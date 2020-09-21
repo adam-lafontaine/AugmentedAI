@@ -143,16 +143,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\data\convert_data.hpp" />
-    <ClInclude Include="..\data\read_data.hpp" />
     <ClInclude Include="..\utils\libimage.hpp" />
     <ClInclude Include="..\utils\rgba.hpp" />
+    <ClInclude Include="src\data_adaptor.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\data\convert_data.cpp" />
-    <ClCompile Include="..\data\read_data.cpp" />
     <ClCompile Include="..\utils\dirhelper.cpp" />
-    <ClCompile Include="data_adaptor_main.cpp" />
+    <ClCompile Include="src\image_file_adaptor.cpp" />
+    <ClCompile Include="test\data_adaptor_test.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

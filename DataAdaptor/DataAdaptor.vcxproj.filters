@@ -33,25 +33,19 @@
     <ClInclude Include="..\utils\rgba.hpp">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\data\convert_data.hpp">
-      <Filter>Header Files\data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\data\read_data.hpp">
-      <Filter>Header Files\data</Filter>
+    <ClInclude Include="src\data_adaptor.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="data_adaptor_main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\utils\dirhelper.cpp">
       <Filter>Source Files\utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\data\convert_data.cpp">
-      <Filter>Source Files\data</Filter>
+    <ClCompile Include="src\image_file_adaptor.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\data\read_data.cpp">
-      <Filter>Source Files\data</Filter>
+    <ClCompile Include="test\data_adaptor_test.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
