@@ -199,6 +199,12 @@ namespace data_adaptor
 	}
 
 
+	void convert_and_save(data_list_t const& data, path_t const& dst_dir)
+	{
+		convert_and_save(data, dst_dir.c_str());
+	}
+
+
 	src_data_t converted_to_data(img::rgba_list_t const& pixels)
 	{
 		assert(pixels.size() == DATA_IMAGE_WIDTH);

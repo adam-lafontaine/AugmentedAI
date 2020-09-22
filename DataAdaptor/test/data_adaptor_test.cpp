@@ -35,6 +35,8 @@ bool convert_and_save_height_test();
 bool converted_to_data_size_test();
 bool converted_to_data_values_test();
 
+void delete_files(std::string dir);
+
 
 
 
@@ -43,16 +45,16 @@ int main()
 	const auto run_test = [&](const char* name, const auto& test) 
 		{ std::cout << name << ": " << (test() ? "Pass" : "Fail") << '\n'; };
 
-	run_test("file_to_data()             not empty", file_to_data_not_empty_test);
-	run_test("file_to_data()                  size", file_to_data_size_test);
-	run_test("files_to_data()                 size", files_to_data_size_test);
-	run_test("files_to_data()      matching values", files_to_data_values_test);
-	run_test("convert_and_save()   file(s) created", convert_and_save_create_file_test);
-	run_test("convert_and_save()    file(s) height", convert_and_save_height_test);
-	run_test("converted_to_data()             size", converted_to_data_size_test);
-	run_test("converted_to_data()  matching values", converted_to_data_values_test);
+	run_test("file_to_data()            not empty", file_to_data_not_empty_test);
+	run_test("file_to_data()                 size", file_to_data_size_test);
+	run_test("files_to_data()                size", files_to_data_size_test);
+	run_test("files_to_data()     matching values", files_to_data_values_test);
+	run_test("convert_and_save()  file(s) created", convert_and_save_create_file_test);
+	run_test("convert_and_save()   file(s) height", convert_and_save_height_test);
+	run_test("converted_to_data()            size", converted_to_data_size_test);
+	run_test("converted_to_data()    close enough", converted_to_data_values_test);
 
-
+	delete_files(dst_root);
 }
 
 
@@ -94,17 +96,14 @@ bool files_to_data_values_test()
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
 	const auto data = data::files_to_data(file_list);
 
-	std::vector<size_t> indeces(data.size());
-	std::iota(indeces.begin(), indeces.end(), 0);
-
 	const size_t test_index = 2;
 
 	const auto file = src_files[test_index];
 	const auto single = data::file_to_data(file);
 
-	const auto pred = [&](const size_t i) { return data[test_index][i] == single[i]; };
+	const auto d = data[test_index];
 
-	return std::all_of(indeces.begin(), indeces.end(), pred);
+	return std::equal(d.begin(), d.end(), single.begin(), single.end());
 }
 
 
@@ -198,7 +197,7 @@ bool converted_to_data_size_test()
 bool converted_to_data_values_test()
 {
 	const size_t test_index = 0;
-	const double tolerance = 0.02;
+	const double tolerance = 0.02; // decide if conversion algorithms should be exact
 
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
 	const auto data = data::files_to_data(file_list);
@@ -214,7 +213,9 @@ bool converted_to_data_values_test()
 	std::vector<size_t> indeces(new_data.size());
 	std::iota(indeces.begin(), indeces.end(), 0);
 
-	const auto pred = [&](const size_t i) { return std::abs(new_data[i] - data[test_index][i]) < tolerance; };
+	const auto d = data[test_index];
 
-	return std::all_of(indeces.begin(), indeces.end(), pred);
+	const auto pred = [&](const auto a, const auto b) { return std::abs(a - b) < tolerance; };
+
+	return std::equal(new_data.begin(), new_data.end(), d.begin(), d.end(), pred);
 }

@@ -24,6 +24,7 @@ namespace data_adaptor
 
 	// Define how data is to be saved as a "data image"
 	void convert_and_save(data_list_t const& data, const char* dst_dir);
+	void convert_and_save(data_list_t const& data, path_t const& dst_dir);
 
 	// Define how one row of a "data image" is converted back to data
 	src_data_t converted_to_data(img::rgba_list_t const& pixel_row);
