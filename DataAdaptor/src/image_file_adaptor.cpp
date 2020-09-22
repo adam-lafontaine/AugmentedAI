@@ -72,21 +72,21 @@ static double to_value(rgba_t const& pix)
 
 static std::string make_numbered_file_name(unsigned index, size_t index_length)
 {
+	index_length = index_length < 2 ? 2 : index_length;
+
 	char idx_str[10];
 	sprintf_s(idx_str, "%0*d", (int)index_length, index); // zero pad index number
 
 	std::time_t result = std::time(nullptr);
 
 	std::ostringstream oss;
-	oss << std::put_time(std::localtime(&result), "%Y-%m-%d_%H-%M-%S"); // TODO: check
+	oss << std::put_time(std::localtime(&result), "%F_%T");
 
 	auto date_file = oss.str() + img::IMAGE_FILE_EXTENSION;
 
-	std::replace(date_file.begin(), date_file.end(), '\n', ' ');
-	std::replace(date_file.begin(), date_file.end(), ' ', '_');
 	std::replace(date_file.begin(), date_file.end(), ':', '-');
 
-	return std::string(idx_str) + '_' + date_file.substr(4);
+	return std::string(idx_str) + '_' + date_file;
 }
 
 
@@ -118,9 +118,6 @@ namespace data_adaptor
 	{
 		const auto width = DATA_IMAGE_WIDTH;
 		const auto height = std::distance(first, last);
-
-		auto list = *first;
-		assert(list.size() == 0);
 
 		img::image_t image(width, height);
 		auto view = img::make_view(image);

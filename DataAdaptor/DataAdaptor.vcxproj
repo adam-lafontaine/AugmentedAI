@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\utils\dirhelper.hpp" />
     <ClInclude Include="..\utils\libimage.hpp" />
     <ClInclude Include="..\utils\rgba.hpp" />
     <ClInclude Include="src\data_adaptor.hpp" />
