@@ -1,5 +1,4 @@
 #include "data_adaptor.hpp"
-#include "../../utils/libimage.hpp"
 
 #include <algorithm>
 #include <cassert>
@@ -15,7 +14,7 @@
 
 #endif
 
-namespace img = libimage;
+
 
 using shade_t = img::bits8;
 
@@ -64,7 +63,7 @@ static img::pixel_t to_pixel(double val)
 }
 
 
-static double to_value(rgba_t const& pix)
+static double to_value(img::rgba_t const& pix)
 {
 	return to_value(pix.r);
 }
@@ -200,7 +199,7 @@ namespace data_adaptor
 	}
 
 
-	src_data_t converted_to_data(rgba_list_t const& pixels)
+	src_data_t converted_to_data(img::rgba_list_t const& pixels)
 	{
 		assert(pixels.size() == DATA_IMAGE_WIDTH);
 

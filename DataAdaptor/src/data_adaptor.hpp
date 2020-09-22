@@ -1,9 +1,11 @@
 #pragma once
 
-#include "../../utils/rgba.hpp"
+#include "../../utils/libimage.hpp"
 
 #include <string>
 #include <vector>
+
+namespace img = libimage;
 
 // Implementations of these functions will be specific for each application.
 namespace data_adaptor
@@ -24,5 +26,5 @@ namespace data_adaptor
 	void convert_and_save(data_list_t const& data, const char* dst_dir);
 
 	// Define how one row of a "data image" is converted back to data
-	src_data_t converted_to_data(rgba_list_t const& pixel_row);
+	src_data_t converted_to_data(img::rgba_list_t const& pixel_row);
 }
