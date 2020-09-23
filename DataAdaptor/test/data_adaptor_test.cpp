@@ -36,6 +36,7 @@ bool converted_to_data_size_test();
 bool converted_to_data_values_test();
 
 void delete_files(std::string dir);
+img::rgba_list_t get_first_color_row(std::string const& image_file);
 
 
 
@@ -45,16 +46,15 @@ int main()
 	const auto run_test = [&](const char* name, const auto& test) 
 		{ std::cout << name << ": " << (test() ? "Pass" : "Fail") << '\n'; };
 
-	/*run_test("file_to_data()            not empty", file_to_data_not_empty_test);
+	run_test("file_to_data()            not empty", file_to_data_not_empty_test);
 	run_test("file_to_data()                 size", file_to_data_size_test);
 	run_test("files_to_data()                size", files_to_data_size_test);
 	run_test("files_to_data()     matching values", files_to_data_values_test);
 	run_test("convert_and_save()  file(s) created", convert_and_save_create_file_test);
 	run_test("convert_and_save()   file(s) height", convert_and_save_height_test);
-	run_test("converted_to_data()            size", converted_to_data_size_test);*/
+	run_test("converted_to_data()            size", converted_to_data_size_test);
 	run_test("converted_to_data()    close enough", converted_to_data_values_test);
-
-	delete_files(dst_root);
+	
 }
 
 
@@ -122,15 +122,6 @@ bool convert_and_save_create_file_test()
 }
 
 
-void delete_files(std::string dir)
-{
-	for (auto const& entry : fs::directory_iterator(dir))
-	{
-		fs::remove_all(entry);
-	}
-}
-
-
 bool convert_and_save_height_test()
 {
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
@@ -153,25 +144,6 @@ bool convert_and_save_height_test()
 	const auto total_height = std::accumulate(data_images.begin(), data_images.end(), init, pred);
 
 	return total_height == file_list.size();
-}
-
-
-img::rgba_list_t get_first_color_row(std::string const& image_file)
-{
-	auto image = img::read_image_from_file(image_file);
-	const auto view = img::make_view(image);
-
-	img::rgba_list_t colors;
-	colors.reserve(view.width());
-
-	using index_t = img::index_t;
-	auto ptr = view.row_begin(0);
-	for (index_t x = 0; x < view.width(); ++x)
-	{
-		colors.push_back(img::to_rgba(ptr[x]));
-	}
-
-	return colors;
 }
 
 
@@ -221,4 +193,32 @@ bool converted_to_data_values_test()
 	const auto pred = [&](const auto a, const auto b) { return std::abs(a - b) < tolerance; };
 
 	return std::equal(new_data.begin(), new_data.end(), d.begin(), d.end(), pred);
+}
+
+
+void delete_files(std::string dir)
+{
+	for (auto const& entry : fs::directory_iterator(dir))
+	{
+		fs::remove_all(entry);
+	}
+}
+
+
+img::rgba_list_t get_first_color_row(std::string const& image_file)
+{
+	auto image = img::read_image_from_file(image_file);
+	const auto view = img::make_view(image);
+
+	img::rgba_list_t colors;
+	colors.reserve(view.width());
+
+	using index_t = img::index_t;
+	auto ptr = view.row_begin(0);
+	for (index_t x = 0; x < view.width(); ++x)
+	{
+		colors.push_back(img::to_rgba(ptr[x]));
+	}
+
+	return colors;
 }
