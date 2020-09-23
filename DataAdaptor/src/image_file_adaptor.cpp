@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <iomanip>
 #include <sstream>
+#include <cstdint>
 
 #ifdef __linux
 
@@ -14,50 +15,30 @@
 
 #endif
 
-
-
-using shade_t = img::bits8;
-
 //======= DATA PROPERTIES =================
 
 constexpr size_t NUM_GRAY_SHADES = 256;
-constexpr shade_t MAX_GRAY_SHADE = 255;
 constexpr size_t DATA_IMAGE_WIDTH = NUM_GRAY_SHADES;
 constexpr size_t MAX_DATA_IMAGE_SIZE = 500 * 500;
 
 
+union four_bytes_t
+{
+	img::bits32 value;
+	img::bits8 bytes[4];
+};
+
+
 // assumes val is between 0.0 and 1.0
-// higher values give darker shades
-static shade_t to_shade(double val)
-{
-	const auto max_val = MAX_GRAY_SHADE;
-
-	if (val <= 0)
-		return max_val;
-
-	if (val > 1)
-		return 0;
-
-	return static_cast<shade_t>((1 - val) * MAX_GRAY_SHADE);
-}
-
-
-// converts a shade back to a value between 0 and 1
-static double to_value(shade_t shade)
-{
-	return static_cast<double>(MAX_GRAY_SHADE - shade) / MAX_GRAY_SHADE;
-}
-
-
-// can use all four channels to store data
 static img::pixel_t to_pixel(double val)
 {
-	const auto shade = to_shade(val);
+	four_bytes_t x;
+	x.value = static_cast<img::bits32>(val * UINT32_MAX);
 
-	const shade_t r = shade;
-	const shade_t g = shade;
-	const shade_t b = shade;
-	const shade_t a = MAX_GRAY_SHADE;
+	const auto r = x.bytes[3];
+	const auto g = x.bytes[2];
+	const auto b = x.bytes[1];
+	const auto a = x.bytes[0];
 
 	return img::to_pixel(r, g, b, a);
 }
@@ -65,7 +46,13 @@ static img::pixel_t to_pixel(double val)
 
 static double to_value(img::rgba_t const& pix)
 {
-	return to_value(pix.r);
+	return static_cast<double>(img::to_bits32(pix)) / UINT32_MAX;
+}
+
+
+static double to_value(img::pixel_ptr_t const& ptr)
+{
+	return static_cast<double>(img::to_bits32(ptr)) / UINT32_MAX;
 }
 
 
@@ -205,16 +192,34 @@ namespace data_adaptor
 	}
 
 
-	src_data_t converted_to_data(img::rgba_list_t const& pixels)
+	src_data_t converted_to_data(img::rgba_list_t const& pixel_row)
 	{
-		assert(pixels.size() == DATA_IMAGE_WIDTH);
+		assert(pixel_row.size() == DATA_IMAGE_WIDTH);
 
 		src_data_t data;
-		data.reserve(pixels.size());
+		data.reserve(pixel_row.size());
 
 		const auto pred = [&](auto const& p) { return to_value(p); };
 
-		std::transform(pixels.begin(), pixels.end(), std::back_inserter(data), pred);
+		std::transform(pixel_row.begin(), pixel_row.end(), std::back_inserter(data), pred);
+
+		return data;
+	}
+
+
+	src_data_t converted_to_data(img::view_t const& pixel_row)
+	{
+		assert(pixel_row.width() == DATA_IMAGE_WIDTH);
+		assert(pixel_row.height() == 1);
+
+		src_data_t data;
+		data.reserve(pixel_row.size());
+
+		const auto ptr = pixel_row.row_begin(0);
+		for (img::index_t x = 0; x < pixel_row.width(); ++x)
+		{
+			data.push_back(to_value(ptr + x));
+		}
 
 		return data;
 	}

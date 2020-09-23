@@ -169,6 +169,17 @@ namespace libimage // 2020-09-19
 	}
 
 
+	constexpr bits32 to_bits32(bits8 red, bits8 green, bits8 blue, bits8 alpha)
+	{
+		const bits32 r = red;
+		const bits32 g = green;
+		const bits32 b = blue;
+		const bits32 a = alpha;
+
+		return (r << 24) + (g << 16) + (b << 8) + a;
+	}
+
+
 	constexpr bits32 to_bits32(rgb_t const& rgb)
 	{
 		const bits32 r = rgb.r;
@@ -193,22 +204,18 @@ namespace libimage // 2020-09-19
 	// converts a pointer to a pixel to a 32 bit integer
 	inline bits32 to_bits32(pixel_ptr_t const& ptr)
 	{
-		auto const src_r = gil::get_color(*ptr, GIL_RED);
-		auto const src_g = gil::get_color(*ptr, GIL_GREEN);
-		auto const src_b = gil::get_color(*ptr, GIL_BLUE);
+		auto const r = gil::get_color(*ptr, GIL_RED);
+		auto const g = gil::get_color(*ptr, GIL_GREEN);
+		auto const b = gil::get_color(*ptr, GIL_BLUE);
+		auto const a = gil::get_color(*ptr, GIL_ALPHA);
 
-		return to_bits32(src_r, src_g, src_b);
+		return to_bits32(r, g, b, a);
 	}
 
 
 	constexpr bits32 to_bits32(rgba_t const& rgba)
 	{
-		const bits32 r = rgba.r;
-		const bits32 g = rgba.g;
-		const bits32 b = rgba.b;
-		const bits32 a = rgba.a;
-
-		return (r << 24) + (g << 16) + (b << 8) + a;
+		return to_bits32(rgba.r, rgba.g, rgba.b, rgba.a);
 	}
 
 

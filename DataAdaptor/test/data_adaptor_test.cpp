@@ -45,13 +45,13 @@ int main()
 	const auto run_test = [&](const char* name, const auto& test) 
 		{ std::cout << name << ": " << (test() ? "Pass" : "Fail") << '\n'; };
 
-	run_test("file_to_data()            not empty", file_to_data_not_empty_test);
+	/*run_test("file_to_data()            not empty", file_to_data_not_empty_test);
 	run_test("file_to_data()                 size", file_to_data_size_test);
 	run_test("files_to_data()                size", files_to_data_size_test);
 	run_test("files_to_data()     matching values", files_to_data_values_test);
 	run_test("convert_and_save()  file(s) created", convert_and_save_create_file_test);
 	run_test("convert_and_save()   file(s) height", convert_and_save_height_test);
-	run_test("converted_to_data()            size", converted_to_data_size_test);
+	run_test("converted_to_data()            size", converted_to_data_size_test);*/
 	run_test("converted_to_data()    close enough", converted_to_data_values_test);
 
 	delete_files(dst_root);
@@ -140,7 +140,7 @@ bool convert_and_save_height_test()
 
 	data::convert_and_save(data, dst_root.c_str());
 
-	const auto new_files = dir::get_files_of_type(dst_root, dst_file_ext);
+	const auto data_images = dir::get_files_of_type(dst_root, dst_file_ext);
 
 	const auto pred = [](size_t total, dir::path_t const& file)
 	{
@@ -150,7 +150,7 @@ bool convert_and_save_height_test()
 
 	size_t init = 0;
 
-	const auto total_height = std::accumulate(new_files.begin(), new_files.end(), init, pred);
+	const auto total_height = std::accumulate(data_images.begin(), data_images.end(), init, pred);
 
 	return total_height == file_list.size();
 }
@@ -185,9 +185,9 @@ bool converted_to_data_size_test()
 	delete_files(dst_root);
 
 	data::convert_and_save(data, dst_root.c_str());
-	const auto new_files = dir::get_files_of_type(dst_root, dst_file_ext);
+	const auto data_images = dir::get_files_of_type(dst_root, dst_file_ext);
 
-	const auto converted = get_first_color_row(new_files[0].string());
+	const auto converted = get_first_color_row(data_images[0].string());
 	const auto new_data = data::converted_to_data(converted);
 
 	return new_data.size() == data[0].size();
@@ -197,7 +197,10 @@ bool converted_to_data_size_test()
 bool converted_to_data_values_test()
 {
 	const size_t test_index = 0;
-	const double tolerance = 0.02; // decide if conversion algorithms should be exact
+
+	// decide if conversion algorithms should be exact
+	// may have loss of precision when saving to data image
+	const double tolerance = 0.0001;
 
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
 	const auto data = data::files_to_data(file_list);
@@ -205,13 +208,13 @@ bool converted_to_data_values_test()
 	delete_files(dst_root);
 
 	data::convert_and_save(data, dst_root.c_str());
-	const auto new_files = dir::get_files_of_type(dst_root, dst_file_ext);
+	const auto data_images = dir::get_files_of_type(dst_root, dst_file_ext);
 
-	const auto converted = get_first_color_row(new_files[0].string());
-	const auto new_data = data::converted_to_data(converted);
+	auto data_image = img::read_image_from_file(data_images[0].c_str());
+	const auto view = img::make_view(data_image);
+	const auto converted = img::row_view(view, test_index);
 
-	std::vector<size_t> indeces(new_data.size());
-	std::iota(indeces.begin(), indeces.end(), 0);
+	const auto new_data = data::converted_to_data(converted);	
 
 	const auto d = data[test_index];
 
