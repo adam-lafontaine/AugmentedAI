@@ -13,8 +13,6 @@ namespace dir = dirhelper;
 namespace img = libimage;
 
 const auto src_root = std::string("D:\\repos\\AugmentedAI\\DataAdaptor\\test\\src");
-const auto dst_root = std::string("D:\\repos\\AugmentedAI\\DataAdaptor\\test\\dst");
-const auto dst_file_ext = ".png";
 
 const auto src_files = std::array
 {
@@ -26,6 +24,11 @@ const auto src_files = std::array
 	src_root + "/181_F.png",
 };
 
+const auto dst_root = std::string("D:\\repos\\AugmentedAI\\DataAdaptor\\test\\dst");
+const auto dst_file_ext = ".png";
+
+bool src_files_exist_test();
+bool dst_root_exists_test();
 bool file_to_data_not_empty_test();
 bool file_to_data_size_test();
 bool files_to_data_size_test();
@@ -46,6 +49,8 @@ int main()
 	const auto run_test = [&](const char* name, const auto& test) 
 		{ std::cout << name << ": " << (test() ? "Pass" : "Fail") << '\n'; };
 
+	run_test("src_files_exist_test()             ", src_files_exist_test);
+	run_test("dst_root_exists_test()             ", dst_root_exists_test);
 	run_test("file_to_data()            not empty", file_to_data_not_empty_test);
 	run_test("file_to_data()                 size", file_to_data_size_test);
 	run_test("files_to_data()                size", files_to_data_size_test);
@@ -55,6 +60,20 @@ int main()
 	run_test("converted_to_data()            size", converted_to_data_size_test);
 	run_test("converted_to_data()    close enough", converted_to_data_values_test);
 	
+}
+
+
+bool src_files_exist_test()
+{
+	const auto pred = [&](auto const& file_path) { return fs::exists(file_path) && fs::is_regular_file(file_path); };
+
+	return std::all_of(src_files.begin(), src_files.end(), pred);
+}
+
+
+bool dst_root_exists_test()
+{
+	return fs::exists(dst_root) && fs::is_directory(dst_root);
 }
 
 
