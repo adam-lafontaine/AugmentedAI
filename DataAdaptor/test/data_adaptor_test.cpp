@@ -3,10 +3,10 @@
 
 #include <string>
 #include <iostream>
-#include <array>
 #include <algorithm>
 #include <numeric>
 #include <cmath>
+#include <cstdio>
 
 namespace data = data_adaptor;
 namespace dir = dirhelper;
@@ -59,7 +59,8 @@ int main()
 	run_test("convert_and_save()   file(s) height", convert_and_save_height_test);
 	run_test("converted_to_data()            size", converted_to_data_size_test);
 	run_test("converted_to_data()    close enough", converted_to_data_values_test);
-	
+
+	std::getchar();	
 }
 
 
