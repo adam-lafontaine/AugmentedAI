@@ -1,5 +1,4 @@
 #include "cluster_config.hpp"
-#include "../utils/stopwatch.hpp"
 
 #include <cstdlib>
 #include <algorithm>
