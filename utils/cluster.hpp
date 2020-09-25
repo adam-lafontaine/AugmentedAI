@@ -10,6 +10,7 @@ namespace cluster
 	//======= TYPE DEFINITIONS ====================
 
 	using value_t = double; // value type of centroids
+	using data_t = double;
 
 	using data_row_t = std::vector<value_t>;
 	using data_row_list_t = std::vector<data_row_t>;
