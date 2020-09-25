@@ -34,10 +34,10 @@ bool file_to_data_size_test();
 bool file_to_data_value_range_test();
 bool files_to_data_size_test();
 bool files_to_data_values_test();
-bool convert_and_save_create_file_test();
-bool convert_and_save_height_test();
-bool converted_to_data_size_test();
-bool converted_to_data_values_test();
+bool save_data_images_create_file_test();
+bool save_data_images_height_test();
+bool data_image_row_to_data_size_test();
+bool data_image_row_to_data_values_test();
 
 void delete_files(std::string dir);
 img::rgba_list_t get_first_color_row(std::string const& image_file);
@@ -50,17 +50,17 @@ int main()
 	const auto run_test = [&](const char* name, const auto& test) 
 		{ std::cout << name << ": " << (test() ? "Pass" : "Fail") << '\n'; };
 
-	run_test("src_files_exist_test()             ", src_files_exist_test);
-	run_test("dst_root_exists_test()             ", dst_root_exists_test);
-	run_test("file_to_data()            not empty", file_to_data_not_empty_test);
-	run_test("file_to_data()                 size", file_to_data_size_test);
-	run_test("file_to_data()          value range", file_to_data_value_range_test);
-	run_test("files_to_data()                size", files_to_data_size_test);
-	run_test("files_to_data()     matching values", files_to_data_values_test);
-	run_test("convert_and_save()  file(s) created", convert_and_save_create_file_test);
-	run_test("convert_and_save()   file(s) height", convert_and_save_height_test);
-	run_test("converted_to_data()            size", converted_to_data_size_test);
-	run_test("converted_to_data()    close enough", converted_to_data_values_test);
+	run_test("src_files_exist_test()               ", src_files_exist_test);
+	run_test("dst_root_exists_test()               ", dst_root_exists_test);
+	run_test("file_to_data()              not empty", file_to_data_not_empty_test);
+	run_test("file_to_data()                   size", file_to_data_size_test);
+	run_test("file_to_data()            value range", file_to_data_value_range_test);
+	run_test("files_to_data()                  size", files_to_data_size_test);
+	run_test("files_to_data()       matching values", files_to_data_values_test);
+	run_test("save_data_images()    file(s) created", save_data_images_create_file_test);
+	run_test("save_data_images()     file(s) height", save_data_images_height_test);
+	run_test("data_image_row_to_data()         size", data_image_row_to_data_size_test);
+	run_test("data_image_row_to_data()  close enough", data_image_row_to_data_values_test);
 
 	std::getchar();	
 }
@@ -134,14 +134,14 @@ bool files_to_data_values_test()
 }
 
 
-bool convert_and_save_create_file_test()
+bool save_data_images_create_file_test()
 {
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
 	const auto data = data::files_to_data(file_list);
 
 	const auto file_count_a = dir::get_files_of_type(dst_root, dst_file_ext).size();
 
-	data::convert_and_save(data, dst_root.c_str());
+	data::save_data_images(data, dst_root.c_str());
 
 	const auto file_count_b = dir::get_files_of_type(dst_root, dst_file_ext).size();
 
@@ -149,14 +149,14 @@ bool convert_and_save_create_file_test()
 }
 
 
-bool convert_and_save_height_test()
+bool save_data_images_height_test()
 {
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
 	const auto data = data::files_to_data(file_list);
 
 	delete_files(dst_root);
 
-	data::convert_and_save(data, dst_root.c_str());
+	data::save_data_images(data, dst_root.c_str());
 
 	const auto data_images = dir::get_files_of_type(dst_root, dst_file_ext);
 
@@ -174,7 +174,7 @@ bool convert_and_save_height_test()
 }
 
 
-bool converted_to_data_size_test()
+bool data_image_row_to_data_size_test()
 {
 	const size_t test_index = 0;
 
@@ -183,17 +183,17 @@ bool converted_to_data_size_test()
 
 	delete_files(dst_root);
 
-	data::convert_and_save(data, dst_root.c_str());
+	data::save_data_images(data, dst_root.c_str());
 	const auto data_images = dir::get_files_of_type(dst_root, dst_file_ext);
 
 	const auto converted = get_first_color_row(data_images[0].string());
-	const auto new_data = data::converted_to_data(converted);
+	const auto new_data = data::data_image_row_to_data(converted);
 
 	return new_data.size() == data[0].size();
 }
 
 
-bool converted_to_data_values_test()
+bool data_image_row_to_data_values_test()
 {
 	const size_t test_index = 0;
 
@@ -206,14 +206,14 @@ bool converted_to_data_values_test()
 
 	delete_files(dst_root);
 
-	data::convert_and_save(data, dst_root.c_str());
+	data::save_data_images(data, dst_root.c_str());
 	const auto data_images = dir::get_files_of_type(dst_root, dst_file_ext);
 
 	auto data_image = img::read_image_from_file(data_images[0].c_str());
 	const auto view = img::make_view(data_image);
 	const auto converted = img::row_view(view, test_index);
 
-	const auto new_data = data::converted_to_data(converted);	
+	const auto new_data = data::data_image_row_to_data(converted);	
 
 	const auto d = data[test_index];
 

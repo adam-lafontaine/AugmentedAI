@@ -156,7 +156,7 @@ namespace data_adaptor
 	}
 
 
-	void convert_and_save(data_list_t const& data, const char* dst_dir)
+	void save_data_images(data_list_t const& data, const char* dst_dir)
 	{
 		const auto max_height = MAX_DATA_IMAGE_SIZE / DATA_IMAGE_WIDTH;
 
@@ -189,13 +189,13 @@ namespace data_adaptor
 	}
 
 
-	void convert_and_save(data_list_t const& data, path_t const& dst_dir)
+	void save_data_images(data_list_t const& data, path_t const& dst_dir)
 	{
-		convert_and_save(data, dst_dir.c_str());
+		save_data_images(data, dst_dir.c_str());
 	}
 
 
-	src_data_t converted_to_data(img::rgba_list_t const& pixel_row)
+	src_data_t data_image_row_to_data(img::rgba_list_t const& pixel_row)
 	{
 		assert(pixel_row.size() == DATA_IMAGE_WIDTH);
 
@@ -210,7 +210,7 @@ namespace data_adaptor
 	}
 
 
-	src_data_t converted_to_data(img::view_t const& pixel_row)
+	src_data_t data_image_row_to_data(img::view_t const& pixel_row)
 	{
 		assert(pixel_row.width() == DATA_IMAGE_WIDTH);
 		assert(pixel_row.height() == 1);

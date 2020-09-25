@@ -273,7 +273,7 @@ static void append_data(data_list_t& data, img::view_t const& data_view)
 	for (auto y = 0; y < data_view.height(); ++y)
 	{
 		const auto row_view = img::row_view(data_view, y);
-		data.push_back(data::converted_to_data(row_view));
+		data.push_back(data::data_image_row_to_data(row_view));
 	}
 }
 
