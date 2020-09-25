@@ -35,6 +35,9 @@ union four_bytes_t
 // assumes val is between 0.0 and 1.0
 static img::pixel_t to_pixel(double val)
 {
+	assert(val >= DATA_MIN_VALUE);
+	assert(val <= DATA_MAX_VALUE);
+
 	four_bytes_t x;
 	x.value = static_cast<img::bits32>(val * UINT32_MAX);
 

@@ -50,16 +50,16 @@ int main()
 	const auto run_test = [&](const char* name, const auto& test) 
 		{ std::cout << name << ": " << (test() ? "Pass" : "Fail") << '\n'; };
 
-	run_test("src_files_exist_test()               ", src_files_exist_test);
-	run_test("dst_root_exists_test()               ", dst_root_exists_test);
-	run_test("file_to_data()              not empty", file_to_data_not_empty_test);
-	run_test("file_to_data()                   size", file_to_data_size_test);
-	run_test("file_to_data()            value range", file_to_data_value_range_test);
-	run_test("files_to_data()                  size", files_to_data_size_test);
-	run_test("files_to_data()       matching values", files_to_data_values_test);
-	run_test("save_data_images()    file(s) created", save_data_images_create_file_test);
-	run_test("save_data_images()     file(s) height", save_data_images_height_test);
-	run_test("data_image_row_to_data()         size", data_image_row_to_data_size_test);
+	run_test("src_files_exist_test()                ", src_files_exist_test);
+	run_test("dst_root_exists_test()                ", dst_root_exists_test);
+	run_test("file_to_data()               not empty", file_to_data_not_empty_test);
+	run_test("file_to_data()                    size", file_to_data_size_test);
+	run_test("file_to_data()             value range", file_to_data_value_range_test);
+	run_test("files_to_data()                   size", files_to_data_size_test);
+	run_test("files_to_data()        matching values", files_to_data_values_test);
+	run_test("save_data_images()     file(s) created", save_data_images_create_file_test);
+	run_test("save_data_images()      file(s) height", save_data_images_height_test);
+	run_test("data_image_row_to_data()          size", data_image_row_to_data_size_test);
 	run_test("data_image_row_to_data()  close enough", data_image_row_to_data_values_test);
 
 	std::getchar();	
