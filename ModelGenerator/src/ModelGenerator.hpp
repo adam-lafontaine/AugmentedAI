@@ -12,12 +12,13 @@ class ModelGenerator
 public:
 	using file_path_t = std::string;
 	using file_list_t = std::vector<file_path_t>;
+	using class_file_list_t = std::array<file_list_t, ML_CLASS_COUNT>;
 
 private:
-	using class_file_list_t = std::array<file_path_t, ML_CLASS_COUNT>;
+	
 
 	// file paths of raw data images by class
-	std::array<file_list_t, ML_CLASS_COUNT> m_class_data;
+	class_file_list_t m_class_data;
 
 	// for cleaning up after reading data
 	void purge_class_data();
@@ -36,8 +37,8 @@ public:
 	void set_teach_files(const char* src_dir, MLClass class_index);
 
 	// saves properties based on all of the data read
-	void teach();
+	void teach_and_save(const char* save_dir);
 
-	void save_learned(const char* save_dir);
+	//void save_learned(const char* save_dir);
 
 };
