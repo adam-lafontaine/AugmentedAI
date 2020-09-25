@@ -19,6 +19,12 @@
     <Filter Include="Source Files\utils">
       <UniqueIdentifier>{a6db110e-23e6-4588-988e-9acfcdf52758}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\data_adaptor">
+      <UniqueIdentifier>{16e251b5-dc52-4bb2-9506-7c7e64520407}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\data_adaptor">
+      <UniqueIdentifier>{a2a81b55-18f4-48dc-aab5-05a40b203f7e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ModelGenerator.hpp">
@@ -39,6 +45,9 @@
     <ClInclude Include="..\utils\ml_class.hpp">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\DataAdaptor\src\data_adaptor.hpp">
+      <Filter>Header Files\data_adaptor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\utils\cluster.cpp">
@@ -52,6 +61,9 @@
     </ClCompile>
     <ClCompile Include="src\model_generator_tests.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DataAdaptor\src\image_file_adaptor.cpp">
+      <Filter>Source Files\data_adaptor</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

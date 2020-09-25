@@ -23,11 +23,6 @@ namespace data = data_adaptor;
 using data_pixel_t = img::pixel_t;
 using centroid_pixel_t = img::pixel_t;
 
-
-constexpr size_t DATA_IMAGE_WIDTH = 256; // TODO: get from DataAdaptor
-constexpr double DATA_MIN_VALUE = 0;
-constexpr double DATA_MAX_VALUE = 1;
-
 using hist_value_t = unsigned; // represent a pixel as a single value for a histogram
 constexpr hist_value_t MAX_COLOR_VALUE = 256;
 
@@ -108,10 +103,10 @@ void ModelGenerator::purge_class_data()
 
 
 // reads directory of raw data for a given class
-void ModelGenerator::set_teach_files(const char* src_dir, MLClass class_index)
+void ModelGenerator::add_class_data(const char* src_dir, MLClass class_index)
 {
 	// convert the class enum to an array index
-	const auto index = static_cast<size_t>(class_index);
+	const auto index = to_class_index(class_index);
 
 	// data is organized in directories by class
 	auto data_files = dir::get_files_of_type(src_dir, img::IMAGE_FILE_EXTENSION);
@@ -137,7 +132,7 @@ void ModelGenerator::teach_and_save(const char* save_dir)
 			auto data_image = img::read_image_from_file(data_file);
 			auto data_view = img::make_view(data_image);
 
-			assert(data_view.width() == DATA_IMAGE_WIDTH);
+			assert(data_view.width() == data::data_image_width());
 
 			update_histograms(class_hists[c], data_view);
 			append_data(cluster_data[c], data_view);
@@ -169,7 +164,7 @@ void ModelGenerator::teach_and_save(const char* save_dir)
 
 	const auto save_path = std::string(save_dir) + '/' + make_file_name();
 
-	const auto width = DATA_IMAGE_WIDTH;
+	const auto width = data::data_image_width();
 	const auto height = centroids.size();
 
 	img::image_t image(width, height);
@@ -318,8 +313,8 @@ static class_position_hists_t make_empty_histograms()
 
 	const auto pred = [&](auto c)
 	{
-		position_hists[c].reserve(DATA_IMAGE_WIDTH); // TODO: initialize better?
-		for (size_t i = 0; i < DATA_IMAGE_WIDTH; ++i)
+		position_hists[c].reserve(data::data_image_width()); // TODO: initialize better?
+		for (size_t i = 0; i < data::data_image_width(); ++i)
 		{
 			position_hists[c].push_back({ 0 }); // set all values to zero
 		}
@@ -366,8 +361,8 @@ using shade_t = img::bits8;
 // how a value in a centroid is converted to a pixel for saving
 static centroid_pixel_t to_save_pixel(double val, bool is_relevant)
 {
-	assert(val >= DATA_MIN_VALUE);
-	assert(val <= DATA_MAX_VALUE);
+	assert(val >= data::data_min_value());
+	assert(val <= data::data_max_value());
 
 	img::bits8 min = 0;
 	img::bits8 max = 255;
@@ -383,7 +378,7 @@ static centroid_pixel_t to_save_pixel(double val, bool is_relevant)
 	const shade_t g = dist(gen); // doesn't matter
 
 	// only the blue channel is used to store data
-	const shade_t b = static_cast<shade_t>(val * max);
+	const shade_t b = static_cast<shade_t>(std::abs(val) * max);
 
 	const shade_t a = max;
 

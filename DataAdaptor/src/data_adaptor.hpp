@@ -29,4 +29,9 @@ namespace data_adaptor
 	// Define how one row of a "data image" is converted back to data
 	src_data_t converted_to_data(img::rgba_list_t const& pixel_row);
 	src_data_t converted_to_data(img::view_t const& pixel_row);
+
+	// make data properties public
+	size_t data_image_width();
+	double data_min_value();
+	double data_max_value();
 }

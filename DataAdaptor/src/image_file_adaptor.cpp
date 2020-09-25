@@ -18,8 +18,11 @@
 //======= DATA PROPERTIES =================
 
 constexpr size_t NUM_GRAY_SHADES = 256;
-constexpr size_t DATA_IMAGE_WIDTH = NUM_GRAY_SHADES;
 constexpr size_t MAX_DATA_IMAGE_SIZE = 500 * 500;
+
+constexpr size_t DATA_IMAGE_WIDTH = NUM_GRAY_SHADES;
+constexpr double DATA_MIN_VALUE = 0;
+constexpr double DATA_MAX_VALUE = 1;
 
 
 union four_bytes_t
@@ -222,5 +225,23 @@ namespace data_adaptor
 		}
 
 		return data;
+	}
+
+
+	size_t data_image_width()
+	{
+		return DATA_IMAGE_WIDTH;
+	}
+
+
+	double data_min_value()
+	{
+		return DATA_MIN_VALUE;
+	}
+
+
+	double data_max_value()
+	{
+		return DATA_MAX_VALUE;
 	}
 }
