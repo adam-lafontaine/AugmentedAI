@@ -31,6 +31,7 @@ bool src_files_exist_test();
 bool dst_root_exists_test();
 bool file_to_data_not_empty_test();
 bool file_to_data_size_test();
+bool file_to_data_value_range_test();
 bool files_to_data_size_test();
 bool files_to_data_values_test();
 bool convert_and_save_create_file_test();
@@ -53,6 +54,7 @@ int main()
 	run_test("dst_root_exists_test()             ", dst_root_exists_test);
 	run_test("file_to_data()            not empty", file_to_data_not_empty_test);
 	run_test("file_to_data()                 size", file_to_data_size_test);
+	run_test("file_to_data()          value range", file_to_data_value_range_test);
 	run_test("files_to_data()                size", files_to_data_size_test);
 	run_test("files_to_data()     matching values", files_to_data_values_test);
 	run_test("convert_and_save()  file(s) created", convert_and_save_create_file_test);
@@ -81,7 +83,6 @@ bool dst_root_exists_test()
 bool file_to_data_not_empty_test()
 {
 	const auto file = src_files[2];
-
 	const auto data = data::file_to_data(file);
 
 	return !data.empty();
@@ -90,15 +91,21 @@ bool file_to_data_not_empty_test()
 
 bool file_to_data_size_test()
 {	
-	std::vector<size_t> sizes;
-	sizes.reserve(src_files.size());
+	const auto file = src_files[2];
+	const auto data = data::file_to_data(file);
 
-	const auto size_pred = [](const auto& v) { return v.size(); };
-	std::transform(src_files.begin(), src_files.end(), std::back_inserter(sizes), size_pred);
+	return data.size() == data::data_image_width();
+}
 
-	const auto [min, max] = std::minmax_element(sizes.begin(), sizes.end());
 
-	return *min == *max;
+bool file_to_data_value_range_test()
+{
+	const auto file = src_files[2];
+	const auto data = data::file_to_data(file);
+
+	const auto pred = [&](auto val) { return val >= data::data_min_value() && val <= data::data_max_value(); };
+
+	return std::all_of(data.begin(), data.end(), pred);
 }
 
 
