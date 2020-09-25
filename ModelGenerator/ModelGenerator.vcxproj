@@ -150,6 +150,7 @@
     <ClInclude Include="..\utils\libimage.hpp" />
     <ClInclude Include="..\utils\ml_class.hpp" />
     <ClInclude Include="src\ModelGenerator.hpp" />
+    <ClInclude Include="src\pixel_conversion.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\DataAdaptor\src\image_file_adaptor.cpp" />
@@ -157,6 +158,7 @@
     <ClCompile Include="..\utils\dirhelper.cpp" />
     <ClCompile Include="src\ModelGenerator.cpp" />
     <ClCompile Include="src\model_generator_tests.cpp" />
+    <ClCompile Include="src\pixel_conversion.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

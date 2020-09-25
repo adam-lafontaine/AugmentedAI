@@ -1,17 +1,16 @@
 #include "ModelGenerator.hpp"
+#include "pixel_conversion.hpp"
 #include "../../utils/cluster_config.hpp"
 #include "../../utils/dirhelper.hpp"
 #include "../../DataAdaptor/src/data_adaptor.hpp"
 
-#include <cassert>
 #include <algorithm>
-#include <iterator>
 #include <functional>
-#include <cmath>
-#include <random>
-#include <ctime>
 #include <iomanip>
 #include <sstream>
+#include <cassert>
+#include <cmath>
+#include <ctime>
 #include <cstdlib>
 
 namespace dir = dirhelper;
@@ -54,9 +53,6 @@ namespace model_generator
 
 	//======= CONVERSION =============
 
-	// how a value in a centroid is converted to a pixel for saving
-	static centroid_pixel_t to_save_pixel(double val, bool is_relevant); // TODO: visible for reading
-
 
 	// converts a data pixel to a value between 0 and MAX_COLOR_VALUE
 	static hist_value_t to_hist_value(data_pixel_t const& pix);
@@ -68,7 +64,7 @@ namespace model_generator
 	static index_list_t find_relevant_positions(class_position_hists_t const& class_pos_hists);
 
 	// build function for evaluating distance between data and a cluster centroid
-	static cluster::dist_func_t build_cluster_distance(index_list_t const& indeces);
+	static cluster::dist_func_t build_cluster_distance(index_list_t const& relevant_indeces);
 
 
 
@@ -179,7 +175,7 @@ namespace model_generator
 			for (auto x = 0; x < width; ++x)
 			{
 				auto is_counted = std::find(data_indeces.begin(), data_indeces.end(), x) != data_indeces.end();
-				ptr[x] = to_save_pixel(list[x], is_counted);
+				ptr[x] = to_centroid_pixel(list[x], is_counted);
 			}
 			++y;
 		}
@@ -238,20 +234,20 @@ namespace model_generator
 
 
 	// build function for evaluating distance between data and a cluster centroid
-	static cluster::dist_func_t build_cluster_distance(index_list_t const& indeces)
+	static cluster::dist_func_t build_cluster_distance(index_list_t const& relevant_indeces)
 	{
 		return [&](auto const& data, auto const& centroid)
 		{
 			double total = 0;
 
-			for (auto i : indeces)
+			for (auto i : relevant_indeces)
 			{
 				const auto lhs = data[i];
 				const auto rhs = centroid[i];
 				total += std::abs(lhs - rhs);
 			}
 
-			return total / indeces.size();
+			return total / relevant_indeces.size();
 		};
 	}
 
@@ -356,37 +352,6 @@ namespace model_generator
 
 
 	//======= CONVERSION =============
-
-	using shade_t = img::bits8;
-
-
-	// how a value in a centroid is converted to a pixel for saving
-	static centroid_pixel_t to_save_pixel(double val, bool is_relevant)
-	{
-		assert(val >= data::data_min_value());
-		assert(val <= data::data_max_value());
-
-		img::bits8 min = 0;
-		img::bits8 max = 255;
-
-		std::random_device rd;
-		std::mt19937 gen(rd());
-		std::uniform_int_distribution<> dist(min, max);
-
-		// red channel used as a flag for inspector
-		// if zero, value can be ignored
-		const shade_t r = is_relevant ? dist(gen) : 0;
-
-		const shade_t g = dist(gen); // doesn't matter
-
-		// only the blue channel is used to store data
-		const shade_t b = static_cast<shade_t>(std::abs(val) * max);
-
-		const shade_t a = max;
-
-		return img::to_pixel(r, g, b, a);
-
-	}
 
 
 	// converts a data pixel to a value between 0 and MAX_COLOR_VALUE
