@@ -29,6 +29,14 @@ namespace dirhelper
 
 	void process_files(file_str_list_t const& files, file_str_func_t const& func);
 
+	std::string get_first_file_of_type(std::string const& src_dir, std::string const& extension);
+
+	std::string get_first_file_of_type(const char* src_dir, std::string const& extension);
+
+	std::string get_first_file_of_type(std::string const& src_dir, const char* extension);
+
+	std::string get_first_file_of_type(const char* src_dir, const char* extension);
+
 
 
 	// for testing/debugging

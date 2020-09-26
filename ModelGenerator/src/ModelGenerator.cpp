@@ -1,5 +1,6 @@
 #include "ModelGenerator.hpp"
 #include "pixel_conversion.hpp"
+#include "cluster_distance.hpp"
 #include "../../utils/cluster_config.hpp"
 #include "../../utils/dirhelper.hpp"
 #include "../../DataAdaptor/src/data_adaptor.hpp"
@@ -22,7 +23,6 @@ namespace model_generator
 {
 	// help distinguish what image we are working with
 	using data_pixel_t = img::pixel_t;
-	using centroid_pixel_t = img::pixel_t;
 
 	using hist_value_t = unsigned; // represent a pixel as a single value for a histogram
 	constexpr hist_value_t MAX_COLOR_VALUE = 256;
@@ -63,9 +63,6 @@ namespace model_generator
 	// finds the indeces of the data that contribute to determining the class
 	static index_list_t find_relevant_positions(class_position_hists_t const& class_pos_hists);
 
-	// build function for evaluating distance between data and a cluster centroid
-	static cluster::dist_func_t build_cluster_distance(index_list_t const& relevant_indeces);
-
 
 
 	//======= HISTOGRAM ============================
@@ -84,8 +81,7 @@ namespace model_generator
 
 	//======= HELPERS ===================
 
-	using class_func_t = std::function<void(size_t c)>;
-	static void for_each_class(class_func_t const& func);
+	
 
 	static std::string make_file_name();
 
@@ -158,7 +154,7 @@ namespace model_generator
 
 		cluster_t cluster;
 		centroid_list_t centroids;
-		std::array<size_t, ML_CLASS_COUNT> class_clusters = { 10, 10 };
+		std::array<size_t, ML_CLASS_COUNT> class_clusters = { 10, 10 }; // TODO: in config
 
 		cluster.set_distance(build_cluster_distance(data_indeces));
 
@@ -244,25 +240,6 @@ namespace model_generator
 	}
 
 
-	// build function for evaluating distance between data and a cluster centroid
-	static cluster::dist_func_t build_cluster_distance(index_list_t const& relevant_indeces)
-	{
-		return [&](auto const& data, auto const& centroid)
-		{
-			double total = 0;
-
-			for (auto i : relevant_indeces)
-			{
-				const auto lhs = data[i];
-				const auto rhs = centroid[i];
-				total += std::abs(lhs - rhs);
-			}
-
-			return total / relevant_indeces.size();
-		};
-	}
-
-
 	//======= HISTOGRAM ============================
 
 
@@ -338,13 +315,7 @@ namespace model_generator
 
 	//======= HELPERS =====================
 
-	static void for_each_class(class_func_t const& func)
-	{
-		for (size_t class_index = 0; class_index < ML_CLASS_COUNT; ++class_index)
-		{
-			func(class_index);
-		}
-	}
+	
 
 
 	static std::string make_file_name()
