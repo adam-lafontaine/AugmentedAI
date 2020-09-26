@@ -352,7 +352,7 @@ namespace model_generator
 		std::time_t result = std::time(nullptr);
 
 		std::ostringstream oss;
-		oss << std::put_time(std::localtime(&result), "%F_%T");
+		oss << "model_" << std::put_time(std::localtime(&result), "%F_%T");
 
 		auto date_file = oss.str() + img::IMAGE_FILE_EXTENSION;
 
