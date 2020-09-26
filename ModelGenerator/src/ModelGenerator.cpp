@@ -203,7 +203,7 @@ namespace model_generator
 	// does not account for multiple maxima
 	static index_list_t find_relevant_positions(class_position_hists_t const& class_pos_hists)
 	{
-		const double min_diff = 6.0;
+		const double min_diff = 0.001;
 		const size_t num_pos = class_pos_hists[0].size();
 		std::array<double, ML_CLASS_COUNT> class_avg = { 0.0 };
 

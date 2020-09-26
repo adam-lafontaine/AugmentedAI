@@ -51,7 +51,7 @@ int main()
 	run_test("save_model_one_class_test()        ", save_model_one_class_test);
 	run_test("save_model_one_file_test()         ", save_model_one_file_test);
 	
-
+	std::cout << "\nTests complete.";
 
 	std::getchar();
 }
@@ -123,8 +123,6 @@ bool no_class_data_test()
 bool add_class_data_test()
 {
 	gen::ModelGenerator gen;
-
-
 
 	gen.add_class_data(data_pass, MLClass::Pass);
 	gen.add_class_data(data_fail, MLClass::Fail);
