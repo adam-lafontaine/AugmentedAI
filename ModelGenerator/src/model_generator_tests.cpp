@@ -39,8 +39,6 @@ int main()
 
 	run_test("data_fail_exists_test()  dir exists", data_fail_exists_test);
 	run_test("data_pass_exists_test()  dir exists", data_pass_exists_test);
-	run_test("data_fail_exists_test()  dir exists", data_fail_exists_test);
-	run_test("data_pass_exists_test()  dir exists", data_pass_exists_test);
 	run_test("model_exists_test()      dir exists", model_exists_test);
 	run_test("data_fail_files_test()  files exist", data_fail_files_test);
 	run_test("data_pass_files_test()  files exist", data_pass_files_test);
@@ -54,8 +52,7 @@ int main()
 	run_test("pixel_conversion_test()            ", pixel_conversion_test);
 	
 	std::cout << "\nTests complete.";
-
-	std::getchar();
+	std::cin.get();
 }
 
 
@@ -80,6 +77,7 @@ void delete_files(const char* dir)
 		fs::remove_all(entry);
 	}
 }
+
 
 //======= TESTS ==============
 

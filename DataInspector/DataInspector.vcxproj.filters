@@ -19,6 +19,18 @@
     <Filter Include="Source Files\utils">
       <UniqueIdentifier>{7ec3ff1d-0c98-480c-b4ed-b141e161790a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\data_adaptor">
+      <UniqueIdentifier>{3b323346-4f92-41c9-9034-56ced898fd83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\data_adaptor">
+      <UniqueIdentifier>{d28188f5-7115-443b-b7d8-2303311c16d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\model_generator">
+      <UniqueIdentifier>{9777554e-c291-41d4-9e08-6af660477bdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\model_generator">
+      <UniqueIdentifier>{a5c8d2b6-2189-40a5-8e2f-3573d15ffe1a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\data_inspector_tests.cpp">
@@ -32,6 +44,12 @@
     </ClCompile>
     <ClCompile Include="..\utils\cluster.cpp">
       <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DataAdaptor\src\image_file_adaptor.cpp">
+      <Filter>Source Files\data_adaptor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ModelGenerator\src\pixel_conversion.cpp">
+      <Filter>Source Files\model_generator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -52,6 +70,15 @@
     </ClInclude>
     <ClInclude Include="..\utils\cluster_config.hpp">
       <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DataAdaptor\src\data_adaptor.hpp">
+      <Filter>Header Files\data_adaptor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ModelGenerator\src\cluster_distance.hpp">
+      <Filter>Header Files\model_generator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ModelGenerator\src\pixel_conversion.hpp">
+      <Filter>Header Files\model_generator</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

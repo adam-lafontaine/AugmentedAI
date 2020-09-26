@@ -1,6 +1,5 @@
 #include "data_inspector.hpp"
 #include "../../DataAdaptor/src/data_adaptor.hpp"
-#include "../../ModelGenerator/src/ModelGenerator.hpp"
 #include "../../ModelGenerator/src/pixel_conversion.hpp"
 #include "../../ModelGenerator/src/cluster_distance.hpp"
 #include "../../utils/libimage.hpp"
@@ -100,6 +99,8 @@ namespace data_inspector
 
 	MLClass inspect(const char* data_file, const char* model_dir)
 	{
-		return MLClass::Error;
+		const auto data = data::file_to_data(data_file);
+
+		return inspect(data, model_dir);
 	}
 }
