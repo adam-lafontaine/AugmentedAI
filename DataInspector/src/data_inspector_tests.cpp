@@ -2,6 +2,7 @@
 #include "../../utils/dirhelper.hpp"
 
 #include <iostream>
+#include <algorithm>
 
 namespace ins = data_inspector;
 namespace dir = dirhelper;
@@ -18,6 +19,8 @@ bool model_exists_test();
 bool src_fail_files_test();
 bool src_pass_files_test();
 bool model_file_test();
+bool src_fail_files_ext_test();
+bool src_pass_files_ext_test();
 
 
 int main()
@@ -25,12 +28,14 @@ int main()
 	const auto run_test = [&](const char* name, const auto& test)
 	{ std::cout << name << ": " << (test() ? "Pass" : "Fail") << '\n'; };
 
-	run_test("src_fail_exists_test()  dir exists", src_fail_exists_test);
-	run_test("src_pass_exists_test()  dir exists", src_pass_exists_test);
-	run_test("model_exists_test()     dir exists", model_exists_test);
-	run_test("src_fail_files_test()  files exist", src_fail_files_test);
-	run_test("src_pass_files_test()  files exist", src_pass_files_test);
-	run_test("model_file_test()       dir exists", model_file_test);
+	run_test("src_fail_exists_test()   dir exists", src_fail_exists_test);
+	run_test("src_pass_exists_test()   dir exists", src_pass_exists_test);
+	run_test("model_exists_test()      dir exists", model_exists_test);
+	run_test("src_fail_files_test()   files exist", src_fail_files_test);
+	run_test("src_pass_files_test()   files exist", src_pass_files_test);
+	run_test("model_file_test()       file exists", model_file_test);
+	run_test("src_fail_files_ext_test()  same ext", src_fail_files_ext_test);
+	run_test("src_pass_files_ext_test()  same ext", src_pass_files_ext_test);
 
 	std::cout << "\nTests complete.";
 	std::cin.get();
@@ -42,6 +47,30 @@ int main()
 bool is_directory(const char* path)
 {
 	return fs::exists(path) && fs::is_directory(path);
+}
+
+
+bool files_exist(const char* dir)
+{
+	auto const files = dir::get_all_files(dir);
+
+	return !files.empty();
+}
+
+
+bool files_same_ext(const char* dir)
+{
+	auto const files = dir::get_all_files(dir);
+	if (files.empty())
+		return false;
+
+	const auto ext = files[0].extension();
+
+	const auto pred = [&](auto const& file) { return file.extension() == ext; };
+
+	const auto begin = files.begin() + 1;
+
+	return std::all_of(begin, files.end(), pred);
 }
 
 
@@ -74,13 +103,13 @@ bool model_exists_test()
 
 bool src_fail_files_test()
 {
-	return image_files_exist(src_fail);
+	return files_exist(src_fail);
 }
 
 
 bool src_pass_files_test()
 {
-	return image_files_exist(src_pass);
+	return files_exist(src_pass);
 }
 
 
@@ -90,9 +119,16 @@ bool model_file_test()
 }
 
 
-// inspect - no data
+bool src_fail_files_ext_test()
+{
+	return files_same_ext(src_fail);
+}
 
-// inspect - no model
+
+bool src_pass_files_ext_test()
+{
+	return files_same_ext(src_fail);
+}
 
 // inspect - pass
 

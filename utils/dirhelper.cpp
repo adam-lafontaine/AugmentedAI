@@ -2,6 +2,38 @@
 
 namespace dirhelper
 {
+	file_list_t get_all_files(const char* src_dir)
+	{
+		file_list_t file_list;
+
+		if (!fs::exists(src_dir) || !fs::is_directory(src_dir))
+		{
+			// handle error
+			return file_list;
+		}
+
+		auto const entry_match = [&](fs::path const& entry)
+		{
+			return fs::is_regular_file(entry) &&
+				entry.has_extension();
+		};
+
+		for (auto const& entry : fs::directory_iterator(src_dir))
+		{
+			if (entry_match(entry))
+				file_list.push_back(entry.path());
+		}
+
+		return file_list;
+	}
+
+
+	file_list_t get_all_files(std::string const& src_dir)
+	{
+		return get_all_files(src_dir.c_str());
+	}
+
+
 	// returns all files in a directory with a given extension
 	file_list_t get_files_of_type(std::string const& src_dir, std::string const& extension)
 	{
@@ -13,18 +45,18 @@ namespace dirhelper
 
 		file_list_t file_list;
 
-		auto const entry_match = [&](fs::path const& entry)
-		{
-			return fs::is_regular_file(entry) &&
-				entry.has_extension() &&
-				entry.extension() == ext_copy;
-		};
-
 		if (!fs::exists(src_dir) || !fs::is_directory(src_dir))
 		{
 			// handle error
 			return file_list;
 		}
+
+		auto const entry_match = [&](fs::path const& entry)
+		{
+			return fs::is_regular_file(entry) &&
+				entry.has_extension() &&
+				entry.extension() == ext_copy;
+		};		
 
 		for (auto const& entry : fs::directory_iterator(src_dir))
 		{
@@ -133,6 +165,40 @@ namespace dirhelper
 	namespace str
 	{
 		// using file_list_t = std::vector<std::string>;
+
+
+		file_list_t get_all_files(const char* src_dir)
+		{
+			file_list_t file_list;
+
+			if (!fs::exists(src_dir) || !fs::is_directory(src_dir))
+			{
+				// handle error
+				return file_list;
+			}
+
+			auto const entry_match = [&](fs::path const& entry)
+			{
+				return fs::is_regular_file(entry) &&
+					entry.has_extension();
+			};
+
+			for (auto const& entry : fs::directory_iterator(src_dir))
+			{
+				if (entry_match(entry))
+					file_list.push_back(entry.path().string());
+			}
+
+			return file_list;
+		}
+
+
+		file_list_t get_all_files(std::string const& src_dir)
+		{
+			return get_all_files(src_dir.c_str());
+		}
+
+
 
 		file_list_t get_files_of_type(std::string const& src_dir, std::string const& extension)
 		{

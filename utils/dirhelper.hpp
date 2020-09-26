@@ -17,6 +17,10 @@ namespace dirhelper
 	using file_str_func_t = std::function<void(std::string const&)>;
 
 
+	file_list_t get_all_files(const char* src_dir);
+
+	file_list_t get_all_files(std::string const& src_dir);
+
 	file_list_t get_files_of_type(std::string const& src_dir, std::string const& extension);
 
 	file_list_t get_files_of_type(const char* src_dir, std::string const& extension);
@@ -49,6 +53,10 @@ namespace dirhelper
 	namespace str
 	{
 		using file_list_t = std::vector<std::string>;
+
+		file_list_t get_all_files(const char* src_dir);
+
+		file_list_t get_all_files(std::string const& src_dir);
 
 		file_list_t get_files_of_type(std::string const& src_dir, std::string const& extension);
 
