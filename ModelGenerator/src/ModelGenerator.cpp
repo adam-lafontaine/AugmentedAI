@@ -100,6 +100,14 @@ namespace model_generator
 	}
 
 
+	bool ModelGenerator::has_class_data()
+	{
+		const auto pred = [&](auto const& list) { return !list.empty(); };
+
+		return std::all_of(m_class_data.begin(), m_class_data.end(), pred);
+	}
+
+
 	// reads directory of raw data for a given class
 	void ModelGenerator::add_class_data(const char* src_dir, MLClass class_index)
 	{
@@ -120,6 +128,9 @@ namespace model_generator
 	// saves properties based on all of the data read
 	void ModelGenerator::save_model(const char* save_dir)
 	{
+		if (!has_class_data())
+			return;
+
 		auto class_hists = make_empty_histograms();
 		class_cluster_data_t cluster_data;
 

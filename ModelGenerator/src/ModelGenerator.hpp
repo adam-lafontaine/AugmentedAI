@@ -17,12 +17,15 @@ namespace model_generator
 
 	private:
 		// file paths of raw data images by class
-		class_file_list_t m_class_data;
+		class_file_list_t m_class_data;		
 
+	public:
 		// for cleaning up after reading data
 		void purge_class_data();
 
-	public:
+		// check if data exists for every class
+		bool has_class_data();
+
 		// reads directory of data images for a given class
 		void add_class_data(const char* src_dir, MLClass class_index);
 
