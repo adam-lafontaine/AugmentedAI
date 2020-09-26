@@ -11,6 +11,38 @@
 namespace data = data_adaptor;
 namespace dir = dirhelper;
 
+
+constexpr auto src_fail = "D:\\test_images\\src_fail";
+constexpr auto src_pass = "D:\\test_images\\src_pass";
+
+constexpr auto data_fail = "D:\\test_images\\data_fail";
+constexpr auto data_pass = "D:\\test_images\\data_pass";
+
+void make_data_images()
+{
+	for (auto const& entry : fs::directory_iterator(data_fail))
+	{
+		fs::remove_all(entry);
+	}
+
+	for (auto const& entry : fs::directory_iterator(data_pass))
+	{
+		fs::remove_all(entry);
+	}
+
+	auto src_files = dir::str::get_files_of_type(src_fail, ".png");
+	auto data = data::files_to_data(src_files);
+	data::save_data_images(data, data_fail);
+
+	src_files = dir::str::get_files_of_type(src_pass, ".png");
+	data = data::files_to_data(src_files);
+	data::save_data_images(data, data_pass);
+}
+
+
+
+
+
 const auto src_root = std::string("D:\\repos\\AugmentedAI\\DataAdaptor\\test\\src");
 
 const auto src_files = std::array
@@ -63,7 +95,18 @@ int main()
 	run_test("data_image_row_to_data()          size", data_image_row_to_data_size_test);
 	run_test("data_image_row_to_data()  close enough", data_image_row_to_data_values_test);
 
-	std::getchar();	
+	std::cout << "\nTests complete.  Enter 'y' to generate data images\n";
+		
+	if(std::getchar() != 'y')
+		return EXIT_SUCCESS;
+
+	std::cout << "Generating data images... ";
+
+	make_data_images();
+
+	std::cout << "done.";
+
+	std::cin.get();
 }
 
 

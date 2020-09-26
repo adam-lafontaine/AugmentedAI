@@ -12,45 +12,44 @@
 namespace dir = dirhelper;
 namespace gen = model_generator;
 
-constexpr auto src_fail = "D:\\test_images\\src_fail";
-constexpr auto src_pass = "D:\\test_images\\src_pass";
 constexpr auto data_fail = "D:\\test_images\\data_fail";
 constexpr auto data_pass = "D:\\test_images\\data_pass";
 constexpr auto model = "D:\\test_images\\model";
 
 const auto img_ext = ".png";
 
-bool src_fail_exists_test();
-bool src_pass_exists_test();
 bool data_fail_exists_test();
 bool data_pass_exists_test();
 bool model_exists_test();
-bool src_fail_files_test();
-bool src_pass_files_test();
+bool data_fail_files_test();
+bool data_pass_files_test();
 bool no_class_data_test();
-bool no_class_data_does_not_save_test();
 bool add_class_data_test();
 bool add_class_data_one_class_test();
 bool purge_class_data_test();
+bool save_model_no_data_test();
+bool save_model_one_class_test();
+bool save_model_one_file_test();
 
 int main()
 {
 	const auto run_test = [&](const char* name, const auto& test)
 	{ std::cout << name << ": " << (test() ? "Pass" : "Fail") << '\n'; };
 
-	run_test("src_fail_exists_test()   dir exists", src_fail_exists_test);
-	run_test("src_pass_exists_test()   dir exists", src_pass_exists_test);
+	run_test("data_fail_exists_test()  dir exists", data_fail_exists_test);
+	run_test("data_pass_exists_test()  dir exists", data_pass_exists_test);
 	run_test("data_fail_exists_test()  dir exists", data_fail_exists_test);
 	run_test("data_pass_exists_test()  dir exists", data_pass_exists_test);
 	run_test("model_exists_test()      dir exists", model_exists_test);
-	run_test("src_fail_files_test()   files exist", src_fail_files_test);
-	run_test("src_pass_files_test()   files exist", src_pass_files_test);
+	run_test("data_fail_files_test()  files exist", data_fail_files_test);
+	run_test("data_pass_files_test()  files exist", data_pass_files_test);
 	run_test("no_class_data_test()               ", no_class_data_test);
-	run_test("no_class_data_does_not_save_test() ", no_class_data_does_not_save_test);
 	run_test("add_class_data_test()              ", add_class_data_test);
 	run_test("add_class_data_one_class_test()    ", add_class_data_one_class_test);
 	run_test("purge_class_data_test()            ", purge_class_data_test);
-
+	run_test("save_model_no_data_test()          ", save_model_no_data_test);
+	run_test("save_model_one_class_test()        ", save_model_one_class_test);
+	run_test("save_model_one_file_test()         ", save_model_one_file_test);
 	
 
 
@@ -82,17 +81,6 @@ void delete_files(const char* dir)
 
 //======= TESTS ==============
 
-bool src_fail_exists_test()
-{
-	return is_directory(src_fail);
-}
-
-
-bool src_pass_exists_test()
-{
-	return is_directory(src_pass);
-}
-
 
 bool data_fail_exists_test()
 {
@@ -112,15 +100,15 @@ bool model_exists_test()
 }
 
 
-bool src_fail_files_test()
+bool data_fail_files_test()
 {
-	return image_files_exist(src_fail);
+	return image_files_exist(data_fail);
 }
 
 
-bool src_pass_files_test()
+bool data_pass_files_test()
 {
-	return image_files_exist(src_pass);
+	return image_files_exist(data_pass);
 }
 
 
@@ -132,7 +120,42 @@ bool no_class_data_test()
 }
 
 
-bool no_class_data_does_not_save_test()
+bool add_class_data_test()
+{
+	gen::ModelGenerator gen;
+
+
+
+	gen.add_class_data(data_pass, MLClass::Pass);
+	gen.add_class_data(data_fail, MLClass::Fail);
+
+	return gen.has_class_data();
+}
+
+
+bool add_class_data_one_class_test()
+{
+	gen::ModelGenerator gen;
+
+	gen.add_class_data(data_pass, MLClass::Pass);
+
+	return !gen.has_class_data();
+}
+
+
+bool purge_class_data_test()
+{
+	gen::ModelGenerator gen;
+
+	gen.add_class_data(data_pass, MLClass::Pass);
+	gen.add_class_data(data_fail, MLClass::Fail);
+
+	gen.purge_class_data();
+
+	return !gen.has_class_data();
+}
+
+bool save_model_no_data_test()
 {
 	delete_files(model);
 
@@ -144,35 +167,30 @@ bool no_class_data_does_not_save_test()
 }
 
 
-bool add_class_data_test()
+bool save_model_one_class_test()
 {
+	delete_files(model);
+
 	gen::ModelGenerator gen;
 
-	gen.add_class_data(src_pass, MLClass::Pass);
-	gen.add_class_data(src_fail, MLClass::Fail);
+	gen.add_class_data(data_pass, MLClass::Pass);
 
-	return gen.has_class_data();
+	gen.save_model(model);
+
+	return dir::get_files_of_type(model, img_ext).empty();
 }
 
 
-bool add_class_data_one_class_test()
+bool save_model_one_file_test()
 {
+	delete_files(model);
+
 	gen::ModelGenerator gen;
 
-	gen.add_class_data(src_pass, MLClass::Pass);
+	gen.add_class_data(data_pass, MLClass::Pass);
+	gen.add_class_data(data_fail, MLClass::Fail);
 
-	return !gen.has_class_data();
-}
+	gen.save_model(model);
 
-
-bool purge_class_data_test()
-{
-	gen::ModelGenerator gen;
-
-	gen.add_class_data(src_pass, MLClass::Pass);
-	gen.add_class_data(src_fail, MLClass::Fail);
-
-	gen.purge_class_data();
-
-	return !gen.has_class_data();
+	return dir::get_files_of_type(model, img_ext).size() == 1;;
 }
