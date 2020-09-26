@@ -204,6 +204,7 @@ bool save_model_one_file_test()
 }
 
 
+// convert back and forth between model pixels and values
 bool pixel_conversion_test()
 {
 	// make sure a model file exists
@@ -220,7 +221,6 @@ bool pixel_conversion_test()
 	for (auto x = 0; x < row.width(); ++x)
 	{
 		const auto value = gen::to_centroid_value(ptr[x]);
-
 		const auto pixel = gen::to_centroid_pixel(value);
 
 		if (gen::to_centroid_value(pixel) != value)
