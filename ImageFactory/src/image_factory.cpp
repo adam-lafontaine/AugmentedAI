@@ -289,7 +289,7 @@ static void add_defects(img::view_t const& view)
 
 
 // builds all of the images 
-void build_images(const char* alpha_path, const char* border_path, const char* out_dir)
+void build_images(const char* alpha_path, const char* border_path, const char* pass_dir, const char* fail_dir)
 {
 	auto alpha_img = img::read_image_from_file(alpha_path);
 	auto alpha_v = img::make_view(alpha_img);
@@ -319,8 +319,6 @@ void build_images(const char* alpha_path, const char* border_path, const char* o
 	const auto idx_len = std::to_string(num_images).length();
 	unsigned idx = 1;
 	char idx_str[100];
-	const auto pass_path_base = str_append_sub(std::string(out_dir), std::string("pass")); // make sure these subdirectories exist
-	const auto fail_path_base = str_append_sub(std::string(out_dir), std::string("fail"));
 	size_t pass_idx = 0;
 	size_t fail_idx = 1;
 
@@ -336,8 +334,8 @@ void build_images(const char* alpha_path, const char* border_path, const char* o
 			{
 				sprintf_s(idx_str, "%0*d", (int)idx_len, idx++); // zero pad index number
 				const auto file_name = std::string(idx_str) + "_" + block_letter + ".png";
-				const auto pass_path = str_append_sub(pass_path_base, file_name);
-				const auto fail_path = str_append_sub(fail_path_base, file_name);
+				const auto pass_path = str_append_sub(pass_dir, file_name);
+				const auto fail_path = str_append_sub(fail_dir, file_name);
 				
 				img::image_t pass_img(dst_w, dst_h);
 				img::image_t fail_img(dst_w, dst_h);
