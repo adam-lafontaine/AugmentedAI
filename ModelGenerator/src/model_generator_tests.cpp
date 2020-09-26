@@ -30,6 +30,7 @@ bool purge_class_data_test();
 bool save_model_no_data_test();
 bool save_model_one_class_test();
 bool save_model_one_file_test();
+bool pixel_conversion_test();
 
 int main()
 {
@@ -50,6 +51,7 @@ int main()
 	run_test("save_model_no_data_test()          ", save_model_no_data_test);
 	run_test("save_model_one_class_test()        ", save_model_one_class_test);
 	run_test("save_model_one_file_test()         ", save_model_one_file_test);
+	run_test("pixel_conversion_test()            ", pixel_conversion_test);
 	
 	std::cout << "\nTests complete.";
 
@@ -199,4 +201,31 @@ bool save_model_one_file_test()
 	gen.save_model(model);
 
 	return dir::get_files_of_type(model, img_ext).size() == 1;;
+}
+
+
+bool pixel_conversion_test()
+{
+	// make sure a model file exists
+	if (!save_model_one_file_test())
+		return false;
+
+	const auto model_file = dir::get_files_of_type(model, img_ext)[0];
+
+	auto model = img::read_image_from_file(model_file.c_str());
+	const auto view = img::make_view(model);
+
+	const auto row = img::row_view(view, 0);
+	auto ptr = row.row_begin(0);
+	for (auto x = 0; x < row.width(); ++x)
+	{
+		const auto value = gen::to_centroid_value(ptr[x]);
+
+		const auto pixel = gen::to_centroid_pixel(value);
+
+		if (gen::to_centroid_value(pixel) != value)
+			return false;
+	}
+
+	return true;
 }
