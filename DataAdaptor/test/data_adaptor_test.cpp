@@ -10,7 +10,6 @@
 
 namespace data = data_adaptor;
 namespace dir = dirhelper;
-namespace img = libimage;
 
 const auto src_root = std::string("D:\\repos\\AugmentedAI\\DataAdaptor\\test\\src");
 
@@ -27,6 +26,7 @@ const auto src_files = std::array
 const auto dst_root = std::string("D:\\repos\\AugmentedAI\\DataAdaptor\\test\\dst");
 const auto dst_file_ext = ".png";
 
+bool src_root_exists_test();
 bool src_files_exist_test();
 bool dst_root_exists_test();
 bool file_to_data_not_empty_test();
@@ -50,6 +50,7 @@ int main()
 	const auto run_test = [&](const char* name, const auto& test) 
 		{ std::cout << name << ": " << (test() ? "Pass" : "Fail") << '\n'; };
 
+	run_test("src_root_exists_test()                ", src_root_exists_test);
 	run_test("src_files_exist_test()                ", src_files_exist_test);
 	run_test("dst_root_exists_test()                ", dst_root_exists_test);
 	run_test("file_to_data()               not empty", file_to_data_not_empty_test);
@@ -63,6 +64,12 @@ int main()
 	run_test("data_image_row_to_data()  close enough", data_image_row_to_data_values_test);
 
 	std::getchar();	
+}
+
+
+bool src_root_exists_test()
+{
+	return fs::exists(src_root) && fs::is_directory(src_root);
 }
 
 
