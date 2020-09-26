@@ -130,6 +130,7 @@ bool dst_root_exists_test()
 }
 
 
+// reading a file creates data
 bool file_to_data_not_empty_test()
 {
 	const auto file = src_files[2];
@@ -139,6 +140,7 @@ bool file_to_data_not_empty_test()
 }
 
 
+// reading a file creates the expected amount of data
 bool file_to_data_size_test()
 {	
 	const auto file = src_files[2];
@@ -148,6 +150,7 @@ bool file_to_data_size_test()
 }
 
 
+// all data generated is within the expected range
 bool file_to_data_value_range_test()
 {
 	const auto file = src_files[2];
@@ -159,6 +162,7 @@ bool file_to_data_value_range_test()
 }
 
 
+// reading multiple files generates the expected amount of data
 bool files_to_data_size_test()
 {
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
@@ -168,6 +172,8 @@ bool files_to_data_size_test()
 }
 
 
+// generating data from multiple files give the same values
+// as if generating data from each file individually
 bool files_to_data_values_test()
 {
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
@@ -184,21 +190,25 @@ bool files_to_data_values_test()
 }
 
 
+// generating data_images actually creates files
 bool save_data_images_create_file_test()
 {
+	delete_files(dst_root);
+
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
 	const auto data = data::files_to_data(file_list);
 
-	const auto file_count_a = dir::get_files_of_type(dst_root, dst_file_ext).size();
-
 	data::save_data_images(data, dst_root.c_str());
 
-	const auto file_count_b = dir::get_files_of_type(dst_root, dst_file_ext).size();
+	const auto data_files = dir::get_files_of_type(dst_root, dst_file_ext);
 
-	return file_count_b > file_count_a;
+	return !data_files.empty();
 }
 
 
+// the amount of data in the generated data image file(s)
+// matches the amount of data saved
+// each row of pixels in the data represents a row of pixels
 bool save_data_images_height_test()
 {
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
@@ -224,6 +234,7 @@ bool save_data_images_height_test()
 }
 
 
+// a row of pixels in a data image has the same quantity as the data provided
 bool data_image_row_to_data_size_test()
 {
 	const size_t test_index = 0;
@@ -243,6 +254,7 @@ bool data_image_row_to_data_size_test()
 }
 
 
+// reading data from a data images gives the same values as the data provided
 bool data_image_row_to_data_values_test()
 {
 	const size_t test_index = 0;
@@ -271,6 +283,9 @@ bool data_image_row_to_data_values_test()
 
 	return std::equal(new_data.begin(), new_data.end(), d.begin(), d.end(), pred);
 }
+
+
+// ======= HELPERS ==================
 
 
 void delete_files(std::string dir)

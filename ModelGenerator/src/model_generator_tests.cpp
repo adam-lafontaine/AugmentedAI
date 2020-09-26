@@ -112,6 +112,7 @@ bool data_pass_files_test()
 }
 
 
+// detect if data has not yet been added
 bool no_class_data_test()
 {
 	gen::ModelGenerator gen;
@@ -120,6 +121,7 @@ bool no_class_data_test()
 }
 
 
+// data present after adding
 bool add_class_data_test()
 {
 	gen::ModelGenerator gen;
@@ -131,6 +133,7 @@ bool add_class_data_test()
 }
 
 
+// has_class_data() returns false if not all classes have data
 bool add_class_data_one_class_test()
 {
 	gen::ModelGenerator gen;
@@ -141,6 +144,7 @@ bool add_class_data_one_class_test()
 }
 
 
+// no class data after purging
 bool purge_class_data_test()
 {
 	gen::ModelGenerator gen;
@@ -153,6 +157,8 @@ bool purge_class_data_test()
 	return !gen.has_class_data();
 }
 
+
+// no model file is created when no class data is available
 bool save_model_no_data_test()
 {
 	delete_files(model);
@@ -165,6 +171,7 @@ bool save_model_no_data_test()
 }
 
 
+// all classes need to have data before a model file is created
 bool save_model_one_class_test()
 {
 	delete_files(model);
@@ -179,6 +186,7 @@ bool save_model_one_class_test()
 }
 
 
+// one file is created when generating a model
 bool save_model_one_file_test()
 {
 	delete_files(model);
