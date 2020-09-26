@@ -18,8 +18,11 @@
 //======= DATA PROPERTIES =================
 
 constexpr size_t NUM_GRAY_SHADES = 256;
-constexpr size_t DATA_IMAGE_WIDTH = NUM_GRAY_SHADES;
 constexpr size_t MAX_DATA_IMAGE_SIZE = 500 * 500;
+
+constexpr size_t DATA_IMAGE_WIDTH = NUM_GRAY_SHADES;
+constexpr double DATA_MIN_VALUE = 0;
+constexpr double DATA_MAX_VALUE = 1;
 
 
 union four_bytes_t
@@ -32,6 +35,9 @@ union four_bytes_t
 // assumes val is between 0.0 and 1.0
 static img::pixel_t to_pixel(double val)
 {
+	assert(val >= DATA_MIN_VALUE);
+	assert(val <= DATA_MAX_VALUE);
+
 	four_bytes_t x;
 	x.value = static_cast<img::bits32>(val * UINT32_MAX);
 
@@ -153,7 +159,7 @@ namespace data_adaptor
 	}
 
 
-	void convert_and_save(data_list_t const& data, const char* dst_dir)
+	void save_data_images(data_list_t const& data, const char* dst_dir)
 	{
 		const auto max_height = MAX_DATA_IMAGE_SIZE / DATA_IMAGE_WIDTH;
 
@@ -186,13 +192,13 @@ namespace data_adaptor
 	}
 
 
-	void convert_and_save(data_list_t const& data, path_t const& dst_dir)
+	void save_data_images(data_list_t const& data, path_t const& dst_dir)
 	{
-		convert_and_save(data, dst_dir.c_str());
+		save_data_images(data, dst_dir.c_str());
 	}
 
 
-	src_data_t converted_to_data(img::rgba_list_t const& pixel_row)
+	src_data_t data_image_row_to_data(img::rgba_list_t const& pixel_row)
 	{
 		assert(pixel_row.size() == DATA_IMAGE_WIDTH);
 
@@ -207,7 +213,7 @@ namespace data_adaptor
 	}
 
 
-	src_data_t converted_to_data(img::view_t const& pixel_row)
+	src_data_t data_image_row_to_data(img::view_t const& pixel_row)
 	{
 		assert(pixel_row.width() == DATA_IMAGE_WIDTH);
 		assert(pixel_row.height() == 1);
@@ -222,5 +228,23 @@ namespace data_adaptor
 		}
 
 		return data;
+	}
+
+
+	size_t data_image_width()
+	{
+		return DATA_IMAGE_WIDTH;
+	}
+
+
+	double data_min_value()
+	{
+		return DATA_MIN_VALUE;
+	}
+
+
+	double data_max_value()
+	{
+		return DATA_MAX_VALUE;
 	}
 }

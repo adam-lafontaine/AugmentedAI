@@ -10,7 +10,38 @@
 
 namespace data = data_adaptor;
 namespace dir = dirhelper;
-namespace img = libimage;
+
+
+constexpr auto src_fail = "D:\\test_images\\src_fail";
+constexpr auto src_pass = "D:\\test_images\\src_pass";
+
+constexpr auto data_fail = "D:\\test_images\\data_fail";
+constexpr auto data_pass = "D:\\test_images\\data_pass";
+
+void make_data_images()
+{
+	for (auto const& entry : fs::directory_iterator(data_fail))
+	{
+		fs::remove_all(entry);
+	}
+
+	for (auto const& entry : fs::directory_iterator(data_pass))
+	{
+		fs::remove_all(entry);
+	}
+
+	auto src_files = dir::str::get_files_of_type(src_fail, ".png");
+	auto data = data::files_to_data(src_files);
+	data::save_data_images(data, data_fail);
+
+	src_files = dir::str::get_files_of_type(src_pass, ".png");
+	data = data::files_to_data(src_files);
+	data::save_data_images(data, data_pass);
+}
+
+
+
+
 
 const auto src_root = std::string("D:\\repos\\AugmentedAI\\DataAdaptor\\test\\src");
 
@@ -27,16 +58,18 @@ const auto src_files = std::array
 const auto dst_root = std::string("D:\\repos\\AugmentedAI\\DataAdaptor\\test\\dst");
 const auto dst_file_ext = ".png";
 
+bool src_root_exists_test();
 bool src_files_exist_test();
 bool dst_root_exists_test();
 bool file_to_data_not_empty_test();
 bool file_to_data_size_test();
+bool file_to_data_value_range_test();
 bool files_to_data_size_test();
 bool files_to_data_values_test();
-bool convert_and_save_create_file_test();
-bool convert_and_save_height_test();
-bool converted_to_data_size_test();
-bool converted_to_data_values_test();
+bool save_data_images_create_file_test();
+bool save_data_images_height_test();
+bool data_image_row_to_data_size_test();
+bool data_image_row_to_data_values_test();
 
 void delete_files(std::string dir);
 img::rgba_list_t get_first_color_row(std::string const& image_file);
@@ -49,18 +82,37 @@ int main()
 	const auto run_test = [&](const char* name, const auto& test) 
 		{ std::cout << name << ": " << (test() ? "Pass" : "Fail") << '\n'; };
 
-	run_test("src_files_exist_test()             ", src_files_exist_test);
-	run_test("dst_root_exists_test()             ", dst_root_exists_test);
-	run_test("file_to_data()            not empty", file_to_data_not_empty_test);
-	run_test("file_to_data()                 size", file_to_data_size_test);
-	run_test("files_to_data()                size", files_to_data_size_test);
-	run_test("files_to_data()     matching values", files_to_data_values_test);
-	run_test("convert_and_save()  file(s) created", convert_and_save_create_file_test);
-	run_test("convert_and_save()   file(s) height", convert_and_save_height_test);
-	run_test("converted_to_data()            size", converted_to_data_size_test);
-	run_test("converted_to_data()    close enough", converted_to_data_values_test);
+	run_test("src_root_exists_test()                ", src_root_exists_test);
+	run_test("src_files_exist_test()                ", src_files_exist_test);
+	run_test("dst_root_exists_test()                ", dst_root_exists_test);
+	run_test("file_to_data()               not empty", file_to_data_not_empty_test);
+	run_test("file_to_data()                    size", file_to_data_size_test);
+	run_test("file_to_data()             value range", file_to_data_value_range_test);
+	run_test("files_to_data()                   size", files_to_data_size_test);
+	run_test("files_to_data()        matching values", files_to_data_values_test);
+	run_test("save_data_images()     file(s) created", save_data_images_create_file_test);
+	run_test("save_data_images()      file(s) height", save_data_images_height_test);
+	run_test("data_image_row_to_data()          size", data_image_row_to_data_size_test);
+	run_test("data_image_row_to_data()  close enough", data_image_row_to_data_values_test);
 
-	std::getchar();	
+	std::cout << "\nTests complete.  Enter 'y' to generate data images\n";
+		
+	if(std::getchar() != 'y')
+		return EXIT_SUCCESS;
+
+	std::cout << "Generating data images... ";
+
+	make_data_images();
+
+	std::cout << "done.";
+
+	std::cin.get();
+}
+
+
+bool src_root_exists_test()
+{
+	return fs::exists(src_root) && fs::is_directory(src_root);
 }
 
 
@@ -78,30 +130,39 @@ bool dst_root_exists_test()
 }
 
 
+// reading a file creates data
 bool file_to_data_not_empty_test()
 {
 	const auto file = src_files[2];
-
 	const auto data = data::file_to_data(file);
 
 	return !data.empty();
 }
 
 
+// reading a file creates the expected amount of data
 bool file_to_data_size_test()
 {	
-	std::vector<size_t> sizes;
-	sizes.reserve(src_files.size());
+	const auto file = src_files[2];
+	const auto data = data::file_to_data(file);
 
-	const auto size_pred = [](const auto& v) { return v.size(); };
-	std::transform(src_files.begin(), src_files.end(), std::back_inserter(sizes), size_pred);
-
-	const auto [min, max] = std::minmax_element(sizes.begin(), sizes.end());
-
-	return *min == *max;
+	return data.size() == data::data_image_width();
 }
 
 
+// all data generated is within the expected range
+bool file_to_data_value_range_test()
+{
+	const auto file = src_files[2];
+	const auto data = data::file_to_data(file);
+
+	const auto pred = [&](auto val) { return val >= data::data_min_value() && val <= data::data_max_value(); };
+
+	return std::all_of(data.begin(), data.end(), pred);
+}
+
+
+// reading multiple files generates the expected amount of data
 bool files_to_data_size_test()
 {
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
@@ -111,6 +172,8 @@ bool files_to_data_size_test()
 }
 
 
+// generating data from multiple files give the same values
+// as if generating data from each file individually
 bool files_to_data_values_test()
 {
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
@@ -127,29 +190,33 @@ bool files_to_data_values_test()
 }
 
 
-bool convert_and_save_create_file_test()
+// generating data_images actually creates files
+bool save_data_images_create_file_test()
 {
+	delete_files(dst_root);
+
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
 	const auto data = data::files_to_data(file_list);
 
-	const auto file_count_a = dir::get_files_of_type(dst_root, dst_file_ext).size();
+	data::save_data_images(data, dst_root.c_str());
 
-	data::convert_and_save(data, dst_root.c_str());
+	const auto data_files = dir::get_files_of_type(dst_root, dst_file_ext);
 
-	const auto file_count_b = dir::get_files_of_type(dst_root, dst_file_ext).size();
-
-	return file_count_b > file_count_a;
+	return !data_files.empty();
 }
 
 
-bool convert_and_save_height_test()
+// the amount of data in the generated data image file(s)
+// matches the amount of data saved
+// each row of pixels in the data represents a row of pixels
+bool save_data_images_height_test()
 {
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
 	const auto data = data::files_to_data(file_list);
 
 	delete_files(dst_root);
 
-	data::convert_and_save(data, dst_root.c_str());
+	data::save_data_images(data, dst_root.c_str());
 
 	const auto data_images = dir::get_files_of_type(dst_root, dst_file_ext);
 
@@ -167,7 +234,8 @@ bool convert_and_save_height_test()
 }
 
 
-bool converted_to_data_size_test()
+// a row of pixels in a data image has the same quantity as the data provided
+bool data_image_row_to_data_size_test()
 {
 	const size_t test_index = 0;
 
@@ -176,17 +244,18 @@ bool converted_to_data_size_test()
 
 	delete_files(dst_root);
 
-	data::convert_and_save(data, dst_root.c_str());
+	data::save_data_images(data, dst_root.c_str());
 	const auto data_images = dir::get_files_of_type(dst_root, dst_file_ext);
 
 	const auto converted = get_first_color_row(data_images[0].string());
-	const auto new_data = data::converted_to_data(converted);
+	const auto new_data = data::data_image_row_to_data(converted);
 
 	return new_data.size() == data[0].size();
 }
 
 
-bool converted_to_data_values_test()
+// reading data from a data images gives the same values as the data provided
+bool data_image_row_to_data_values_test()
 {
 	const size_t test_index = 0;
 
@@ -199,14 +268,14 @@ bool converted_to_data_values_test()
 
 	delete_files(dst_root);
 
-	data::convert_and_save(data, dst_root.c_str());
+	data::save_data_images(data, dst_root.c_str());
 	const auto data_images = dir::get_files_of_type(dst_root, dst_file_ext);
 
 	auto data_image = img::read_image_from_file(data_images[0].c_str());
 	const auto view = img::make_view(data_image);
 	const auto converted = img::row_view(view, test_index);
 
-	const auto new_data = data::converted_to_data(converted);	
+	const auto new_data = data::data_image_row_to_data(converted);	
 
 	const auto d = data[test_index];
 
@@ -214,6 +283,9 @@ bool converted_to_data_values_test()
 
 	return std::equal(new_data.begin(), new_data.end(), d.begin(), d.end(), pred);
 }
+
+
+// ======= HELPERS ==================
 
 
 void delete_files(std::string dir)

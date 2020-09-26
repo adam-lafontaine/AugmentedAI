@@ -21,12 +21,16 @@ namespace data_adaptor
 
 	data_list_t files_to_data(file_list_t const& files);
 
-
 	// Define how data is to be saved as a "data image"
-	void convert_and_save(data_list_t const& data, const char* dst_dir);
-	void convert_and_save(data_list_t const& data, path_t const& dst_dir);
+	void save_data_images(data_list_t const& data, const char* dst_dir);
+	void save_data_images(data_list_t const& data, path_t const& dst_dir);
 
 	// Define how one row of a "data image" is converted back to data
-	src_data_t converted_to_data(img::rgba_list_t const& pixel_row);
-	src_data_t converted_to_data(img::view_t const& pixel_row);
+	src_data_t data_image_row_to_data(img::rgba_list_t const& pixel_row);
+	src_data_t data_image_row_to_data(img::view_t const& pixel_row);
+
+	// make data properties public
+	size_t data_image_width();
+	double data_min_value();
+	double data_max_value();
 }

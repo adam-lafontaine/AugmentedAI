@@ -191,13 +191,26 @@ namespace libimage // 2020-09-19
 
 
 	// converts pixel reference to a 32 bit integer
+	inline bits32 to_bits32(pixel_t const& src)
+	{
+		auto const r = gil::get_color(src, GIL_RED);
+		auto const g = gil::get_color(src, GIL_GREEN);
+		auto const b = gil::get_color(src, GIL_BLUE);
+		auto const a = gil::get_color(src, GIL_ALPHA);
+
+		return to_bits32(r, g, b, a);
+	}
+
+
+	// converts pixel reference to a 32 bit integer
 	inline bits32 to_bits32(ref_t const& src)
 	{
-		auto const src_r = gil::get_color(src, GIL_RED);
-		auto const src_g = gil::get_color(src, GIL_GREEN);
-		auto const src_b = gil::get_color(src, GIL_BLUE);
+		auto const r = gil::get_color(src, GIL_RED);
+		auto const g = gil::get_color(src, GIL_GREEN);
+		auto const b = gil::get_color(src, GIL_BLUE);
+		auto const a = gil::get_color(src, GIL_ALPHA);
 
-		return to_bits32(src_r, src_g, src_b);
+		return to_bits32(r, g, b, a);
 	}
 
 
