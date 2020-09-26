@@ -68,7 +68,12 @@ namespace data_inspector
 {
 	MLClass inspect(src_data_t const& data, const char* model_dir)
 	{
+		if (data.empty())
+			return MLClass::Error;
+
 		const auto file = dir::get_first_file_of_type(model_dir, img::IMAGE_FILE_EXTENSION);
+		if (file.empty())
+			return MLClass::Error;
 
 		const auto centroids = read_model(file.c_str());
 		const auto data_indeces = find_positions(centroids[0]);

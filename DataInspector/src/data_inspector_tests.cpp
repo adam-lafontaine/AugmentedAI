@@ -15,6 +15,9 @@ const auto img_ext = ".png";
 bool src_fail_exists_test();
 bool src_pass_exists_test();
 bool model_exists_test();
+bool src_fail_files_test();
+bool src_pass_files_test();
+bool model_file_test();
 
 
 int main()
@@ -25,6 +28,9 @@ int main()
 	run_test("src_fail_exists_test()  dir exists", src_fail_exists_test);
 	run_test("src_pass_exists_test()  dir exists", src_pass_exists_test);
 	run_test("model_exists_test()     dir exists", model_exists_test);
+	run_test("src_fail_files_test()  files exist", src_fail_files_test);
+	run_test("src_pass_files_test()  files exist", src_pass_files_test);
+	run_test("model_file_test()       dir exists", model_file_test);
 
 	std::cout << "\nTests complete.";
 	std::cin.get();
@@ -64,3 +70,30 @@ bool model_exists_test()
 {
 	return is_directory(model);
 }
+
+
+bool src_fail_files_test()
+{
+	return image_files_exist(src_fail);
+}
+
+
+bool src_pass_files_test()
+{
+	return image_files_exist(src_pass);
+}
+
+
+bool model_file_test()
+{
+	return image_files_exist(model);
+}
+
+
+// inspect - no data
+
+// inspect - no model
+
+// inspect - pass
+
+// inspect fail
