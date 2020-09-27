@@ -30,14 +30,14 @@ int main()
 	const auto run_test = [&](const char* name, const auto& test)
 	{ std::cout << name << ": " << (test() ? "Pass" : "Fail") << '\n'; };
 
-	run_test("src_fail_exists_test()   dir exists", src_fail_exists_test);
+	/*run_test("src_fail_exists_test()   dir exists", src_fail_exists_test);
 	run_test("src_pass_exists_test()   dir exists", src_pass_exists_test);
 	run_test("model_exists_test()      dir exists", model_exists_test);
 	run_test("src_fail_files_test()   files exist", src_fail_files_test);
 	run_test("src_pass_files_test()   files exist", src_pass_files_test);
 	run_test("model_file_test()       file exists", model_file_test);
 	run_test("src_fail_files_ext_test()  same ext", src_fail_files_ext_test);
-	run_test("src_pass_files_ext_test()  same ext", src_pass_files_ext_test);
+	run_test("src_pass_files_ext_test()  same ext", src_pass_files_ext_test);*/
 	run_test("src_fail_inspect_test()    all fail", src_fail_inspect_test);
 	run_test("src_pass_inspect_test()    all pass", src_pass_inspect_test);
 
@@ -156,5 +156,36 @@ bool src_fail_inspect_test()
 
 bool src_pass_inspect_test()
 {
-	return expected_class(src_pass, MLClass::Pass);
+	//return expected_class(src_pass, MLClass::Pass);
+
+	auto const files = dir::str::get_all_files(src_pass);
+	auto begin = files.begin();
+	auto end = files.end();
+
+	unsigned pass = 0;
+	unsigned fail = 0;
+	unsigned error = 0;
+
+	for (auto const& file : files)
+	{
+		const auto res = ins::inspect(file.c_str(), model);
+		switch (res)
+		{
+		case MLClass::Pass:
+			++pass;
+			break;
+		case MLClass::Fail:
+			++fail;
+			break;
+		case MLClass::Error:
+			++error;
+			break;
+		default:
+			break;
+		}
+	}
+
+	std::cout << " pass=" << pass << " fail=" << fail << " error=" << error;
+
+	return false;	
 }

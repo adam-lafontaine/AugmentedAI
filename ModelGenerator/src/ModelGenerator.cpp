@@ -54,6 +54,9 @@ namespace model_generator
 	//======= CONVERSION =============
 
 
+	// TODO: convert data image to grayscale and use pixel value
+
+
 	// converts a data pixel to a value between 0 and MAX_COLOR_VALUE
 	static hist_value_t to_hist_value(data_pixel_t const& pix);
 
@@ -201,7 +204,11 @@ namespace model_generator
 	// does not account for multiple maxima
 	static index_list_t find_relevant_positions(class_position_hists_t const& class_pos_hists)
 	{
-		const double min_diff = 0.001;
+		index_list_t list{ 0 };
+
+		return list;
+
+		/*const double min_diff = 0.001;
 		const size_t num_pos = class_pos_hists[0].size();
 		std::array<double, ML_CLASS_COUNT> class_avg = { 0.0 };
 
@@ -238,7 +245,7 @@ namespace model_generator
 
 		assert(!list.empty());
 
-		return list;
+		return list;*/
 	}
 
 
@@ -256,12 +263,18 @@ namespace model_generator
 	}
 
 
-	static void append_data(data_list_t& data, img::view_t const& data_view)
+	static void append_data(data_list_t& data, img::view_t const& data_view) // TODO: grayscale
 	{
 		for (auto y = 0; y < data_view.height(); ++y)
 		{
-			const auto row_view = img::row_view(data_view, y);
-			data.push_back(data::data_image_row_to_data(row_view));
+			cluster::data_row_t data_row;
+			auto ptr = data_view.row_begin(y);
+			for (auto x = 0; x < data_view.width(); ++x)
+			{
+				data_row.push_back(to_centroid_value(ptr[x]));
+			}
+
+			data.push_back(data_row);
 		}
 	}
 
@@ -339,7 +352,7 @@ namespace model_generator
 
 
 	// converts a data pixel to a value between 0 and MAX_COLOR_VALUE
-	static hist_value_t to_hist_value(data_pixel_t const& pix)
+	static hist_value_t to_hist_value(data_pixel_t const& pix)  // TODO: grayscale
 	{
 		const auto val = static_cast<double>(img::to_bits32(pix));
 		const auto ratio = val / UINT32_MAX;

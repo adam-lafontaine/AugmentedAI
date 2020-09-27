@@ -26,7 +26,7 @@ namespace data_adaptor
 	void save_data_images(data_list_t const& data, path_t const& dst_dir);
 
 	// Define how one row of a "data image" is converted back to data
-	src_data_t data_image_row_to_data(img::rgba_list_t const& pixel_row);
+	src_data_t data_image_row_to_data(img::rgba_list_t const& pixel_row); // TODO: needed?
 	src_data_t data_image_row_to_data(img::view_t const& pixel_row);
 
 	// make data properties public
