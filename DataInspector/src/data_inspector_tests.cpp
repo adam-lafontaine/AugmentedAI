@@ -21,6 +21,8 @@ bool src_pass_files_test();
 bool model_file_test();
 bool src_fail_files_ext_test();
 bool src_pass_files_ext_test();
+bool src_fail_inspect_test();
+bool src_pass_inspect_test();
 
 
 int main()
@@ -36,6 +38,8 @@ int main()
 	run_test("model_file_test()       file exists", model_file_test);
 	run_test("src_fail_files_ext_test()  same ext", src_fail_files_ext_test);
 	run_test("src_pass_files_ext_test()  same ext", src_pass_files_ext_test);
+	run_test("src_fail_inspect_test()            ", src_fail_inspect_test);
+	run_test("src_pass_inspect_test()            ", src_pass_inspect_test);
 
 	std::cout << "\nTests complete.";
 	std::cin.get();
@@ -77,6 +81,19 @@ bool files_same_ext(const char* dir)
 bool image_files_exist(const char* dir)
 {
 	return dir::get_files_of_type(dir, img_ext).size() > 0;
+}
+
+
+// all files in the directory should match the class since they were used to generate the model
+bool expected_class(const char* dir, MLClass ml_class)
+{
+	auto const files = dir::str::get_all_files(dir);
+	auto begin = files.begin();
+	auto end = files.end(); // begin + 1;
+
+	const auto inspect = [&](auto const& file) { return ins::inspect(file.c_str(), model) == ml_class; };
+
+	return std::all_of(begin, end, inspect);
 }
 
 
@@ -127,9 +144,17 @@ bool src_fail_files_ext_test()
 
 bool src_pass_files_ext_test()
 {
-	return files_same_ext(src_fail);
+	return files_same_ext(src_pass);
 }
 
-// inspect - pass
 
-// inspect fail
+bool src_fail_inspect_test()
+{
+	return expected_class(src_fail, MLClass::Fail);
+}
+
+
+bool src_pass_inspect_test()
+{
+	return expected_class(src_pass, MLClass::Pass);
+}

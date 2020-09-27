@@ -11,4 +11,10 @@ namespace data_inspector
 	MLClass inspect(src_data_t const& data, const char* model_dir);
 
 	MLClass inspect(const char* data_file, const char* model_dir);
+
+	/*
+	Creating cluster data on each read may be slow.
+	Consider implementing with a class to store clustering in state
+	*/
+
 }
