@@ -20,7 +20,7 @@ namespace model_generator
 		const auto data_min = data::data_min_value();
 		const auto data_max = data::data_max_value();
 
-		const auto in_range = val >= data_min && val < data_max;
+		const auto in_range = val >= data_min && val <= data_max;
 
 		std::random_device rd;
 		std::mt19937 gen(rd());
@@ -56,6 +56,12 @@ namespace model_generator
 		// only the blue channel is used to store value
 		const auto ratio = rgba.b / max;		
 		return data_min + ratio * (data_max - data_min);
+	}
+
+
+	bool is_relevant(double val)
+	{
+		return val >= data::data_min_value() && val <= data::data_max_value();
 	}
 
 

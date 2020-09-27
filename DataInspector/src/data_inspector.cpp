@@ -26,7 +26,7 @@ static index_list_t find_positions(value_list_t const& saved_centroid)
 
 	for (size_t i = 0; i < saved_centroid.size(); ++i)
 	{
-		if (saved_centroid[i] >= 0) // TODO: do better
+		if (model::is_relevant(saved_centroid[i]))
 			list.push_back(i);
 	}
 
@@ -76,13 +76,14 @@ namespace data_inspector
 			return MLClass::Error;
 
 		const auto centroids = read_model(file.c_str());
-		const auto data_indeces = find_positions(centroids[0]); // TODO: error
+		const auto data_indeces = find_positions(centroids[0]);
 
 		cluster_t cluster;
 
 		cluster.set_distance(model::build_cluster_distance(data_indeces));
 
-		std::array<size_t, ML_CLASS_COUNT> class_clusters = { 10, 10 }; // TODO: in config
+		const auto clusters_per_class = cluster::CLUSTER_COUNT;
+		std::array<size_t, ML_CLASS_COUNT> class_clusters = { clusters_per_class, clusters_per_class };
 
 		// map centroid index to class
 		std::vector<MLClass> map;

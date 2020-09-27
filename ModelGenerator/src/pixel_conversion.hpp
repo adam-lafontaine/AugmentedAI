@@ -12,4 +12,7 @@ namespace model_generator
 	// how a pixel in a saved model is converted to a centroid value
 	double to_centroid_value(img::pixel_t const& p);
 
+	// is this a value that contributes to the clusters
+	bool is_relevant(double val);
+
 }

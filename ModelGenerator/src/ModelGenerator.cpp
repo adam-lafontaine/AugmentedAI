@@ -154,7 +154,9 @@ namespace model_generator
 
 		cluster_t cluster;
 		centroid_list_t centroids;
-		std::array<size_t, ML_CLASS_COUNT> class_clusters = { 10, 10 }; // TODO: in config
+
+		const auto clusters_per_class = cluster::CLUSTER_COUNT;
+		std::array<size_t, ML_CLASS_COUNT> class_clusters = { clusters_per_class, clusters_per_class };
 
 		cluster.set_distance(build_cluster_distance(data_indeces));
 
