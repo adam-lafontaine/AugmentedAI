@@ -13,7 +13,7 @@ namespace cluster
 	constexpr size_t CLUSTER_ATTEMPTS = 30;
 	constexpr size_t CLUSTER_ITERATIONS = 30;
 
-	constexpr size_t CLUSTER_COUNT = 5;
+	constexpr size_t CLUSTER_COUNT = 10;
 
 
 	//======= DATA FUNCTIONS =======================

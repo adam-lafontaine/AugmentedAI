@@ -35,7 +35,7 @@ union four_bytes_t
 
 
 // assumes val is between 0.0 and 1.0
-static img::pixel_t to_save_pixel(double val)
+static img::pixel_t to_data_pixel(double val)
 {
 	assert(val >= DATA_MIN_VALUE);
 	assert(val <= DATA_MAX_VALUE);
@@ -54,7 +54,7 @@ static img::pixel_t to_save_pixel(double val)
 }
 
 
-static double to_value(img::rgba_t const& pix)
+static double to_data_value(img::rgba_t const& pix)
 {
 	const auto ratio = static_cast<double>(img::to_bits32(pix)) / BITS32_MAX;
 
@@ -62,7 +62,7 @@ static double to_value(img::rgba_t const& pix)
 }
 
 
-static double to_value(img::pixel_ptr_t const& ptr)
+static double to_data_value(img::pixel_ptr_t const& ptr)
 {
 	const auto ratio = static_cast<double>(img::to_bits32(ptr)) / BITS32_MAX;
 	
@@ -124,12 +124,12 @@ namespace data_adaptor
 
 		for (auto y = 0; y < view.height(); ++y)
 		{
-			auto data = *(first + y);
+			auto data_row = *(first + y);
 
 			auto ptr = view.row_begin(y);
 			for (auto x = 0; x < view.width(); ++x)
 			{
-				ptr[x] = to_save_pixel(data[x]);
+				ptr[x] = to_data_pixel(data_row[x]);
 			}
 		}
 
@@ -213,7 +213,7 @@ namespace data_adaptor
 		src_data_t data;
 		data.reserve(pixel_row.size());
 
-		const auto pred = [&](auto const& p) { return to_value(p); };
+		const auto pred = [&](auto const& p) { return to_data_value(p); };
 
 		std::transform(pixel_row.begin(), pixel_row.end(), std::back_inserter(data), pred);
 
@@ -232,7 +232,7 @@ namespace data_adaptor
 		const auto ptr = pixel_row.row_begin(0);
 		for (img::index_t x = 0; x < pixel_row.width(); ++x)
 		{
-			data.push_back(to_value(ptr + x));
+			data.push_back(to_data_value(ptr + x));
 		}
 
 		return data;

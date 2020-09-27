@@ -218,10 +218,10 @@ bool pixel_conversion_test()
 	auto ptr = row.row_begin(0);
 	for (auto x = 0; x < row.width(); ++x)
 	{
-		const auto value = gen::to_centroid_value(ptr[x]);
-		const auto pixel = gen::to_centroid_pixel(value);
+		const auto value = gen::model_pixel_to_model_value(ptr[x]);
+		const auto pixel = gen::model_value_to_model_pixel(value);
 
-		if (gen::to_centroid_value(pixel) != value)
+		if (gen::model_pixel_to_model_value(pixel) != value)
 			return false;
 	}
 

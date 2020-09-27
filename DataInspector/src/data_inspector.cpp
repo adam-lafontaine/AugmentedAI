@@ -54,7 +54,7 @@ static centroid_list_t read_model(const char* model_file)
 		auto ptr = view.row_begin(y);
 		for (auto x = 0; x < width; ++x)
 		{
-			centroid.push_back(model::to_centroid_value(ptr[x]));
+			centroid.push_back(model::model_pixel_to_model_value(ptr[x]));
 		}
 
 		centroids.push_back(centroid);

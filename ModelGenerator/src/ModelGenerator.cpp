@@ -22,7 +22,7 @@ namespace data = data_adaptor;
 namespace model_generator
 {
 	// help distinguish what image we are working with
-	using data_pixel_t = img::pixel_t;
+	//using data_pixel_t = img::pixel_t;
 
 	using hist_value_t = unsigned; // represent a pixel as a single value for a histogram
 	constexpr hist_value_t MAX_COLOR_VALUE = 255;
@@ -187,7 +187,7 @@ namespace model_generator
 			for (auto x = 0; x < width; ++x)
 			{
 				auto is_counted = std::find(data_indeces.begin(), data_indeces.end(), x) != data_indeces.end();
-				ptr[x] = to_centroid_pixel(list[x], is_counted);
+				ptr[x] = model_value_to_model_pixel(list[x], is_counted);
 			}
 			++y;
 		}
@@ -254,11 +254,19 @@ namespace model_generator
 
 	static void update_histograms(position_hists_t& pos_hists, img::view_t const& data_view)
 	{
-		for (auto w = 0; w < data_view.width(); ++w)
+		auto w = 0;
+		const auto update_pred = [&](auto const& p)
 		{
-			const auto column_view = img::column_view(data_view, w);
+			data_pixel_t dp{ p };
 
-			gil::for_each_pixel(column_view, [&](auto const& p) { ++pos_hists[w][to_hist_value(p)]; });
+			++pos_hists[w][to_hist_value(dp)];
+		};
+
+		for (w = 0; w < data_view.width(); ++w)
+		{
+			const auto column_view = img::column_view(data_view, w);			
+
+			gil::for_each_pixel(column_view, update_pred);
 		}
 	}
 
@@ -271,7 +279,7 @@ namespace model_generator
 			auto ptr = data_view.row_begin(y);
 			for (auto x = 0; x < data_view.width(); ++x)
 			{
-				data_row.push_back(to_centroid_value(ptr[x]));
+				data_row.push_back(data_pixel_to_model_value(ptr[x]));
 			}
 
 			data.push_back(data_row);
