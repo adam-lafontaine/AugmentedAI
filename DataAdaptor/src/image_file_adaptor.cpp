@@ -22,7 +22,7 @@ constexpr size_t MAX_DATA_IMAGE_SIZE = 500 * 500;
 
 constexpr size_t DATA_IMAGE_WIDTH = NUM_GRAY_SHADES;
 constexpr double DATA_MIN_VALUE = 0;
-constexpr double DATA_MAX_VALUE = 1;
+constexpr double DATA_MAX_VALUE = 10000;
 
 
 union four_bytes_t
@@ -32,14 +32,16 @@ union four_bytes_t
 };
 
 
-// assumes val is between 0.0 and 1.0
+// assumes val is between 0.0 and 255
 static img::pixel_t to_pixel(double val)
 {
 	assert(val >= DATA_MIN_VALUE);
 	assert(val <= DATA_MAX_VALUE);
 
+	const auto ratio = (val - DATA_MIN_VALUE) / (DATA_MAX_VALUE - DATA_MIN_VALUE);
+
 	four_bytes_t x;
-	x.value = static_cast<img::bits32>(val * UINT32_MAX);
+	x.value = static_cast<img::bits32>(ratio * UINT32_MAX);
 
 	const auto r = x.bytes[3];
 	const auto g = x.bytes[2];
@@ -52,13 +54,17 @@ static img::pixel_t to_pixel(double val)
 
 static double to_value(img::rgba_t const& pix)
 {
-	return static_cast<double>(img::to_bits32(pix)) / UINT32_MAX;
+	const auto ratio = static_cast<double>(img::to_bits32(pix)) / UINT32_MAX;
+
+	return DATA_MIN_VALUE + (DATA_MAX_VALUE - DATA_MIN_VALUE) * ratio;
 }
 
 
 static double to_value(img::pixel_ptr_t const& ptr)
 {
-	return static_cast<double>(img::to_bits32(ptr)) / UINT32_MAX;
+	const auto ratio = static_cast<double>(img::to_bits32(ptr)) / UINT32_MAX;
+	
+	return DATA_MIN_VALUE + (DATA_MAX_VALUE - DATA_MIN_VALUE) * ratio;
 }
 
 

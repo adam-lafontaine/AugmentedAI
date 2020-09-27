@@ -25,7 +25,7 @@ namespace model_generator
 	using data_pixel_t = img::pixel_t;
 
 	using hist_value_t = unsigned; // represent a pixel as a single value for a histogram
-	constexpr hist_value_t MAX_COLOR_VALUE = 256;
+	constexpr hist_value_t MAX_COLOR_VALUE = 255;
 
 	using color_qty_t = unsigned;
 	constexpr color_qty_t MAX_RELATIVE_QTY = 255;

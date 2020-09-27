@@ -38,8 +38,8 @@ int main()
 	run_test("model_file_test()       file exists", model_file_test);
 	run_test("src_fail_files_ext_test()  same ext", src_fail_files_ext_test);
 	run_test("src_pass_files_ext_test()  same ext", src_pass_files_ext_test);
-	run_test("src_fail_inspect_test()            ", src_fail_inspect_test);
-	run_test("src_pass_inspect_test()            ", src_pass_inspect_test);
+	run_test("src_fail_inspect_test()    all fail", src_fail_inspect_test);
+	run_test("src_pass_inspect_test()    all pass", src_pass_inspect_test);
 
 	std::cout << "\nTests complete.";
 	std::cin.get();
