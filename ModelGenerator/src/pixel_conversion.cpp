@@ -14,8 +14,10 @@ namespace model_generator
 	// how a value in a centroid is converted to a pixel for saving
 	img::pixel_t to_centroid_pixel(double val, bool is_relevant)
 	{
-		assert(val >= data::data_min_value());
-		assert(val <= data::data_max_value());
+		//assert(val >= data::data_min_value());
+		//assert(val <= data::data_max_value());
+
+		const auto in_range = val >= data::data_min_value() && val <= data::data_max_value();
 
 		img::bits8 min = 0;
 		img::bits8 max = 255;
@@ -26,7 +28,7 @@ namespace model_generator
 
 		// red channel used as a flag for inspector
 		// if zero, value can be ignored
-		const shade_t r = is_relevant ? dist(gen) : 0;
+		const shade_t r = is_relevant && in_range ? dist(gen) : 0;
 
 		const shade_t g = dist(gen); // doesn't matter
 
@@ -43,7 +45,7 @@ namespace model_generator
 	{
 		const auto rgba = img::to_rgba(p);
 		if (!rgba.r)
-			return 0;
+			return -1;
 
 		const double max = 255;
 

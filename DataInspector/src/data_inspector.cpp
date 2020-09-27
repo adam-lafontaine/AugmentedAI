@@ -26,7 +26,7 @@ static index_list_t find_positions(value_list_t const& saved_centroid)
 
 	for (size_t i = 0; i < saved_centroid.size(); ++i)
 	{
-		if (saved_centroid[i]) // TODO: do better
+		if (saved_centroid[i] >= 0) // TODO: do better
 			list.push_back(i);
 	}
 
@@ -76,7 +76,7 @@ namespace data_inspector
 			return MLClass::Error;
 
 		const auto centroids = read_model(file.c_str());
-		const auto data_indeces = find_positions(centroids[0]);
+		const auto data_indeces = find_positions(centroids[0]); // TODO: error
 
 		cluster_t cluster;
 
