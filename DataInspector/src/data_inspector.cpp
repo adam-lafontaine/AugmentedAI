@@ -64,11 +64,33 @@ static centroid_list_t read_model(const char* model_file)
 }
 
 
+double data_value_to_model_value(double data_val)
+{
+	const auto pix = data::data_value_to_data_pixel(data_val);
+
+	return model::data_pixel_to_model_value(pix);
+}
+
+
+
+
+
 namespace data_inspector
 {
-	MLClass inspect(src_data_t const& data, const char* model_dir)
+	using model_row_t = std::vector<double>;
+
+	model_row_t to_model_value_row(src_data_t const& data_row)
 	{
-		if (data.empty())
+		model_row_t row;
+
+		std::transform(data_row.begin(), data_row.end(), std::back_inserter(row), data_value_to_model_value);
+
+		return row;
+	}
+
+	MLClass inspect(src_data_t const& data_row , const char* model_dir)
+	{
+		if (data_row.empty())
 			return MLClass::Error;
 
 		const auto file = dir::get_first_file_of_type(model_dir, img::IMAGE_FILE_EXTENSION);
@@ -97,7 +119,11 @@ namespace data_inspector
 
 		for_each_class(update_map);
 
-		auto centroid_index = cluster.find_centroid(data, centroids);
+
+		// convert data into values for the model
+		const auto model_row = to_model_value_row(data_row);
+
+		auto centroid_index = cluster.find_centroid(model_row, centroids);
 
 		return map[centroid_index];
 	}

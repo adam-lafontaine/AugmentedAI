@@ -37,7 +37,7 @@ int main()
 	const auto run_test = [&](const char* name, const auto& test)
 	{ std::cout << name << ": " << (test() ? "Pass" : "Fail") << '\n'; };
 
-	/*run_test("data_fail_exists_test()  dir exists", data_fail_exists_test);
+	run_test("data_fail_exists_test()  dir exists", data_fail_exists_test);
 	run_test("data_pass_exists_test()  dir exists", data_pass_exists_test);
 	run_test("model_exists_test()      dir exists", model_exists_test);
 	run_test("data_fail_files_test()  files exist", data_fail_files_test);
@@ -48,7 +48,7 @@ int main()
 	run_test("purge_class_data_test()            ", purge_class_data_test);
 	run_test("save_model_no_data_test()          ", save_model_no_data_test);
 	run_test("save_model_one_class_test()        ", save_model_one_class_test);
-	run_test("save_model_one_file_test()         ", save_model_one_file_test);*/
+	run_test("save_model_one_file_test()         ", save_model_one_file_test);
 	run_test("pixel_conversion_test()            ", pixel_conversion_test);
 	
 	std::cout << "\nTests complete.";

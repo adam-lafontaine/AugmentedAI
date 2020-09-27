@@ -14,6 +14,7 @@ namespace data_adaptor
 	using data_list_t = std::vector<src_data_t>;
 	using path_t = std::string;
 	using file_list_t = std::vector<path_t>;
+	using data_pixel_t = img::pixel_t;
 
 	// Define how files are interpreted as data to be processed.
 	src_data_t file_to_data(const char* src_file);
@@ -26,11 +27,15 @@ namespace data_adaptor
 	void save_data_images(data_list_t const& data, path_t const& dst_dir);
 
 	// Define how one row of a "data image" is converted back to data
-	src_data_t data_image_row_to_data(img::rgba_list_t const& pixel_row); // TODO: needed?
+	//src_data_t data_image_row_to_data(img::rgba_list_t const& pixel_row); // TODO: needed?
 	src_data_t data_image_row_to_data(img::view_t const& pixel_row);
 
 	// make data properties public
 	size_t data_image_width();
 	double data_min_value();
 	double data_max_value();
+
+
+	data_pixel_t data_value_to_data_pixel(double val);   // TODO: tests
+	double data_pixel_to_data_value(data_pixel_t const& pix);
 }

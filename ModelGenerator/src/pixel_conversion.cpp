@@ -30,11 +30,8 @@ namespace model_generator
 	}
 
 
-	model_pixel_t model_value_to_model_pixel(double model_val, bool is_relevant)
+	model_pixel_t model_value_to_model_pixel(double model_val, bool is_active)
 	{
-		assert(model_val >= MODEL_VALUE_MIN);
-		assert(model_val <= MODEL_VALUE_MAX);		
-
 		shade_t min = 0;
 		shade_t max = 255;
 
@@ -44,7 +41,7 @@ namespace model_generator
 
 		// red channel used as a flag for inspector
 		// if zero, value can be ignored
-		const shade_t r = is_relevant ? dist(gen) : 0;
+		const shade_t r = is_active && is_relevant(model_val) ? dist(gen) : 0;
 
 		// green channel doesn't matter
 		const shade_t g = dist(gen);
@@ -62,6 +59,8 @@ namespace model_generator
 	double model_pixel_to_model_value(model_pixel_t const& model_pix)
 	{
 		const auto rgba = img::to_rgba(model_pix);
+
+		// if red channel is 0, then pixel has been flagged as not relevant
 		if (!rgba.r)
 			return MODEL_VALUE_MIN - 1;
 

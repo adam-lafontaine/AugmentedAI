@@ -29,5 +29,6 @@ namespace model_generator
 
 
 	// how a value for the model is converted to a pixel for a model image
-	model_pixel_t model_value_to_model_pixel(double model_val, bool is_relevant = true);
+	model_pixel_t model_value_to_model_pixel(double model_val, bool is_active = true);
+
 }

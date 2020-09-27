@@ -247,10 +247,12 @@ bool data_image_row_to_data_size_test()
 	data::save_data_images(data, dst_root.c_str());
 	const auto data_images = dir::get_files_of_type(dst_root, dst_file_ext);
 
-	const auto converted = get_first_color_row(data_images[0].string());
-	const auto new_data = data::data_image_row_to_data(converted);
+	//const auto converted = get_first_color_row(data_images[0].string());
+	//const auto new_data = data::data_image_row_to_data(converted);
 
-	return new_data.size() == data[0].size();
+	//return new_data.size() == data[0].size();
+
+	return false;
 }
 
 

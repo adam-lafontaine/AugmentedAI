@@ -271,7 +271,7 @@ namespace model_generator
 	}
 
 
-	static void append_data(data_list_t& data, img::view_t const& data_view) // TODO: grayscale
+	static void append_data(data_list_t& data, img::view_t const& data_view)
 	{
 		for (auto y = 0; y < data_view.height(); ++y)
 		{

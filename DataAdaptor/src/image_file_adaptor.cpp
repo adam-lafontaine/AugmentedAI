@@ -54,19 +54,16 @@ static img::pixel_t to_data_pixel(double val)
 }
 
 
-static double to_data_value(img::rgba_t const& pix)
+static double to_data_value(img::rgba_t const& rgba)
 {
-	const auto ratio = static_cast<double>(img::to_bits32(pix)) / BITS32_MAX;
+	four_bytes_t x;
 
-	return DATA_MIN_VALUE + (DATA_MAX_VALUE - DATA_MIN_VALUE) * ratio;
-}
+	x.bytes[3] = rgba.r;
+	x.bytes[2] = rgba.g;
+	x.bytes[1] = rgba.b;
+	x.bytes[0] = rgba.a;
 
-
-static double to_data_value(img::pixel_ptr_t const& ptr)
-{
-	const auto ratio = static_cast<double>(img::to_bits32(ptr)) / BITS32_MAX;
-	
-	return DATA_MIN_VALUE + (DATA_MAX_VALUE - DATA_MIN_VALUE) * ratio;
+	return static_cast<double>(x.value);
 }
 
 
@@ -129,7 +126,7 @@ namespace data_adaptor
 			auto ptr = view.row_begin(y);
 			for (auto x = 0; x < view.width(); ++x)
 			{
-				ptr[x] = to_data_pixel(data_row[x]);
+				ptr[x] = data_value_to_data_pixel(data_row[x]);
 			}
 		}
 
@@ -206,19 +203,19 @@ namespace data_adaptor
 	}
 
 
-	src_data_t data_image_row_to_data(img::rgba_list_t const& pixel_row)
+	/*src_data_t data_image_row_to_data(img::rgba_list_t const& pixel_row)
 	{
 		assert(pixel_row.size() == DATA_IMAGE_WIDTH);
 
 		src_data_t data;
 		data.reserve(pixel_row.size());
 
-		const auto pred = [&](auto const& p) { return to_data_value(p); };
+		const auto pred = [&](auto const& p) { return data_pixel_to_data_value(p); };
 
 		std::transform(pixel_row.begin(), pixel_row.end(), std::back_inserter(data), pred);
 
 		return data;
-	}
+	}*/
 
 
 	src_data_t data_image_row_to_data(img::view_t const& pixel_row)
@@ -232,7 +229,7 @@ namespace data_adaptor
 		const auto ptr = pixel_row.row_begin(0);
 		for (img::index_t x = 0; x < pixel_row.width(); ++x)
 		{
-			data.push_back(to_data_value(ptr + x));
+			data.push_back(data_pixel_to_data_value(ptr[x]));
 		}
 
 		return data;
@@ -254,5 +251,18 @@ namespace data_adaptor
 	double data_max_value()
 	{
 		return DATA_MAX_VALUE;
+	}
+
+
+
+	data_pixel_t data_value_to_data_pixel(double val)
+	{
+		return to_data_pixel(val);
+	}
+
+
+	double data_pixel_to_data_value(data_pixel_t const& pix)
+	{
+		return to_data_value(img::to_rgba(pix));
 	}
 }
