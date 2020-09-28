@@ -42,7 +42,6 @@ int main()
 	run_test("src_pass_inspect_test()    all pass", src_pass_inspect_test);
 
 	std::cout << "\nTests complete.";
-	std::cin.get();
 }
 
 
@@ -156,36 +155,5 @@ bool src_fail_inspect_test()
 
 bool src_pass_inspect_test()
 {
-	//return expected_class(src_pass, MLClass::Pass);
-
-	auto const files = dir::str::get_all_files(src_pass);
-	auto begin = files.begin();
-	auto end = files.end();
-
-	unsigned pass = 0;
-	unsigned fail = 0;
-	unsigned error = 0;
-
-	for (auto const& file : files)
-	{
-		const auto res = ins::inspect(file.c_str(), model);
-		switch (res)
-		{
-		case MLClass::Pass:
-			++pass;
-			break;
-		case MLClass::Fail:
-			++fail;
-			break;
-		case MLClass::Error:
-			++error;
-			break;
-		default:
-			break;
-		}
-	}
-
-	std::cout << " pass=" << pass << " fail=" << fail << " error=" << error;
-
-	return false;	
+	return expected_class(src_pass, MLClass::Pass);
 }
