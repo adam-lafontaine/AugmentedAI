@@ -63,7 +63,7 @@ static double to_data_value(img::rgba_t const& rgba)
 	x.bytes[1] = rgba.b;
 	x.bytes[0] = rgba.a;
 
-	return static_cast<double>(x.value);
+	return static_cast<double>(x.value) / BITS32_MAX;
 }
 
 
