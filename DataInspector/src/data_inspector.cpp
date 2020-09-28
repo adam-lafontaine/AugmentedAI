@@ -88,6 +88,7 @@ namespace data_inspector
 		return row;
 	}
 
+
 	MLClass inspect(src_data_t const& data_row , const char* model_dir)
 	{
 		if (data_row.empty())

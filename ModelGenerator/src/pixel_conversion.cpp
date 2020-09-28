@@ -1,10 +1,7 @@
 #include "pixel_conversion.hpp"
-//#include "../../DataAdaptor/src/data_adaptor.hpp"
 
 #include <cassert>
 #include <random>
-
-//namespace data = data_adaptor;
 
 
 constexpr auto BITS32_MAX = static_cast<double>(img::to_bits32(255, 255, 255, 255));
@@ -20,9 +17,6 @@ constexpr shade_t INACTIVE = 254;
 
 namespace model_generator
 {
-	
-
-
 	bool is_relevant(double model_val)
 	{
 		return model_val >= MODEL_VALUE_MIN && model_val <= MODEL_VALUE_MAX;

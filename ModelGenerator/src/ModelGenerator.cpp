@@ -199,16 +199,17 @@ namespace model_generator
 
 	//======= CLUSTERING =======================
 
-	// finds the indeces of the data that contribute to determining the class
-	// compares the average of shades with observed values
-	// does not account for multiple maxima
-	static index_list_t find_relevant_positions(class_position_hists_t const& class_pos_hists)
+	static index_list_t set_indeces_manually()
 	{
-		index_list_t list{ 0 };
+		index_list_t list{ 0 }; // use only the first index of the data image values
 
 		return list;
+	}
 
-		/*const double min_diff = 0.001;
+
+	static index_list_t try_find_indeces(class_position_hists_t const& class_pos_hists)
+	{
+		const double min_diff = 0.001;
 		const size_t num_pos = class_pos_hists[0].size();
 		std::array<double, ML_CLASS_COUNT> class_avg = { 0.0 };
 
@@ -245,7 +246,19 @@ namespace model_generator
 
 		assert(!list.empty());
 
-		return list;*/
+		return list;
+	}
+
+
+
+	// finds the indeces of the data that contribute to determining the class
+	// compares the average of shades with observed values
+	// does not account for multiple maxima
+	static index_list_t find_relevant_positions(class_position_hists_t const& class_pos_hists)
+	{
+		return set_indeces_manually();
+
+		//return try_find_indeces(class_pos_hists);		
 	}
 
 
