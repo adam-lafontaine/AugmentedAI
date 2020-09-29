@@ -68,6 +68,7 @@ bool files_to_data_size_test();
 bool files_to_data_values_test();
 bool save_data_images_create_file_test();
 bool save_data_images_height_test();
+bool pixel_conversion_test();
 bool data_image_row_to_data_size_test();
 bool data_image_row_to_data_values_test();
 
@@ -92,6 +93,7 @@ int main()
 	run_test("files_to_data()        matching values", files_to_data_values_test);
 	run_test("save_data_images()     file(s) created", save_data_images_create_file_test);
 	run_test("save_data_images()      file(s) height", save_data_images_height_test);
+	run_test("pixel_conversion_test()   close enough", pixel_conversion_test);
 	run_test("data_image_row_to_data()          size", data_image_row_to_data_size_test);
 	run_test("data_image_row_to_data()  close enough", data_image_row_to_data_values_test);
 
@@ -234,6 +236,32 @@ bool save_data_images_height_test()
 }
 
 
+bool pixel_conversion_test()
+{
+	const size_t test_index = 2;
+
+	// decide if conversion algorithms should be exact
+	// may have loss of precision when saving to data image
+	const double tolerance = 0.0001;
+
+	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
+	const auto data = data::files_to_data(file_list);
+
+	const auto compare = [&](double val) 
+	{
+		const auto pix = data::data_value_to_data_pixel(val);
+		const auto val2 = data::data_pixel_to_data_value(pix);
+		return std::abs(val - val2) < tolerance;
+	};
+
+	const auto begin = data[test_index].begin();
+	const auto end = data[test_index].end();
+
+	return std::all_of(begin, end, compare);
+}
+
+
+
 // a row of pixels in a data image has the same quantity as the data provided
 bool data_image_row_to_data_size_test()
 {
@@ -247,10 +275,13 @@ bool data_image_row_to_data_size_test()
 	data::save_data_images(data, dst_root.c_str());
 	const auto data_images = dir::get_files_of_type(dst_root, dst_file_ext);
 
-	const auto converted = get_first_color_row(data_images[0].string());
+	auto data_image = img::read_image_from_file(data_images[0].c_str());
+	const auto view = img::make_view(data_image);
+	const auto converted = img::row_view(view, test_index);
+
 	const auto new_data = data::data_image_row_to_data(converted);
 
-	return new_data.size() == data[0].size();
+	return new_data.size() == data[test_index].size();
 }
 
 

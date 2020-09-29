@@ -19,12 +19,6 @@
     <Filter Include="Source Files\utils">
       <UniqueIdentifier>{93b82098-e650-4c97-b2e4-e5bef0557885}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\data">
-      <UniqueIdentifier>{1ca17ea4-6bf8-49b7-8f18-5bcd5e7e795b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\data">
-      <UniqueIdentifier>{ebd0ada3-dbcd-4380-bbab-2cc8df436740}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\utils\libimage.hpp">

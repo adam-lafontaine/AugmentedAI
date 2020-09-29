@@ -24,42 +24,15 @@ constexpr size_t DATA_IMAGE_WIDTH = NUM_GRAY_SHADES;
 constexpr double DATA_MIN_VALUE = 0;
 constexpr double DATA_MAX_VALUE = 1;
 
+constexpr auto BITS32_MAX = img::to_bits32(255, 255, 255, 255);
 
+
+// for getting bytes from 32 bit values
 union four_bytes_t
 {
 	img::bits32 value;
 	img::bits8 bytes[4];
 };
-
-
-// assumes val is between 0.0 and 1.0
-static img::pixel_t to_pixel(double val)
-{
-	assert(val >= DATA_MIN_VALUE);
-	assert(val <= DATA_MAX_VALUE);
-
-	four_bytes_t x;
-	x.value = static_cast<img::bits32>(val * UINT32_MAX);
-
-	const auto r = x.bytes[3];
-	const auto g = x.bytes[2];
-	const auto b = x.bytes[1];
-	const auto a = x.bytes[0];
-
-	return img::to_pixel(r, g, b, a);
-}
-
-
-static double to_value(img::rgba_t const& pix)
-{
-	return static_cast<double>(img::to_bits32(pix)) / UINT32_MAX;
-}
-
-
-static double to_value(img::pixel_ptr_t const& ptr)
-{
-	return static_cast<double>(img::to_bits32(ptr)) / UINT32_MAX;
-}
 
 
 static std::string make_numbered_file_name(unsigned index, size_t index_length)
@@ -116,12 +89,12 @@ namespace data_adaptor
 
 		for (auto y = 0; y < view.height(); ++y)
 		{
-			auto data = *(first + y);
+			auto data_row = *(first + y);
 
 			auto ptr = view.row_begin(y);
 			for (auto x = 0; x < view.width(); ++x)
 			{
-				ptr[x] = to_pixel(data[x]);
+				ptr[x] = data_value_to_data_pixel(data_row[x]);
 			}
 		}
 
@@ -151,7 +124,7 @@ namespace data_adaptor
 		data_list_t data;
 		data.reserve(files.size());
 
-		const auto pred = [&](std::string const& file_path) { return file_to_data(file_path); };
+		const auto pred = [&](path_t const& file_path) { return file_to_data(file_path); };
 
 		std::transform(files.begin(), files.end(), std::back_inserter(data), pred);
 
@@ -198,21 +171,6 @@ namespace data_adaptor
 	}
 
 
-	src_data_t data_image_row_to_data(img::rgba_list_t const& pixel_row)
-	{
-		assert(pixel_row.size() == DATA_IMAGE_WIDTH);
-
-		src_data_t data;
-		data.reserve(pixel_row.size());
-
-		const auto pred = [&](auto const& p) { return to_value(p); };
-
-		std::transform(pixel_row.begin(), pixel_row.end(), std::back_inserter(data), pred);
-
-		return data;
-	}
-
-
 	src_data_t data_image_row_to_data(img::view_t const& pixel_row)
 	{
 		assert(pixel_row.width() == DATA_IMAGE_WIDTH);
@@ -224,7 +182,7 @@ namespace data_adaptor
 		const auto ptr = pixel_row.row_begin(0);
 		for (img::index_t x = 0; x < pixel_row.width(); ++x)
 		{
-			data.push_back(to_value(ptr + x));
+			data.push_back(data_pixel_to_data_value(ptr[x]));
 		}
 
 		return data;
@@ -246,5 +204,39 @@ namespace data_adaptor
 	double data_max_value()
 	{
 		return DATA_MAX_VALUE;
+	}
+
+
+	data_pixel_t data_value_to_data_pixel(double val)
+	{
+		assert(val >= DATA_MIN_VALUE);
+		assert(val <= DATA_MAX_VALUE);
+
+		const auto ratio = (val - DATA_MIN_VALUE) / (DATA_MAX_VALUE - DATA_MIN_VALUE);
+
+		four_bytes_t x;
+		x.value = static_cast<img::bits32>(ratio * BITS32_MAX);
+
+		const auto r = x.bytes[3];
+		const auto g = x.bytes[2];
+		const auto b = x.bytes[1];
+		const auto a = x.bytes[0];
+
+		return img::to_pixel(r, g, b, a);
+	}
+
+
+	double data_pixel_to_data_value(data_pixel_t const& pix)
+	{
+		const auto rgba = img::to_rgba(pix);
+
+		four_bytes_t x;
+
+		x.bytes[3] = rgba.r;
+		x.bytes[2] = rgba.g;
+		x.bytes[1] = rgba.b;
+		x.bytes[0] = rgba.a;
+
+		return static_cast<double>(x.value) / BITS32_MAX;
 	}
 }

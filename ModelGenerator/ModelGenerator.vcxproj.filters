@@ -51,6 +51,9 @@
     <ClInclude Include="src\pixel_conversion.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\cluster_distance.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\utils\cluster.cpp">

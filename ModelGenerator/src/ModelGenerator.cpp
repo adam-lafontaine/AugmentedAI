@@ -1,5 +1,6 @@
 #include "ModelGenerator.hpp"
 #include "pixel_conversion.hpp"
+#include "cluster_distance.hpp"
 #include "../../utils/cluster_config.hpp"
 #include "../../utils/dirhelper.hpp"
 #include "../../DataAdaptor/src/data_adaptor.hpp"
@@ -20,12 +21,8 @@ namespace data = data_adaptor;
 
 namespace model_generator
 {
-	// help distinguish what image we are working with
-	using data_pixel_t = img::pixel_t;
-	using centroid_pixel_t = img::pixel_t;
-
 	using hist_value_t = unsigned; // represent a pixel as a single value for a histogram
-	constexpr hist_value_t MAX_COLOR_VALUE = 256;
+	constexpr hist_value_t MAX_COLOR_VALUE = 255;
 
 	using color_qty_t = unsigned;
 	constexpr color_qty_t MAX_RELATIVE_QTY = 255;
@@ -53,7 +50,6 @@ namespace model_generator
 
 	//======= CONVERSION =============
 
-
 	// converts a data pixel to a value between 0 and MAX_COLOR_VALUE
 	static hist_value_t to_hist_value(data_pixel_t const& pix);
 
@@ -62,9 +58,6 @@ namespace model_generator
 
 	// finds the indeces of the data that contribute to determining the class
 	static index_list_t find_relevant_positions(class_position_hists_t const& class_pos_hists);
-
-	// build function for evaluating distance between data and a cluster centroid
-	static cluster::dist_func_t build_cluster_distance(index_list_t const& relevant_indeces);
 
 
 
@@ -75,7 +68,6 @@ namespace model_generator
 	static void append_data(data_list_t& data, img::view_t const& data_view);
 
 
-
 	// sets all values in the histograms to a value between 0 and MAX_RELATIVE_QTY
 	static void normalize_histograms(position_hists_t& pos);
 
@@ -83,13 +75,9 @@ namespace model_generator
 
 
 	//======= HELPERS ===================
-
-	using class_func_t = std::function<void(size_t c)>;
-	static void for_each_class(class_func_t const& func);
+		
 
 	static std::string make_file_name();
-
-
 
 
 	//======= CLASS METHODS ==================
@@ -158,7 +146,9 @@ namespace model_generator
 
 		cluster_t cluster;
 		centroid_list_t centroids;
-		std::array<size_t, ML_CLASS_COUNT> class_clusters = { 10, 10 };
+
+		const auto clusters_per_class = cluster::CLUSTER_COUNT;
+		std::array<size_t, ML_CLASS_COUNT> class_clusters = { clusters_per_class, clusters_per_class };
 
 		cluster.set_distance(build_cluster_distance(data_indeces));
 
@@ -186,7 +176,7 @@ namespace model_generator
 			for (auto x = 0; x < width; ++x)
 			{
 				auto is_counted = std::find(data_indeces.begin(), data_indeces.end(), x) != data_indeces.end();
-				ptr[x] = to_centroid_pixel(list[x], is_counted);
+				ptr[x] = model_value_to_model_pixel(list[x], is_counted);
 			}
 			++y;
 		}
@@ -198,10 +188,20 @@ namespace model_generator
 
 	//======= CLUSTERING =======================
 
+	// here you can cheat by choosing indeces after inspecting the data images
+	static index_list_t set_indeces_manually()
+	{
+		index_list_t list{ 0 }; // use only the first index of the data image values
+
+		return list;
+	}
+
+
+	// An attempt at programatically finding data image indeces that contribute to classification
 	// finds the indeces of the data that contribute to determining the class
 	// compares the average of shades with observed values
 	// does not account for multiple maxima
-	static index_list_t find_relevant_positions(class_position_hists_t const& class_pos_hists)
+	static index_list_t try_find_indeces(class_position_hists_t const& class_pos_hists)
 	{
 		const double min_diff = 0.001;
 		const size_t num_pos = class_pos_hists[0].size();
@@ -244,22 +244,13 @@ namespace model_generator
 	}
 
 
-	// build function for evaluating distance between data and a cluster centroid
-	static cluster::dist_func_t build_cluster_distance(index_list_t const& relevant_indeces)
+
+	
+	static index_list_t find_relevant_positions(class_position_hists_t const& class_pos_hists)
 	{
-		return [&](auto const& data, auto const& centroid)
-		{
-			double total = 0;
+		return set_indeces_manually();
 
-			for (auto i : relevant_indeces)
-			{
-				const auto lhs = data[i];
-				const auto rhs = centroid[i];
-				total += std::abs(lhs - rhs);
-			}
-
-			return total / relevant_indeces.size();
-		};
+		//return try_find_indeces(class_pos_hists);		
 	}
 
 
@@ -268,11 +259,19 @@ namespace model_generator
 
 	static void update_histograms(position_hists_t& pos_hists, img::view_t const& data_view)
 	{
-		for (auto w = 0; w < data_view.width(); ++w)
+		auto w = 0;
+		const auto update_pred = [&](auto const& p)
 		{
-			const auto column_view = img::column_view(data_view, w);
+			data_pixel_t dp{ p };
 
-			gil::for_each_pixel(column_view, [&](auto const& p) { ++pos_hists[w][to_hist_value(p)]; });
+			++pos_hists[w][to_hist_value(dp)];
+		};
+
+		for (w = 0; w < data_view.width(); ++w)
+		{
+			const auto column_view = img::column_view(data_view, w);			
+
+			gil::for_each_pixel(column_view, update_pred);
 		}
 	}
 
@@ -281,8 +280,14 @@ namespace model_generator
 	{
 		for (auto y = 0; y < data_view.height(); ++y)
 		{
-			const auto row_view = img::row_view(data_view, y);
-			data.push_back(data::data_image_row_to_data(row_view));
+			cluster::data_row_t data_row;
+			auto ptr = data_view.row_begin(y);
+			for (auto x = 0; x < data_view.width(); ++x)
+			{
+				data_row.push_back(data_pixel_to_model_value(ptr[x]));
+			}
+
+			data.push_back(data_row);
 		}
 	}
 
@@ -338,13 +343,7 @@ namespace model_generator
 
 	//======= HELPERS =====================
 
-	static void for_each_class(class_func_t const& func)
-	{
-		for (size_t class_index = 0; class_index < ML_CLASS_COUNT; ++class_index)
-		{
-			func(class_index);
-		}
-	}
+	
 
 
 	static std::string make_file_name()
@@ -366,7 +365,7 @@ namespace model_generator
 
 
 	// converts a data pixel to a value between 0 and MAX_COLOR_VALUE
-	static hist_value_t to_hist_value(data_pixel_t const& pix)
+	static hist_value_t to_hist_value(data_pixel_t const& pix)  // TODO: grayscale
 	{
 		const auto val = static_cast<double>(img::to_bits32(pix));
 		const auto ratio = val / UINT32_MAX;
