@@ -156,7 +156,7 @@ namespace data_adaptor
 		data_list_t data;
 		data.reserve(files.size());
 
-		const auto pred = [&](std::string const& file_path) { return file_to_data(file_path); };
+		const auto pred = [&](path_t const& file_path) { return file_to_data(file_path); };
 
 		std::transform(files.begin(), files.end(), std::back_inserter(data), pred);
 
@@ -203,21 +203,6 @@ namespace data_adaptor
 	}
 
 
-	/*src_data_t data_image_row_to_data(img::rgba_list_t const& pixel_row)
-	{
-		assert(pixel_row.size() == DATA_IMAGE_WIDTH);
-
-		src_data_t data;
-		data.reserve(pixel_row.size());
-
-		const auto pred = [&](auto const& p) { return data_pixel_to_data_value(p); };
-
-		std::transform(pixel_row.begin(), pixel_row.end(), std::back_inserter(data), pred);
-
-		return data;
-	}*/
-
-
 	src_data_t data_image_row_to_data(img::view_t const& pixel_row)
 	{
 		assert(pixel_row.width() == DATA_IMAGE_WIDTH);
@@ -252,7 +237,6 @@ namespace data_adaptor
 	{
 		return DATA_MAX_VALUE;
 	}
-
 
 
 	data_pixel_t data_value_to_data_pixel(double val)
