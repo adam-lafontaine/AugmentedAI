@@ -27,44 +27,12 @@ constexpr double DATA_MAX_VALUE = 1;
 constexpr auto BITS32_MAX = img::to_bits32(255, 255, 255, 255);
 
 
+// for getting bytes from 32 bit values
 union four_bytes_t
 {
 	img::bits32 value;
 	img::bits8 bytes[4];
 };
-
-
-// assumes val is between 0.0 and 1.0
-static img::pixel_t to_data_pixel(double val)
-{
-	assert(val >= DATA_MIN_VALUE);
-	assert(val <= DATA_MAX_VALUE);
-
-	const auto ratio = (val - DATA_MIN_VALUE) / (DATA_MAX_VALUE - DATA_MIN_VALUE);
-
-	four_bytes_t x;
-	x.value = static_cast<img::bits32>(ratio * BITS32_MAX);
-
-	const auto r = x.bytes[3];
-	const auto g = x.bytes[2];
-	const auto b = x.bytes[1];
-	const auto a = x.bytes[0];
-
-	return img::to_pixel(r, g, b, a);
-}
-
-
-static double to_data_value(img::rgba_t const& rgba)
-{
-	four_bytes_t x;
-
-	x.bytes[3] = rgba.r;
-	x.bytes[2] = rgba.g;
-	x.bytes[1] = rgba.b;
-	x.bytes[0] = rgba.a;
-
-	return static_cast<double>(x.value) / BITS32_MAX;
-}
 
 
 static std::string make_numbered_file_name(unsigned index, size_t index_length)
@@ -241,12 +209,34 @@ namespace data_adaptor
 
 	data_pixel_t data_value_to_data_pixel(double val)
 	{
-		return to_data_pixel(val);
+		assert(val >= DATA_MIN_VALUE);
+		assert(val <= DATA_MAX_VALUE);
+
+		const auto ratio = (val - DATA_MIN_VALUE) / (DATA_MAX_VALUE - DATA_MIN_VALUE);
+
+		four_bytes_t x;
+		x.value = static_cast<img::bits32>(ratio * BITS32_MAX);
+
+		const auto r = x.bytes[3];
+		const auto g = x.bytes[2];
+		const auto b = x.bytes[1];
+		const auto a = x.bytes[0];
+
+		return img::to_pixel(r, g, b, a);
 	}
 
 
 	double data_pixel_to_data_value(data_pixel_t const& pix)
 	{
-		return to_data_value(img::to_rgba(pix));
+		const auto rgba = img::to_rgba(pix);
+
+		four_bytes_t x;
+
+		x.bytes[3] = rgba.r;
+		x.bytes[2] = rgba.g;
+		x.bytes[1] = rgba.b;
+		x.bytes[0] = rgba.a;
+
+		return static_cast<double>(x.value) / BITS32_MAX;
 	}
 }

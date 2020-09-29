@@ -15,9 +15,7 @@ namespace model_generator
 
 			for (auto i : relevant_indeces)
 			{
-				const auto lhs = data[i];
-				const auto rhs = centroid[i];
-				total += std::abs(lhs - rhs);
+				total += std::abs(data[i] - centroid[i]);
 			}
 
 			return total / relevant_indeces.size();

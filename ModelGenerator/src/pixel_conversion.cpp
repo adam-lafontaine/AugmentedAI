@@ -52,7 +52,7 @@ namespace model_generator
 		const auto ratio = model_val / MODEL_VALUE_MAX;
 		const shade_t b = static_cast<shade_t>(ratio * max);
 
-		// use alpha channel to flag is pixel is used in the model
+		// use alpha channel to flag if pixel is used in the model
 		const shade_t a = is_active ? ACTIVE : INACTIVE;
 
 		return img::to_pixel(r, g, b, a);

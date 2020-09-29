@@ -21,9 +21,6 @@ namespace data = data_adaptor;
 
 namespace model_generator
 {
-	// help distinguish what image we are working with
-	//using data_pixel_t = img::pixel_t;
-
 	using hist_value_t = unsigned; // represent a pixel as a single value for a histogram
 	constexpr hist_value_t MAX_COLOR_VALUE = 255;
 
@@ -53,10 +50,6 @@ namespace model_generator
 
 	//======= CONVERSION =============
 
-
-	// TODO: convert data image to grayscale and use pixel value
-
-
 	// converts a data pixel to a value between 0 and MAX_COLOR_VALUE
 	static hist_value_t to_hist_value(data_pixel_t const& pix);
 
@@ -75,7 +68,6 @@ namespace model_generator
 	static void append_data(data_list_t& data, img::view_t const& data_view);
 
 
-
 	// sets all values in the histograms to a value between 0 and MAX_RELATIVE_QTY
 	static void normalize_histograms(position_hists_t& pos);
 
@@ -83,12 +75,9 @@ namespace model_generator
 
 
 	//======= HELPERS ===================
-
-	
+		
 
 	static std::string make_file_name();
-
-
 
 
 	//======= CLASS METHODS ==================
@@ -199,6 +188,7 @@ namespace model_generator
 
 	//======= CLUSTERING =======================
 
+	// here you can cheat by choosing indeces after inspecting the data images
 	static index_list_t set_indeces_manually()
 	{
 		index_list_t list{ 0 }; // use only the first index of the data image values
@@ -207,6 +197,10 @@ namespace model_generator
 	}
 
 
+	// An attempt at programatically finding data image indeces that contribute to classification
+	// finds the indeces of the data that contribute to determining the class
+	// compares the average of shades with observed values
+	// does not account for multiple maxima
 	static index_list_t try_find_indeces(class_position_hists_t const& class_pos_hists)
 	{
 		const double min_diff = 0.001;
@@ -251,9 +245,7 @@ namespace model_generator
 
 
 
-	// finds the indeces of the data that contribute to determining the class
-	// compares the average of shades with observed values
-	// does not account for multiple maxima
+	
 	static index_list_t find_relevant_positions(class_position_hists_t const& class_pos_hists)
 	{
 		return set_indeces_manually();
