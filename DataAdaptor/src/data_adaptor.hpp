@@ -26,6 +26,8 @@ namespace data_adaptor
 	void save_data_images(data_list_t const& data, const char* dst_dir);
 	void save_data_images(data_list_t const& data, path_t const& dst_dir);
 
+	// TODO: files_to_data_images()
+
 	// Define how values are converted to pixels and vice versa
 	data_pixel_t data_value_to_data_pixel(double val);   // TODO: tests
 	double data_pixel_to_data_value(data_pixel_t const& pix);
