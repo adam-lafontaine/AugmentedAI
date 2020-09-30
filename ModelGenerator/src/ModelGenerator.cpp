@@ -173,7 +173,7 @@ namespace model_generator
 		for (auto const& list : centroids)
 		{
 			auto ptr = view.row_begin(y);
-			for (auto x = 0; x < width; ++x)
+			for (size_t x = 0; x < width; ++x)
 			{
 				auto is_counted = std::find(data_indeces.begin(), data_indeces.end(), x) != data_indeces.end();
 				ptr[x] = model_value_to_model_pixel(list[x], is_counted);
