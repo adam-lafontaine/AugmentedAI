@@ -12,9 +12,19 @@
 namespace dir = dirhelper;
 namespace gen = model_generator;
 
+#ifdef _WIN32
+
 constexpr auto data_fail = "D:\\test_images\\data_fail";
 constexpr auto data_pass = "D:\\test_images\\data_pass";
 constexpr auto model = "D:\\test_images\\model";
+
+#else
+
+constexpr auto data_fail = "/home/adam/projects/test_images/data_fail";
+constexpr auto data_pass = "/home/adam/projects/test_images/data_pass";
+constexpr auto model = "/home/adam/projects/test_images/model";
+
+#endif
 
 const auto img_ext = ".png";
 
