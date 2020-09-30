@@ -1,9 +1,15 @@
-#include "../../utils//libimage.hpp"
+#include "../../utils/libimage.hpp"
 #include "image_factory.hpp"
 
 #include <random>
 #include <vector>
 #include <string>
+
+#ifdef __linux
+
+#define sprintf_s sprintf
+
+#endif
 
 namespace img = libimage;
 
