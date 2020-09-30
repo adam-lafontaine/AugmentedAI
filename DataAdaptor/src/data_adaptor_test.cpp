@@ -11,12 +11,29 @@
 namespace data = data_adaptor;
 namespace dir = dirhelper;
 
+#ifdef _WIN32
 
 constexpr auto src_fail = "D:\\test_images\\src_fail";
 constexpr auto src_pass = "D:\\test_images\\src_pass";
 
 constexpr auto data_fail = "D:\\test_images\\data_fail";
 constexpr auto data_pass = "D:\\test_images\\data_pass";
+
+const auto src_root = std::string("D:\\repos\\AugmentedAI\\DataAdaptor\\test\\src");
+const auto dst_root = std::string("D:\\repos\\AugmentedAI\\DataAdaptor\\test\\dst");
+
+#else
+
+constexpr auto src_fail = "/home/adam/projects/test_images/src_fail";
+constexpr auto src_pass = "/home/adam/projects/test_images/src_pass";
+
+constexpr auto data_fail = "/home/adam/projects/test_images/data_fail";
+constexpr auto data_pass = "/home/adam/projects/test_images/data_pass";
+
+const auto src_root = std::string("/home/adam/projects/AugmentedAI/DataAdaptor/test/src");
+const auto dst_root = std::string("/home/adam/projects/AugmentedAI/DataAdaptor/test/dst");
+
+#endif
 
 void make_data_images()
 {
@@ -43,7 +60,7 @@ void make_data_images()
 
 
 
-const auto src_root = std::string("D:\\repos\\AugmentedAI\\DataAdaptor\\test\\src");
+
 
 const auto src_files = std::array
 {
@@ -55,7 +72,7 @@ const auto src_files = std::array
 	src_root + "/181_F.png",
 };
 
-const auto dst_root = std::string("D:\\repos\\AugmentedAI\\DataAdaptor\\test\\dst");
+
 const auto dst_file_ext = ".png";
 
 bool src_root_exists_test();
@@ -106,7 +123,7 @@ int main()
 
 	make_data_images();
 
-	std::cout << "done.";
+	std::cout << "done.\n";
 
 	std::cin.get();
 }

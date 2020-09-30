@@ -10,12 +10,14 @@ log_file="compile.log"
 flags="-Wall -O3"
 std="-std=c++17"
 
-image_factory="../src/image_factory.cpp"
-main_cpp="../src/source_main.cpp"
+dirhelper="../../utils/dirhelper.cpp"
+image_adaptor="../src/image_file_adaptor.cpp"
 
-cpp_files="$main_cpp $image_factory"
+main_cpp="../src/data_adaptor_test.cpp"
 
-exe="ImageFactory"
+cpp_files="$main_cpp $dirhelper $image_adaptor"
+
+exe="DataAdaptor"
 
 # complile and write to file
 timestamp > $log_file
