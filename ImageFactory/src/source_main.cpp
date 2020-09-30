@@ -20,5 +20,5 @@ constexpr auto pass_dir = "/home/adam/projects/test_images/src_pass";
 
 int main()
 {
-		build_images(alpha_path, border_path, pass_dir, fail_dir);	
+	build_images(alpha_path, border_path, pass_dir, fail_dir);	
 }
