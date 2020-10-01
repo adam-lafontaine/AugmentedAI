@@ -4,5 +4,5 @@
 
 int main()
 {
-	build_images(ALPHA_PATH, BORDER_PATH, SRC_PASS, SRC_FAIL);	
+	build_images(ALPHA_PATH, BORDER_PATH, SRC_PASS_ROOT, SRC_FAIL_ROOT);
 }

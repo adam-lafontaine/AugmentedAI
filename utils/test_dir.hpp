@@ -17,12 +17,12 @@
 #endif
 
 // TODO: test
-#define SRC_FAIL TEST_FILE_ROOT "/src_fail"
-#define SRC_PASS TEST_FILE_ROOT "/src_pass"
+#define SRC_FAIL_ROOT TEST_FILE_ROOT "/src_fail"
+#define SRC_PASS_ROOT TEST_FILE_ROOT "/src_pass"
 
 // TODO: test
-#define DATA_FAIL TEST_FILE_ROOT "/data_fail"
-#define DATA_PASS TEST_FILE_ROOT "/data_pass"
+#define DATA_FAIL_ROOT TEST_FILE_ROOT "/data_fail"
+#define DATA_PASS_ROOT TEST_FILE_ROOT "/data_pass"
 
 #define ALPHA_PATH TEST_FILE_ROOT "/alphabet/alphabet.png"
 #define BORDER_PATH TEST_FILE_ROOT "/alphabet/border.png"

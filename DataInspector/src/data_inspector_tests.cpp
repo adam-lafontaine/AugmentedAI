@@ -98,13 +98,13 @@ bool expected_class(const char* dir, MLClass ml_class)
 
 bool src_fail_exists_test()
 {
-	return is_directory(SRC_FAIL);
+	return is_directory(SRC_FAIL_ROOT);
 }
 
 
 bool src_pass_exists_test()
 {
-	return is_directory(SRC_PASS);
+	return is_directory(SRC_PASS_ROOT);
 }
 
 
@@ -116,13 +116,13 @@ bool model_exists_test()
 
 bool src_fail_files_test()
 {
-	return files_exist(SRC_FAIL);
+	return files_exist(SRC_FAIL_ROOT);
 }
 
 
 bool src_pass_files_test()
 {
-	return files_exist(SRC_PASS);
+	return files_exist(SRC_PASS_ROOT);
 }
 
 
@@ -134,23 +134,23 @@ bool model_file_test()
 
 bool src_fail_files_ext_test()
 {
-	return files_same_ext(SRC_FAIL);
+	return files_same_ext(SRC_FAIL_ROOT);
 }
 
 
 bool src_pass_files_ext_test()
 {
-	return files_same_ext(SRC_PASS);
+	return files_same_ext(SRC_PASS_ROOT);
 }
 
 
 bool src_fail_inspect_test()
 {
-	return expected_class(SRC_FAIL, MLClass::Fail);
+	return expected_class(SRC_FAIL_ROOT, MLClass::Fail);
 }
 
 
 bool src_pass_inspect_test()
 {
-	return expected_class(SRC_PASS, MLClass::Pass);
+	return expected_class(SRC_PASS_ROOT, MLClass::Pass);
 }

@@ -30,23 +30,23 @@ const auto dst_root = project_root + "/dst";
 
 void make_data_images()
 {
-	for (auto const& entry : fs::directory_iterator(DATA_FAIL))
+	for (auto const& entry : fs::directory_iterator(DATA_FAIL_ROOT))
 	{
 		fs::remove_all(entry);
 	}
 
-	for (auto const& entry : fs::directory_iterator(DATA_PASS))
+	for (auto const& entry : fs::directory_iterator(DATA_PASS_ROOT))
 	{
 		fs::remove_all(entry);
 	}
 
-	auto src_files = dir::str::get_files_of_type(SRC_FAIL, ".png");
+	auto src_files = dir::str::get_files_of_type(SRC_FAIL_ROOT, ".png");
 	auto data = data::files_to_data(src_files);
-	data::save_data_images(data, DATA_FAIL);
+	data::save_data_images(data, DATA_FAIL_ROOT);
 
-	src_files = dir::str::get_files_of_type(SRC_PASS, ".png");
+	src_files = dir::str::get_files_of_type(SRC_PASS_ROOT, ".png");
 	data = data::files_to_data(src_files);
-	data::save_data_images(data, DATA_PASS);
+	data::save_data_images(data, DATA_PASS_ROOT);
 }
 
 

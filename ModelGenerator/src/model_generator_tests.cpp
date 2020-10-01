@@ -83,13 +83,13 @@ void delete_files(const char* dir)
 
 bool data_fail_exists_test()
 {
-	return is_directory(DATA_FAIL);
+	return is_directory(DATA_FAIL_ROOT);
 }
 
 
 bool data_pass_exists_test()
 {
-	return is_directory(DATA_PASS);
+	return is_directory(DATA_PASS_ROOT);
 }
 
 
@@ -101,13 +101,13 @@ bool model_exists_test()
 
 bool data_fail_files_test()
 {
-	return image_files_exist(DATA_FAIL);
+	return image_files_exist(DATA_FAIL_ROOT);
 }
 
 
 bool data_pass_files_test()
 {
-	return image_files_exist(DATA_PASS);
+	return image_files_exist(DATA_PASS_ROOT);
 }
 
 
@@ -125,8 +125,8 @@ bool add_class_data_test()
 {
 	gen::ModelGenerator gen;
 
-	gen.add_class_data(DATA_PASS, MLClass::Pass);
-	gen.add_class_data(DATA_FAIL, MLClass::Fail);
+	gen.add_class_data(DATA_PASS_ROOT, MLClass::Pass);
+	gen.add_class_data(DATA_FAIL_ROOT, MLClass::Fail);
 
 	return gen.has_class_data();
 }
@@ -137,7 +137,7 @@ bool add_class_data_one_class_test()
 {
 	gen::ModelGenerator gen;
 
-	gen.add_class_data(DATA_PASS, MLClass::Pass);
+	gen.add_class_data(DATA_PASS_ROOT, MLClass::Pass);
 
 	return !gen.has_class_data();
 }
@@ -148,8 +148,8 @@ bool purge_class_data_test()
 {
 	gen::ModelGenerator gen;
 
-	gen.add_class_data(DATA_PASS, MLClass::Pass);
-	gen.add_class_data(DATA_FAIL, MLClass::Fail);
+	gen.add_class_data(DATA_PASS_ROOT, MLClass::Pass);
+	gen.add_class_data(DATA_FAIL_ROOT, MLClass::Fail);
 
 	gen.purge_class_data();
 
@@ -177,7 +177,7 @@ bool save_model_one_class_test()
 
 	gen::ModelGenerator gen;
 
-	gen.add_class_data(DATA_PASS, MLClass::Pass);
+	gen.add_class_data(DATA_PASS_ROOT, MLClass::Pass);
 
 	gen.save_model(MODEL_ROOT);
 
@@ -192,8 +192,8 @@ bool save_model_one_file_test()
 
 	gen::ModelGenerator gen;
 
-	gen.add_class_data(DATA_PASS, MLClass::Pass);
-	gen.add_class_data(DATA_FAIL, MLClass::Fail);
+	gen.add_class_data(DATA_PASS_ROOT, MLClass::Pass);
+	gen.add_class_data(DATA_FAIL_ROOT, MLClass::Fail);
 
 	gen.save_model(MODEL_ROOT);
 
