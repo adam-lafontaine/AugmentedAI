@@ -14,15 +14,15 @@ dirhelper="../../utils/dirhelper.cpp"
 cluster="../../utils/cluster.cpp"
 
 data_adaptor="../../DataAdaptor/src/image_file_adaptor.cpp"
+pixel_conv="../../ModelGenerator/src/pixel_conversion.cpp"
 
-model_gen="../src/ModelGenerator.cpp"
-pixel_conv="../src/pixel_conversion.cpp"
+data_inspector="../src/data_inspector.cpp"
 
-main_cpp="../src/model_generator_tests.cpp"
+main_cpp="../src/data_inspector_tests.cpp"
 
-cpp_files="$main_cpp $dirhelper $cluster $data_adaptor $model_gen $pixel_conv"
+cpp_files="$main_cpp $dirhelper $cluster $data_adaptor $pixel_conv $data_inspector"
 
-exe="ModelGenerator"
+exe="DataInspector"
 
 # complile and write to file
 timestamp > $log_file

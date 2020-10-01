@@ -7,9 +7,19 @@
 namespace ins = data_inspector;
 namespace dir = dirhelper;
 
+#ifdef _WIN32
+
 constexpr auto src_fail = "D:\\test_images\\src_fail";
 constexpr auto src_pass = "D:\\test_images\\src_pass";
 constexpr auto model = "D:\\test_images\\model";
+
+#else
+
+constexpr auto src_fail = "/home/adam/projects/test_images/src_fail";
+constexpr auto src_pass = "/home/adam/projects/test_images/src_pass";
+constexpr auto model = "/home/adam/projects/test_images/model";
+
+#endif
 
 const auto img_ext = ".png";
 
