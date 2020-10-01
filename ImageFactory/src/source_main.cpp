@@ -1,24 +1,8 @@
 #include "image_factory.hpp"
-
-#ifdef _WIN32
-
-constexpr auto alpha_path = "D:\\test_images\\alphabet\\alphabet.png";
-constexpr auto border_path = "D:\\test_images\\alphabet\\border.png";
-constexpr auto fail_dir = "D:\\test_images\\src_fail";
-constexpr auto pass_dir = "D:\\test_images\\src_pass";
-
-#else
-
-constexpr auto alpha_path = "/home/adam/projects/test_images/alphabet/alphabet.png";
-constexpr auto border_path = "/home/adam/projects/test_images/alphabet/border.png";
-constexpr auto fail_dir = "/home/adam/projects/test_images/src_fail";
-constexpr auto pass_dir = "/home/adam/projects/test_images/src_pass";
-
-#endif
-
+#include "../../utils/test_dir.hpp"
 
 
 int main()
 {
-	build_images(alpha_path, border_path, pass_dir, fail_dir);	
+	build_images(ALPHA_PATH, BORDER_PATH, SRC_PASS, SRC_FAIL);	
 }

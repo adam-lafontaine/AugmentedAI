@@ -23,3 +23,7 @@
 // TODO: test
 #define DATA_FAIL TEST_FILE_ROOT "/data_fail"
 #define DATA_PASS TEST_FILE_ROOT "/data_pass"
+
+
+#define ALPHA_PATH TEST_FILE_ROOT "/alphabet/alphabet.png"
+#define BORDER_PATH TEST_FILE_ROOT "/alphabet/border.png"

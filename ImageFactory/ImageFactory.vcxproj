@@ -144,6 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\utils\libimage.hpp" />
+    <ClInclude Include="..\utils\test_dir.hpp" />
     <ClInclude Include="src\image_factory.hpp" />
   </ItemGroup>
   <ItemGroup>
