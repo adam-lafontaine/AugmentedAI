@@ -1,6 +1,7 @@
 #include "../src/ModelGenerator.hpp"
 #include "../src/pixel_conversion.hpp"
 #include "../../utils/dirhelper.hpp"
+#include "../../utils/test_dir.hpp"
 
 #include <string>
 #include <iostream>
@@ -12,19 +13,6 @@
 namespace dir = dirhelper;
 namespace gen = model_generator;
 
-#ifdef _WIN32
-
-constexpr auto data_fail = "D:\\test_images\\data_fail";
-constexpr auto data_pass = "D:\\test_images\\data_pass";
-constexpr auto model = "D:\\test_images\\model";
-
-#else
-
-constexpr auto data_fail = "/home/adam/projects/test_images/data_fail";
-constexpr auto data_pass = "/home/adam/projects/test_images/data_pass";
-constexpr auto model = "/home/adam/projects/test_images/model";
-
-#endif
 
 const auto img_ext = ".png";
 
@@ -95,31 +83,31 @@ void delete_files(const char* dir)
 
 bool data_fail_exists_test()
 {
-	return is_directory(data_fail);
+	return is_directory(DATA_FAIL);
 }
 
 
 bool data_pass_exists_test()
 {
-	return is_directory(data_pass);
+	return is_directory(DATA_PASS);
 }
 
 
 bool model_exists_test()
 {
-	return is_directory(model);
+	return is_directory(MODEL_ROOT);
 }
 
 
 bool data_fail_files_test()
 {
-	return image_files_exist(data_fail);
+	return image_files_exist(DATA_FAIL);
 }
 
 
 bool data_pass_files_test()
 {
-	return image_files_exist(data_pass);
+	return image_files_exist(DATA_PASS);
 }
 
 
@@ -137,8 +125,8 @@ bool add_class_data_test()
 {
 	gen::ModelGenerator gen;
 
-	gen.add_class_data(data_pass, MLClass::Pass);
-	gen.add_class_data(data_fail, MLClass::Fail);
+	gen.add_class_data(DATA_PASS, MLClass::Pass);
+	gen.add_class_data(DATA_FAIL, MLClass::Fail);
 
 	return gen.has_class_data();
 }
@@ -149,7 +137,7 @@ bool add_class_data_one_class_test()
 {
 	gen::ModelGenerator gen;
 
-	gen.add_class_data(data_pass, MLClass::Pass);
+	gen.add_class_data(DATA_PASS, MLClass::Pass);
 
 	return !gen.has_class_data();
 }
@@ -160,8 +148,8 @@ bool purge_class_data_test()
 {
 	gen::ModelGenerator gen;
 
-	gen.add_class_data(data_pass, MLClass::Pass);
-	gen.add_class_data(data_fail, MLClass::Fail);
+	gen.add_class_data(DATA_PASS, MLClass::Pass);
+	gen.add_class_data(DATA_FAIL, MLClass::Fail);
 
 	gen.purge_class_data();
 
@@ -172,44 +160,44 @@ bool purge_class_data_test()
 // no model file is created when no class data is available
 bool save_model_no_data_test()
 {
-	delete_files(model);
+	delete_files(MODEL_ROOT);
 
 	gen::ModelGenerator gen;
 
-	gen.save_model(model);
+	gen.save_model(MODEL_ROOT);
 
-	return dir::get_files_of_type(model, img_ext).empty();
+	return dir::get_files_of_type(MODEL_ROOT, img_ext).empty();
 }
 
 
 // all classes need to have data before a model file is created
 bool save_model_one_class_test()
 {
-	delete_files(model);
+	delete_files(MODEL_ROOT);
 
 	gen::ModelGenerator gen;
 
-	gen.add_class_data(data_pass, MLClass::Pass);
+	gen.add_class_data(DATA_PASS, MLClass::Pass);
 
-	gen.save_model(model);
+	gen.save_model(MODEL_ROOT);
 
-	return dir::get_files_of_type(model, img_ext).empty();
+	return dir::get_files_of_type(MODEL_ROOT, img_ext).empty();
 }
 
 
 // one file is created when generating a model
 bool save_model_one_file_test()
 {
-	delete_files(model);
+	delete_files(MODEL_ROOT);
 
 	gen::ModelGenerator gen;
 
-	gen.add_class_data(data_pass, MLClass::Pass);
-	gen.add_class_data(data_fail, MLClass::Fail);
+	gen.add_class_data(DATA_PASS, MLClass::Pass);
+	gen.add_class_data(DATA_FAIL, MLClass::Fail);
 
-	gen.save_model(model);
+	gen.save_model(MODEL_ROOT);
 
-	return dir::get_files_of_type(model, img_ext).size() == 1;;
+	return dir::get_files_of_type(MODEL_ROOT, img_ext).size() == 1;;
 }
 
 
@@ -220,7 +208,7 @@ bool save_model_active_test()
 	if (!save_model_one_file_test())
 		return false;
 
-	const auto model_file = dir::get_files_of_type(model, img_ext)[0];
+	const auto model_file = dir::get_files_of_type(MODEL_ROOT, img_ext)[0];
 
 	auto model = img::read_image_from_file(model_file.c_str());
 	const auto view = img::make_view(model);
@@ -245,7 +233,7 @@ bool pixel_conversion_test()
 	if (!save_model_one_file_test())
 		return false;
 
-	const auto model_file = dir::get_files_of_type(model, img_ext)[0];
+	const auto model_file = dir::get_files_of_type(MODEL_ROOT, img_ext)[0];
 
 	auto model = img::read_image_from_file(model_file.c_str());
 	const auto view = img::make_view(model);
