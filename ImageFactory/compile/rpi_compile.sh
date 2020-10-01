@@ -19,7 +19,7 @@ main_cpp="../src/source_main.cpp"
 
 cpp_files="$main_cpp $image_factory"
 
-exe="ImageFactory"
+exe="ImageFactoryPi"
 
 # complile and write to file
 timestamp > $log_file
