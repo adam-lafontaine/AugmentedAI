@@ -1,5 +1,6 @@
 #include "../src/data_adaptor.hpp"
 #include "../../utils/dirhelper.hpp"
+#include "../../utils/test_dir.hpp"
 
 #include <string>
 #include <iostream>
@@ -13,53 +14,40 @@ namespace dir = dirhelper;
 
 #ifdef _WIN32
 
-constexpr auto src_fail = "D:\\test_images\\src_fail";
-constexpr auto src_pass = "D:\\test_images\\src_pass";
-
-constexpr auto data_fail = "D:\\test_images\\data_fail";
-constexpr auto data_pass = "D:\\test_images\\data_pass";
-
-const auto src_root = std::string("D:\\repos\\AugmentedAI\\DataAdaptor\\test\\src");
-const auto dst_root = std::string("D:\\repos\\AugmentedAI\\DataAdaptor\\test\\dst");
+#define PROJECT_ROOT "D:/repos/AugmentedAI/DataAdaptor/test"
 
 #else
 
-constexpr auto src_fail = "/home/adam/projects/test_images/src_fail";
-constexpr auto src_pass = "/home/adam/projects/test_images/src_pass";
-
-constexpr auto data_fail = "/home/adam/projects/test_images/data_fail";
-constexpr auto data_pass = "/home/adam/projects/test_images/data_pass";
-
-const auto src_root = std::string("/home/adam/projects/AugmentedAI/DataAdaptor/test/src");
-const auto dst_root = std::string("/home/adam/projects/AugmentedAI/DataAdaptor/test/dst");
+#define PROJECT_ROOT "/home/adam/projects/AugmentedAI/DataAdaptor/test"
 
 #endif
 
+
+
+const auto project_root = std::string(PROJECT_ROOT);
+const auto src_root = project_root + "/src";
+const auto dst_root = project_root + "/dst";
+
 void make_data_images()
 {
-	for (auto const& entry : fs::directory_iterator(data_fail))
+	for (auto const& entry : fs::directory_iterator(DATA_FAIL))
 	{
 		fs::remove_all(entry);
 	}
 
-	for (auto const& entry : fs::directory_iterator(data_pass))
+	for (auto const& entry : fs::directory_iterator(DATA_PASS))
 	{
 		fs::remove_all(entry);
 	}
 
-	auto src_files = dir::str::get_files_of_type(src_fail, ".png");
+	auto src_files = dir::str::get_files_of_type(SRC_FAIL, ".png");
 	auto data = data::files_to_data(src_files);
-	data::save_data_images(data, data_fail);
+	data::save_data_images(data, DATA_FAIL);
 
-	src_files = dir::str::get_files_of_type(src_pass, ".png");
+	src_files = dir::str::get_files_of_type(SRC_PASS, ".png");
 	data = data::files_to_data(src_files);
-	data::save_data_images(data, data_pass);
+	data::save_data_images(data, DATA_PASS);
 }
-
-
-
-
-
 
 
 const auto src_files = std::array
