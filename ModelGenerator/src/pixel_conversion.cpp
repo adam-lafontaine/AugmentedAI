@@ -68,8 +68,6 @@ namespace model_generator
 		if (rgba.a == INACTIVE)
 			return MODEL_VALUE_MIN - 1;
 
-		const double max = 255;
-
 		// only the blue channel is used to store value
 		const auto ratio = rgba.b / BITS8_MAX;
 		return ratio * MODEL_VALUE_MAX;

@@ -80,5 +80,8 @@
     <ClInclude Include="..\ModelGenerator\src\pixel_conversion.hpp">
       <Filter>Header Files\model_generator</Filter>
     </ClInclude>
+    <ClInclude Include="..\utils\test_dir.hpp">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

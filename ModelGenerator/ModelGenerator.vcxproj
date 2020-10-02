@@ -149,6 +149,7 @@
     <ClInclude Include="..\utils\dirhelper.hpp" />
     <ClInclude Include="..\utils\libimage.hpp" />
     <ClInclude Include="..\utils\ml_class.hpp" />
+    <ClInclude Include="..\utils\test_dir.hpp" />
     <ClInclude Include="src\cluster_distance.hpp" />
     <ClInclude Include="src\ModelGenerator.hpp" />
     <ClInclude Include="src\pixel_conversion.hpp" />

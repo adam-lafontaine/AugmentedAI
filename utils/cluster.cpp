@@ -168,6 +168,7 @@ namespace cluster
 		return min;
 	}
 	
+	/*
 
 	// returns the most popular result
 	// stops when the same result has been found for more than half of the attempts
@@ -208,6 +209,8 @@ namespace cluster
 
 		return best.result;
 	}
+
+	*/
 
 
 	//======= CLASS METHODS ==============================

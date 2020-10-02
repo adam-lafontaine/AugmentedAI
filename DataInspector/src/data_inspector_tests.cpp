@@ -1,15 +1,12 @@
 #include "../src/data_inspector.hpp"
 #include "../../utils/dirhelper.hpp"
+#include "../../utils/test_dir.hpp"
 
 #include <iostream>
 #include <algorithm>
 
 namespace ins = data_inspector;
 namespace dir = dirhelper;
-
-constexpr auto src_fail = "D:\\test_images\\src_fail";
-constexpr auto src_pass = "D:\\test_images\\src_pass";
-constexpr auto model = "D:\\test_images\\model";
 
 const auto img_ext = ".png";
 
@@ -41,7 +38,7 @@ int main()
 	run_test("src_fail_inspect_test()    all fail", src_fail_inspect_test);
 	run_test("src_pass_inspect_test()    all pass", src_pass_inspect_test);
 
-	std::cout << "\nTests complete.";
+	std::cout << "\nTests complete.\n";
 }
 
 
@@ -90,7 +87,7 @@ bool expected_class(const char* dir, MLClass ml_class)
 	auto begin = files.begin();
 	auto end = files.end(); // begin + 1;
 
-	const auto inspect = [&](auto const& file) { return ins::inspect(file.c_str(), model) == ml_class; };
+	const auto inspect = [&](auto const& file) { return ins::inspect(file.c_str(), MODEL_ROOT) == ml_class; };
 
 	return std::all_of(begin, end, inspect);
 }
@@ -101,59 +98,59 @@ bool expected_class(const char* dir, MLClass ml_class)
 
 bool src_fail_exists_test()
 {
-	return is_directory(src_fail);
+	return is_directory(SRC_FAIL_ROOT);
 }
 
 
 bool src_pass_exists_test()
 {
-	return is_directory(src_pass);
+	return is_directory(SRC_PASS_ROOT);
 }
 
 
 bool model_exists_test()
 {
-	return is_directory(model);
+	return is_directory(MODEL_ROOT);
 }
 
 
 bool src_fail_files_test()
 {
-	return files_exist(src_fail);
+	return files_exist(SRC_FAIL_ROOT);
 }
 
 
 bool src_pass_files_test()
 {
-	return files_exist(src_pass);
+	return files_exist(SRC_PASS_ROOT);
 }
 
 
 bool model_file_test()
 {
-	return image_files_exist(model);
+	return image_files_exist(MODEL_ROOT);
 }
 
 
 bool src_fail_files_ext_test()
 {
-	return files_same_ext(src_fail);
+	return files_same_ext(SRC_FAIL_ROOT);
 }
 
 
 bool src_pass_files_ext_test()
 {
-	return files_same_ext(src_pass);
+	return files_same_ext(SRC_PASS_ROOT);
 }
 
 
 bool src_fail_inspect_test()
 {
-	return expected_class(src_fail, MLClass::Fail);
+	return expected_class(SRC_FAIL_ROOT, MLClass::Fail);
 }
 
 
 bool src_pass_inspect_test()
 {
-	return expected_class(src_pass, MLClass::Pass);
+	return expected_class(SRC_PASS_ROOT, MLClass::Pass);
 }
