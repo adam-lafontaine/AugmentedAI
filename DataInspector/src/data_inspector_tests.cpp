@@ -38,7 +38,7 @@ int main()
 	run_test("src_fail_inspect_test()    all fail", src_fail_inspect_test);
 	run_test("src_pass_inspect_test()    all pass", src_pass_inspect_test);
 
-	std::cout << "\nTests complete.";
+	std::cout << "\nTests complete.\n";
 }
 
 

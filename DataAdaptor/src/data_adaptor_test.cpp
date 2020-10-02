@@ -12,18 +12,6 @@
 namespace data = data_adaptor;
 namespace dir = dirhelper;
 
-#ifdef _WIN32
-
-#define PROJECT_ROOT "D:/repos/AugmentedAI/DataAdaptor/test"
-
-#else
-
-#define PROJECT_ROOT "/home/adam/projects/AugmentedAI/DataAdaptor/test"
-
-#endif
-
-
-
 const auto project_root = std::string(PROJECT_ROOT);
 const auto src_root = project_root + "/src";
 const auto dst_root = project_root + "/dst";
