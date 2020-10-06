@@ -234,7 +234,7 @@ namespace model_generator
 				val_total += qty * shade;
 			}
 
-			return val_total / qty_total;
+			return qty_total == 0 ? 0 : val_total / qty_total;
 		};
 
 		const auto sigma = [](color_hist_t const& hist, double mean)
@@ -246,13 +246,16 @@ namespace model_generator
 				auto val = shade;
 				auto qty = hist[shade];
 
+				if (!qty)
+					continue;
+
 				qty_total += qty;
 				auto diff = val - mean;
 				
 				total += qty * diff * diff;
 			}
 
-			return std::sqrt(total / qty_total);
+			return qty_total == 0 ? 0 : std::sqrt(total / qty_total);
 		};
 
 		auto m = mean(hist);
