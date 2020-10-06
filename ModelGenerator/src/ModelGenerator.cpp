@@ -61,10 +61,10 @@ namespace model_generator
 	static index_list_t find_relevant_positions(class_position_hists_t const& class_pos_hists);
 
 
-	centroid_list_t cluster_data(ModelGenerator::class_file_list_t const& class_data, index_list_t const& indeces);
+	//centroid_list_t cluster_data(ModelGenerator::class_file_list_t const& class_data, index_list_t const& indeces);
 
 
-	index_list_t filter_indeces(centroid_list_t const& centroids, index_list_t const& indeces);
+	//index_list_t filter_indeces(centroid_list_t const& centroids, index_list_t const& indeces);
 
 	//======= HISTOGRAM ============================
 
@@ -124,16 +124,49 @@ namespace model_generator
 		if (!has_class_data())
 			return;
 
-		const auto data_size = data::data_image_width();
+		class_cluster_data_t cluster_data;
 
-		// start by using all of the indeces
-		index_list_t data_indeces(data_size);		
-		std::iota(data_indeces.begin(), data_indeces.end(), 0);
+		auto hists = make_empty_histograms();
 
-		//index_list_t data_indeces{ 0 };
-		const auto centroids = cluster_data(m_class_data, data_indeces);
+		const auto get_data = [&](auto class_index)
+		{
+			for (auto const& data_file : m_class_data[class_index])
+			{
+				auto data_image = img::read_image_from_file(data_file);
+				auto data_view = img::make_view(data_image);
 
-		data_indeces = filter_indeces(centroids, data_indeces);
+				assert(data_view.width() == data::data_image_width());
+
+				append_data(cluster_data[class_index], data_view);
+
+				update_histograms(hists[class_index], data_view);
+			}
+
+			normalize_histograms(hists[class_index]);
+		};
+
+		for_each_class(get_data);
+
+		const auto data_indeces = find_relevant_positions(hists); // This needs to be right
+
+		cluster_t cluster;
+		centroid_list_t centroids;
+
+		const auto clusters_per_class = cluster::CLUSTER_COUNT;
+		std::array<size_t, ML_CLASS_COUNT> class_clusters = { clusters_per_class, clusters_per_class };
+
+
+		cluster.set_distance(build_cluster_distance(data_indeces));
+
+		const auto cluster_class_data = [&](auto c)
+		{
+			const auto cents = cluster.cluster_data(cluster_data[c], class_clusters[c]);
+			centroids.insert(centroids.end(), cents.begin(), cents.end());
+		};
+
+		for_each_class(cluster_class_data);
+
+
 
 		const auto save_path = std::string(save_dir) + '/' + make_file_name();
 
@@ -160,84 +193,7 @@ namespace model_generator
 
 
 
-	//======= CLUSTERING =======================
-
-
-	centroid_list_t cluster_data(ModelGenerator::class_file_list_t const& class_data, index_list_t const& indeces)
-	{
-		class_cluster_data_t cluster_data;
-
-		auto hists = make_empty_histograms();
-
-		const auto get_data = [&](auto class_index)
-		{
-			for (auto const& data_file : class_data[class_index])
-			{
-				auto data_image = img::read_image_from_file(data_file);
-				auto data_view = img::make_view(data_image);
-
-				assert(data_view.width() == data::data_image_width());
-
-				append_data(cluster_data[class_index], data_view);
-
-				update_histograms(hists[class_index], data_view);
-			}
-
-			normalize_histograms(hists[class_index]);
-		};
-
-		for_each_class(get_data);
-
-		
-
-		cluster_t cluster;
-		centroid_list_t centroids;
-
-		const auto clusters_per_class = cluster::CLUSTER_COUNT;
-		std::array<size_t, ML_CLASS_COUNT> class_clusters = { clusters_per_class, clusters_per_class };
-
-
-		cluster.set_distance(build_cluster_distance(indeces));
-
-		const auto cluster_class_data = [&](auto c)
-		{
-			const auto cents = cluster.cluster_data(cluster_data[c], class_clusters[c]);
-			centroids.insert(centroids.end(), cents.begin(), cents.end());
-		};
-
-		for_each_class(cluster_class_data);
-
-		return centroids;
-	}
-
-
-	index_list_t filter_indeces(centroid_list_t const& centroids, index_list_t const& indeces)
-	{
-		index_list_t list;
-		const auto tolerance = 0.01;
-
-		for (auto i : indeces)
-		{
-			auto min = centroids[0][i];
-			auto max = centroids[0][i];
-			for (auto const& cent : centroids)
-			{
-				auto val = cent[i];
-				if (val < min)
-					min = val;
-				else if (val > max)
-					max = val;
-
-				if (std::abs(max - min) > tolerance)
-				{
-					list.push_back(i);
-					break;
-				}					
-			}			
-		}
-
-		return list;
-	}
+	//======= CLUSTERING =======================	
 
 	
 	static index_list_t set_indeces_manually(class_position_hists_t const& class_pos_hists)
@@ -260,6 +216,7 @@ namespace model_generator
 	} minmax_t;
 
 
+
 	static minmax_t get_stat_range(color_hist_t const& hist)
 	{
 		const auto mean = [](color_hist_t const& hist)
@@ -280,7 +237,7 @@ namespace model_generator
 			return val_total / qty_total;
 		};
 
-		const auto sigma = [](color_hist_t const& hist, double mean) // TODO: wrong
+		const auto sigma = [](color_hist_t const& hist, double mean)
 		{
 			double total = 0;
 			size_t qty_total = 0;
@@ -312,7 +269,7 @@ namespace model_generator
 		const auto r_min = std::min_element(ranges.begin(), ranges.end(), [](const auto& a, const auto& b) { return a.min < b.min; });
 		const auto r_max = std::max_element(ranges.begin(), ranges.end(), [](const auto& a, const auto& b) { return a.max < b.max; });
 
-		return r_min->max >= (r_min + 1) ->min || r_max->min <= (r_max - 1)->min;
+		return r_min->max >= r_max->min;
 	}
 
 
