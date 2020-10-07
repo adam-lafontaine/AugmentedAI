@@ -20,7 +20,7 @@ namespace data_adaptor
 	src_data_t file_to_data(const char* src_file);
 	src_data_t file_to_data(path_t const& src_file);
 
-	data_list_t files_to_data(file_list_t const& files);
+	data_list_t file_list_to_data(file_list_t const& files);
 
 	// Define how data is to be saved as a "data image"
 	void save_data_images(data_list_t const& data, const char* dst_dir);

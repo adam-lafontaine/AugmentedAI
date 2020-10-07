@@ -19,6 +19,9 @@
     <Filter Include="Source Files\utils">
       <UniqueIdentifier>{93b82098-e650-4c97-b2e4-e5bef0557885}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\adaptors">
+      <UniqueIdentifier>{caf3eb27-d46f-417f-907f-af9125d144b5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\utils\libimage.hpp">
@@ -38,11 +41,14 @@
     <ClCompile Include="..\utils\dirhelper.cpp">
       <Filter>Source Files\utils</Filter>
     </ClCompile>
-    <ClCompile Include="src\image_file_adaptor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\data_adaptor_test.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\adaptors\adaptor_skeleton.cpp">
+      <Filter>Source Files\adaptors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\adaptors\image_file_adaptor.cpp">
+      <Filter>Source Files\adaptors</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

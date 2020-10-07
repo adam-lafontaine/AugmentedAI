@@ -1,4 +1,4 @@
-#include "data_adaptor.hpp"
+#include "../data_adaptor.hpp"
 
 #include <algorithm>
 #include <cassert>
@@ -103,23 +103,10 @@ namespace data_adaptor
 
 	//======= PUBLIC ========================
 
-	src_data_t file_to_data(const char* src_file)
-	{
-		auto image = img::gray::read_image_from_file(src_file);
-
-		return count_shades(img::make_view(image));
-	}
+	
 
 
-	src_data_t file_to_data(path_t const& src_file)
-	{
-		auto image = img::gray::read_image_from_file(src_file);
-
-		return count_shades(img::make_view(image));
-	}
-
-
-	data_list_t files_to_data(file_list_t const& files)
+	data_list_t file_list_to_data(file_list_t const& files)
 	{
 		data_list_t data;
 		data.reserve(files.size());
@@ -238,5 +225,27 @@ namespace data_adaptor
 		x.bytes[0] = rgba.a;
 
 		return static_cast<double>(x.value) / BITS32_MAX;
+	}
+
+
+	src_data_t file_to_data(const char* src_file)
+	{
+		auto image = img::gray::read_image_from_file(src_file);
+		const auto data = count_shades(img::make_view(image));
+
+		assert(data.size() == DATA_IMAGE_WIDTH);
+
+		return data;
+	}
+
+
+	src_data_t file_to_data(path_t const& src_file)
+	{
+		auto image = img::gray::read_image_from_file(src_file);
+		const auto data = count_shades(img::make_view(image));
+
+		assert(data.size() == DATA_IMAGE_WIDTH);
+
+		return data;
 	}
 }
