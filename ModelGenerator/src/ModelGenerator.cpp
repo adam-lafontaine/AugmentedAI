@@ -60,12 +60,6 @@ namespace model_generator
 	// finds the indeces of the data that contribute to determining the class
 	static index_list_t find_relevant_positions(class_position_hists_t const& class_pos_hists);
 
-
-	//centroid_list_t cluster_data(ModelGenerator::class_file_list_t const& class_data, index_list_t const& indeces);
-
-
-	//index_list_t filter_indeces(centroid_list_t const& centroids, index_list_t const& indeces);
-
 	//======= HISTOGRAM ============================
 
 	static void update_histograms(position_hists_t& pos_hists, img::view_t const& view);
@@ -429,7 +423,7 @@ namespace model_generator
 
 
 	// converts a data pixel to a value between 0 and MAX_COLOR_VALUE
-	static hist_value_t to_hist_value(data_pixel_t const& pix)  // TODO: grayscale
+	static hist_value_t to_hist_value(data_pixel_t const& pix)
 	{
 		const auto val = static_cast<double>(img::to_bits32(pix));
 		const auto ratio = val / UINT32_MAX;
