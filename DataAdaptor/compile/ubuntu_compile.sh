@@ -11,11 +11,11 @@ flags="-Wall -O3"
 std="-std=c++17"
 
 dirhelper="../../utils/dirhelper.cpp"
-image_adaptor="../src/image_file_adaptor.cpp"
+data_adaptor="../src/data_adaptor.cpp"
 
 main_cpp="../src/data_adaptor_test.cpp"
 
-cpp_files="$main_cpp $dirhelper $image_adaptor"
+cpp_files="$main_cpp $dirhelper $data_adaptor"
 
 exe="DataAdaptor"
 
