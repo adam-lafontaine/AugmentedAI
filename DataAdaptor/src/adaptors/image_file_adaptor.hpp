@@ -42,25 +42,7 @@ union four_bytes_t
 };
 
 
-// Define how to name save files
-inline std::string make_numbered_file_name(unsigned index, size_t index_length)
-{
-	index_length = index_length < 2 ? 2 : index_length;
 
-	char idx_str[10];
-	sprintf_s(idx_str, "%0*d", (int)index_length, index); // zero pad index number
-
-	std::time_t result = std::time(nullptr);
-
-	std::ostringstream oss;
-	oss << std::put_time(std::localtime(&result), "%F_%T");
-
-	auto date_file = oss.str() + img::IMAGE_FILE_EXTENSION;
-
-	std::replace(date_file.begin(), date_file.end(), ':', '-');
-
-	return std::string(idx_str) + '_' + date_file;
-}
 
 
 
@@ -88,6 +70,34 @@ inline src_data_t count_shades(img::gray::view_t const& view)
 
 namespace impl
 {
+	// Define how to name save files
+	inline std::string make_numbered_file_name(unsigned index, size_t index_length)
+	{
+		//index_length = index_length < 2 ? 2 : index_length;
+
+		//char idx_str[10];
+		//sprintf_s(idx_str, "%0*d", (int)index_length, index); // zero pad index number
+
+		//std::time_t result = std::time(nullptr);
+
+		//std::ostringstream oss;
+		//oss << std::put_time(std::localtime(&result), "%F_%T");
+
+		//auto date_file = oss.str() + img::IMAGE_FILE_EXTENSION;
+
+		//std::replace(date_file.begin(), date_file.end(), ':', '-');
+
+		//return std::string(idx_str) + '_' + date_file;
+
+		index_length = index_length < 2 ? 2 : index_length;
+
+		char idx_str[10];
+		sprintf_s(idx_str, "%0*d", (int)index_length, index); // zero pad index number
+
+		return std::string(idx_str) + img::IMAGE_FILE_EXTENSION;
+	}
+
+
 	inline data_pixel_t data_value_to_data_pixel(double val)
 	{
 		assert(val >= DATA_MIN_VALUE);

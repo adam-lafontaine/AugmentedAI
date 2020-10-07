@@ -80,7 +80,7 @@ namespace data_adaptor
 			first != end;
 			first = last, last = get_last())
 		{
-			const auto name = make_numbered_file_name(idx++, idx_len);
+			const auto name = impl::make_numbered_file_name(idx++, idx_len);
 			const auto dst_file_path = std::string(dst_dir) + '/' + name;
 
 			save_data_range(first, last, dst_file_path);

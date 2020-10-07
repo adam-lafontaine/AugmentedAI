@@ -20,20 +20,23 @@ constexpr double DATA_MAX_VALUE = 1;
 
 
 
-// Define how to name save files
-inline std::string make_numbered_file_name(unsigned index, size_t index_length)
-{
-	index_length = index_length < 2 ? 2 : index_length;
 
-	char idx_str[10];
-	sprintf_s(idx_str, "%0*d", (int)index_length, index); // zero pad index number
-
-	return std::string(idx_str) + img::IMAGE_FILE_EXTENSION;
-}
 
 
 namespace impl
 {
+	// Define how to name save files
+	inline std::string make_numbered_file_name(unsigned index, size_t index_length)
+	{
+		index_length = index_length < 2 ? 2 : index_length;
+
+		char idx_str[10];
+		sprintf_s(idx_str, "%0*d", (int)index_length, index); // zero pad index number
+
+		return std::string(idx_str) + img::IMAGE_FILE_EXTENSION;
+	}
+
+
 	//======= TODO: IMPLEMENT =================
 
 	inline data_pixel_t data_value_to_data_pixel(double val)
