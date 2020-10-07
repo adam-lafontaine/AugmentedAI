@@ -6,6 +6,7 @@
 #include "../../DataAdaptor/src/data_adaptor.hpp"
 
 #include <algorithm>
+#include <numeric>
 #include <functional>
 #include <iomanip>
 #include <sstream>
@@ -58,8 +59,6 @@ namespace model_generator
 
 	// finds the indeces of the data that contribute to determining the class
 	static index_list_t find_relevant_positions(class_position_hists_t const& class_pos_hists);
-
-
 
 	//======= HISTOGRAM ============================
 
@@ -119,36 +118,37 @@ namespace model_generator
 		if (!has_class_data())
 			return;
 
-		auto class_hists = make_empty_histograms();
 		class_cluster_data_t cluster_data;
 
-		const auto fill_class_hists = [&](auto c)
+		auto hists = make_empty_histograms();
+
+		const auto get_data = [&](auto class_index)
 		{
-			for (auto const& data_file : m_class_data[c])
+			for (auto const& data_file : m_class_data[class_index])
 			{
 				auto data_image = img::read_image_from_file(data_file);
 				auto data_view = img::make_view(data_image);
 
 				assert(data_view.width() == data::data_image_width());
 
-				update_histograms(class_hists[c], data_view);
-				append_data(cluster_data[c], data_view);
+				append_data(cluster_data[class_index], data_view);
+
+				update_histograms(hists[class_index], data_view);
 			}
 
-			normalize_histograms(class_hists[c]);
+			normalize_histograms(hists[class_index]);
 		};
 
-		for_each_class(fill_class_hists);
+		for_each_class(get_data);
 
-
-		// build clustering distance function from position histograms
-		const auto data_indeces = find_relevant_positions(class_hists);
+		const auto data_indeces = find_relevant_positions(hists); // This needs to be right
 
 		cluster_t cluster;
 		centroid_list_t centroids;
 
 		const auto clusters_per_class = cluster::CLUSTER_COUNT;
 		std::array<size_t, ML_CLASS_COUNT> class_clusters = { clusters_per_class, clusters_per_class };
+
 
 		cluster.set_distance(build_cluster_distance(data_indeces));
 
@@ -159,6 +159,7 @@ namespace model_generator
 		};
 
 		for_each_class(cluster_class_data);
+
 
 
 		const auto save_path = std::string(save_dir) + '/' + make_file_name();
@@ -186,71 +187,128 @@ namespace model_generator
 
 
 
-	//======= CLUSTERING =======================
+	//======= CLUSTERING =======================	
 
-	// here you can cheat by choosing indeces after inspecting the data images
-	static index_list_t set_indeces_manually()
+	
+	static index_list_t set_indeces_manually(class_position_hists_t const& class_pos_hists)
 	{
-		index_list_t list{ 0 }; // use only the first index of the data image values
+		// here you can cheat by choosing indeces after inspecting the data images
+		//index_list_t list{ 0 }; // use only the first index of the data image values
+
+		// just return all of the indeces
+		index_list_t list(class_pos_hists[0].size());
+		std::iota(list.begin(), list.end(), 0);
 
 		return list;
+	}
+
+	
+	typedef struct
+	{
+		double min;
+		double max;
+	} minmax_t;
+
+
+
+	static minmax_t get_stat_range(color_hist_t const& hist)
+	{
+		const auto mean = [](color_hist_t const& hist)
+		{
+			size_t qty_total = 0;
+			size_t val_total = 0;
+
+			for (size_t shade = 0; shade < hist.size(); ++shade)
+			{
+				auto qty = hist[shade];
+				if (!qty)
+					continue;
+
+				qty_total += qty;
+				val_total += qty * shade;
+			}
+
+			return qty_total == 0 ? 0 : val_total / qty_total;
+		};
+
+		const auto sigma = [](color_hist_t const& hist, double mean)
+		{
+			double total = 0;
+			size_t qty_total = 0;
+			for (size_t shade = 0; shade < hist.size(); ++shade)
+			{
+				auto val = shade;
+				auto qty = hist[shade];
+
+				if (!qty)
+					continue;
+
+				qty_total += qty;
+				auto diff = val - mean;
+				
+				total += qty * diff * diff;
+			}
+
+			return qty_total == 0 ? 0 : std::sqrt(total / qty_total);
+		};
+
+		auto m = mean(hist);
+		auto s = sigma(hist, m);
+
+		return{ m - s, m + s }; // mean +/- one std dev
+	}
+	
+
+	static bool has_overlap(std::array<minmax_t, ML_CLASS_COUNT> const& ranges)
+	{
+		assert(ranges.size() >= 2);
+
+		const auto r_min = std::min_element(ranges.begin(), ranges.end(), [](const auto& a, const auto& b) { return a.min < b.min; });
+		const auto r_max = std::max_element(ranges.begin(), ranges.end(), [](const auto& a, const auto& b) { return a.max < b.max; });
+
+		return r_min->max >= r_max->min;
 	}
 
 
 	// An attempt at programatically finding data image indeces that contribute to classification
 	// finds the indeces of the data that contribute to determining the class
-	// compares the average of shades with observed values
-	// does not account for multiple maxima
 	static index_list_t try_find_indeces(class_position_hists_t const& class_pos_hists)
 	{
-		const double min_diff = 0.001;
+		const size_t min_diff = 1;
 		const size_t num_pos = class_pos_hists[0].size();
-		std::array<double, ML_CLASS_COUNT> class_avg = { 0.0 };
+
+		std::array<minmax_t, ML_CLASS_COUNT> class_ranges;
 
 		index_list_t list;
 
 		for (size_t pos = 0; pos < num_pos; ++pos)
 		{
-			for (size_t class_index = 0; class_index < ML_CLASS_COUNT; ++class_index)
-			{
-				double total = 0;
-				size_t count = 0;
+			class_ranges = { 0 };
 
-				auto hist = class_pos_hists[class_index][pos];
+			const auto set_class_range = [&](auto class_index) { class_ranges[class_index] = get_stat_range(class_pos_hists[class_index][pos]); };
 
-				for (size_t shade = 0; shade < hist.size(); ++shade)
-				{
-					auto qty = hist[shade];
-					if (!qty)
-						continue;
+			for_each_class(set_class_range);
 
-					total += shade;
-					++count;
-				}
+			if (has_overlap(class_ranges))
+				continue;
 
-				class_avg[class_index] = total / count;
-			}
-
-			const auto [min, max] = std::minmax_element(class_avg.begin(), class_avg.end());
-			if ((*max - *min) > min_diff)
-				list.push_back(pos);
-
-			class_avg = { 0.0 };
+			list.push_back(pos);			
 		}
-
-		assert(!list.empty());
 
 		return list;
 	}
 
-
-
 	
 	static index_list_t find_relevant_positions(class_position_hists_t const& class_pos_hists)
 	{
-		return set_indeces_manually();
+		//return set_indeces_manually(class_pos_hists);
 
-		//return try_find_indeces(class_pos_hists);		
+		const auto indeces = try_find_indeces(class_pos_hists);
+
+		if(indeces.empty())
+			return set_indeces_manually(class_pos_hists);		
+
+		return indeces;
 	}
 
 
@@ -365,7 +423,7 @@ namespace model_generator
 
 
 	// converts a data pixel to a value between 0 and MAX_COLOR_VALUE
-	static hist_value_t to_hist_value(data_pixel_t const& pix)  // TODO: grayscale
+	static hist_value_t to_hist_value(data_pixel_t const& pix)
 	{
 		const auto val = static_cast<double>(img::to_bits32(pix));
 		const auto ratio = val / UINT32_MAX;
