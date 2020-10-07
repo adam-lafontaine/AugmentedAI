@@ -45,11 +45,11 @@
     <ClCompile Include="..\utils\cluster.cpp">
       <Filter>Source Files\utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\DataAdaptor\src\image_file_adaptor.cpp">
-      <Filter>Source Files\data_adaptor</Filter>
-    </ClCompile>
     <ClCompile Include="..\ModelGenerator\src\pixel_conversion.cpp">
       <Filter>Source Files\model_generator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DataAdaptor\src\adaptors\image_file_adaptor.cpp">
+      <Filter>Source Files\data_adaptor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

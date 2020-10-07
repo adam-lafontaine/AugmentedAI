@@ -29,11 +29,11 @@ void make_data_images()
 	}
 
 	auto src_files = dir::str::get_files_of_type(SRC_FAIL_ROOT, ".png");
-	auto data = data::files_to_data(src_files);
+	auto data = data::file_list_to_data(src_files);
 	data::save_data_images(data, DATA_FAIL_ROOT);
 
 	src_files = dir::str::get_files_of_type(SRC_PASS_ROOT, ".png");
-	data = data::files_to_data(src_files);
+	data = data::file_list_to_data(src_files);
 	data::save_data_images(data, DATA_PASS_ROOT);
 }
 
@@ -57,8 +57,8 @@ bool dst_root_exists_test();
 bool file_to_data_not_empty_test();
 bool file_to_data_size_test();
 bool file_to_data_value_range_test();
-bool files_to_data_size_test();
-bool files_to_data_values_test();
+bool file_list_to_data_size_test();
+bool file_list_to_data_values_test();
 bool save_data_images_create_file_test();
 bool save_data_images_height_test();
 bool pixel_conversion_test();
@@ -82,8 +82,8 @@ int main()
 	run_test("file_to_data()               not empty", file_to_data_not_empty_test);
 	run_test("file_to_data()                    size", file_to_data_size_test);
 	run_test("file_to_data()             value range", file_to_data_value_range_test);
-	run_test("files_to_data()                   size", files_to_data_size_test);
-	run_test("files_to_data()        matching values", files_to_data_values_test);
+	run_test("file_list_to_data()               size", file_list_to_data_size_test);
+	run_test("file_list_to_data()    matching values", file_list_to_data_values_test);
 	run_test("save_data_images()     file(s) created", save_data_images_create_file_test);
 	run_test("save_data_images()      file(s) height", save_data_images_height_test);
 	run_test("pixel_conversion_test()   close enough", pixel_conversion_test);
@@ -158,10 +158,10 @@ bool file_to_data_value_range_test()
 
 
 // reading multiple files generates the expected amount of data
-bool files_to_data_size_test()
+bool file_list_to_data_size_test()
 {
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
-	const auto data = data::files_to_data(file_list);
+	const auto data = data::file_list_to_data(file_list);
 
 	return data.size() == file_list.size();
 }
@@ -169,10 +169,10 @@ bool files_to_data_size_test()
 
 // generating data from multiple files give the same values
 // as if generating data from each file individually
-bool files_to_data_values_test()
+bool file_list_to_data_values_test()
 {
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
-	const auto data = data::files_to_data(file_list);
+	const auto data = data::file_list_to_data(file_list);
 
 	const size_t test_index = 2;
 
@@ -191,7 +191,7 @@ bool save_data_images_create_file_test()
 	delete_files(dst_root);
 
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
-	const auto data = data::files_to_data(file_list);
+	const auto data = data::file_list_to_data(file_list);
 
 	data::save_data_images(data, dst_root.c_str());
 
@@ -207,7 +207,7 @@ bool save_data_images_create_file_test()
 bool save_data_images_height_test()
 {
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
-	const auto data = data::files_to_data(file_list);
+	const auto data = data::file_list_to_data(file_list);
 
 	delete_files(dst_root);
 
@@ -238,7 +238,7 @@ bool pixel_conversion_test()
 	const double tolerance = 0.0001;
 
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
-	const auto data = data::files_to_data(file_list);
+	const auto data = data::file_list_to_data(file_list);
 
 	const auto compare = [&](double val) 
 	{
@@ -261,7 +261,7 @@ bool data_image_row_to_data_size_test()
 	const size_t test_index = 0;
 
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
-	const auto data = data::files_to_data(file_list);
+	const auto data = data::file_list_to_data(file_list);
 
 	delete_files(dst_root);
 
@@ -288,7 +288,7 @@ bool data_image_row_to_data_values_test()
 	const double tolerance = 0.0001;
 
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
-	const auto data = data::files_to_data(file_list);
+	const auto data = data::file_list_to_data(file_list);
 
 	delete_files(dst_root);
 

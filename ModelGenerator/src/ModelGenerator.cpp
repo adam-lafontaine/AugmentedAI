@@ -231,7 +231,7 @@ namespace model_generator
 			return qty_total == 0 ? 0 : val_total / qty_total;
 		};
 
-		const auto sigma = [](color_hist_t const& hist, double mean)
+		const auto sigma = [](color_hist_t const& hist, size_t mean)
 		{
 			double total = 0;
 			size_t qty_total = 0;

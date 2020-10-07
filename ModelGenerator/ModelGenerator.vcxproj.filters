@@ -71,11 +71,11 @@
     <ClCompile Include="src\model_generator_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\DataAdaptor\src\image_file_adaptor.cpp">
-      <Filter>Source Files\data_adaptor</Filter>
-    </ClCompile>
     <ClCompile Include="src\pixel_conversion.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DataAdaptor\src\adaptors\image_file_adaptor.cpp">
+      <Filter>Source Files\data_adaptor</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

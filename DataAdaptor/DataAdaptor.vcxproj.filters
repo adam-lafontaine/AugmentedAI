@@ -44,9 +44,6 @@
     <ClCompile Include="src\data_adaptor_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\adaptors\adaptor_skeleton.cpp">
-      <Filter>Source Files\adaptors</Filter>
-    </ClCompile>
     <ClCompile Include="src\adaptors\image_file_adaptor.cpp">
       <Filter>Source Files\adaptors</Filter>
     </ClCompile>

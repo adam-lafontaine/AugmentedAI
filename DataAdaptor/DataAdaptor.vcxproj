@@ -150,7 +150,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\utils\dirhelper.cpp" />
-    <ClCompile Include="src\adaptors\adaptor_skeleton.cpp" />
     <ClCompile Include="src\adaptors\image_file_adaptor.cpp" />
     <ClCompile Include="src\data_adaptor_test.cpp" />
   </ItemGroup>
