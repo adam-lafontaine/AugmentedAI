@@ -48,7 +48,7 @@
     <ClCompile Include="..\ModelGenerator\src\pixel_conversion.cpp">
       <Filter>Source Files\model_generator</Filter>
     </ClCompile>
-    <ClCompile Include="..\DataAdaptor\src\adaptors\image_file_adaptor.cpp">
+    <ClCompile Include="..\DataAdaptor\src\data_adaptor.cpp">
       <Filter>Source Files\data_adaptor</Filter>
     </ClCompile>
   </ItemGroup>
