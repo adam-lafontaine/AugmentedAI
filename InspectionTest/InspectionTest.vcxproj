@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\DataAdaptor\src\data_adaptor.cpp" />
     <ClCompile Include="..\utils\dirhelper.cpp" />
     <ClCompile Include="src\inspection_test_main.cpp" />
   </ItemGroup>

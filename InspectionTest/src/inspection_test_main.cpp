@@ -35,7 +35,10 @@ constexpr auto IMG_EXT = ".png";
 
 
 void print_title();
+void print(const char* msg);
+void println(const char* msg);
 file_div_t divide_files_for_testing(file_list_t&& files);
+void save_data_images(file_list_t const&, const char* dst_dir);
 
 
 int main()
@@ -43,14 +46,25 @@ int main()
 	print_title();
 
 	// get the raw data files
+	print("getting files. ");
 	auto src_fail = dir::str::get_files_of_type(SRC_FAIL_ROOT, ".png");
 	auto src_pass = dir::str::get_files_of_type(SRC_PASS_ROOT, ".png");
+	println("done.");
 
 	// separate files for teaching and testing
+	print("separating files for teach/test. ");
 	const auto div_fail = divide_files_for_testing(std::move(src_fail));
 	const auto div_pass = divide_files_for_testing(std::move(src_pass));
+	println("done.");
 
+	// save data for teaching
+	print("saving fail data. ");
+	save_data_images(div_fail.teach, DATA_FAIL_ROOT);
+	println("done.");
 
+	print("saving pass data. ");
+	save_data_images(div_pass.teach, DATA_PASS_ROOT);
+	println("done.");
 
 
 	std::cout << "\ndone.\n";
@@ -66,11 +80,24 @@ void print_title()
 	std::cout << "***************************************************\n\n";
 }
 
+
+// Lazy
+void print(const char* msg)
+{
+	std::cout << msg;
+}
+
+
+void println(const char* msg)
+{
+	std::cout << msg << '\n';
+}
+
 file_div_t divide_files_for_testing(file_list_t&& files)
 {
 	const auto size = files.size();
 
-	const auto teach_sz = 0.8 * size;
+	const auto teach_sz = static_cast<size_t>(0.8 * size);
 	const auto test_sz = size - teach_sz;
 
 	assert(teach_sz > 0);
@@ -106,4 +133,21 @@ file_div_t divide_files_for_testing(file_list_t&& files)
 	}
 
 	return result;
+}
+
+
+void delete_files(const char* dir)
+{
+	for (auto const& entry : fs::directory_iterator(dir))
+	{
+		fs::remove_all(entry);
+	}
+}
+
+
+void save_data_images(file_list_t const& files, const char* dst_dir)
+{
+	const auto data = da::file_list_to_data(files);
+	delete_files(dst_dir);
+	da::save_data_images(data, dst_dir);
 }

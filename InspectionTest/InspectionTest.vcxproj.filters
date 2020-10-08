@@ -19,6 +19,9 @@
     <Filter Include="Source Files\utils">
       <UniqueIdentifier>{ae0c6738-0952-4db5-9586-4451700e8033}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\data_adaptor">
+      <UniqueIdentifier>{454180ba-1eb6-4ac9-9def-e1f20cb26254}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\inspection_test_main.cpp">
@@ -26,6 +29,9 @@
     </ClCompile>
     <ClCompile Include="..\utils\dirhelper.cpp">
       <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DataAdaptor\src\data_adaptor.cpp">
+      <Filter>Source Files\data_adaptor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
