@@ -17,7 +17,7 @@ std="-std=c++17"
 dirhelper="../../utils/dirhelper.cpp"
 cluster="../../utils/cluster.cpp"
 
-data_adaptor="../../DataAdaptor/src/image_file_adaptor.cpp"
+data_adaptor="../../DataAdaptor/src/data_adaptor.cpp"
 
 model_gen="../src/ModelGenerator.cpp"
 pixel_conv="../src/pixel_conversion.cpp"

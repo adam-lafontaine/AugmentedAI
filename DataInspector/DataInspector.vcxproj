@@ -143,7 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\DataAdaptor\src\image_file_adaptor.cpp" />
+    <ClCompile Include="..\DataAdaptor\src\data_adaptor.cpp" />
     <ClCompile Include="..\ModelGenerator\src\pixel_conversion.cpp" />
     <ClCompile Include="..\utils\cluster.cpp" />
     <ClCompile Include="..\utils\dirhelper.cpp" />

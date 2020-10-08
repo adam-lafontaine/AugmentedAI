@@ -146,12 +146,16 @@
     <ClInclude Include="..\utils\dirhelper.hpp" />
     <ClInclude Include="..\utils\libimage.hpp" />
     <ClInclude Include="..\utils\test_dir.hpp" />
+    <ClInclude Include="src\adaptors\adaptor_skeleton.hpp" />
+    <ClInclude Include="src\adaptors\count_black_pixels.hpp" />
+    <ClInclude Include="src\adaptors\image_file_adaptor.hpp" />
+    <ClInclude Include="src\adaptors\image_sections.hpp" />
     <ClInclude Include="src\data_adaptor.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\utils\dirhelper.cpp" />
+    <ClCompile Include="src\data_adaptor.cpp" />
     <ClCompile Include="src\data_adaptor_test.cpp" />
-    <ClCompile Include="src\image_file_adaptor.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
