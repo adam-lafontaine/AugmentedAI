@@ -17,12 +17,15 @@ namespace mg = model_generator;
 namespace di = data_inspector;
 
 using index_list_t = std::vector<size_t>;
+using file_list_t = dir::str::file_list_t;
+
+
 
 typedef struct
 {
-	index_list_t teach;
-	index_list_t test;
-} index_div_t;
+	file_list_t teach;
+	file_list_t test;
+} file_div_t;
 
 
 
@@ -32,17 +35,22 @@ constexpr auto IMG_EXT = ".png";
 
 
 void print_title();
-index_div_t divide_indeces_for_testing(size_t size);
+file_div_t divide_files_for_testing(file_list_t&& files);
+
 
 int main()
 {
 	print_title();
 
-	const auto src_fail = dir::str::get_files_of_type(SRC_FAIL_ROOT, ".png");
-	const auto src_pass = dir::str::get_files_of_type(SRC_PASS_ROOT, ".png");
+	// get the raw data files
+	auto src_fail = dir::str::get_files_of_type(SRC_FAIL_ROOT, ".png");
+	auto src_pass = dir::str::get_files_of_type(SRC_PASS_ROOT, ".png");
 
-	const auto fail_idx = divide_indeces_for_testing(src_fail.size());
-	const auto pass_idx = divide_indeces_for_testing(src_pass.size());
+	// separate files for teaching and testing
+	const auto div_fail = divide_files_for_testing(std::move(src_fail));
+	const auto div_pass = divide_files_for_testing(std::move(src_pass));
+
+
 
 
 	std::cout << "\ndone.\n";
@@ -58,18 +66,19 @@ void print_title()
 	std::cout << "***************************************************\n\n";
 }
 
-
-index_div_t divide_indeces_for_testing(size_t size)
+file_div_t divide_files_for_testing(file_list_t&& files)
 {
+	const auto size = files.size();
+
 	const auto teach_sz = 0.8 * size;
 	const auto test_sz = size - teach_sz;
 
 	assert(teach_sz > 0);
 	assert(test_sz > 0);
 
-	index_div_t result;
+	file_div_t result;
 	result.teach.reserve(teach_sz);
-	result.test.reserve(test_sz);	
+	result.test.reserve(test_sz);
 
 	index_list_t list(size);
 	std::iota(list.begin(), list.end(), 0);
@@ -79,11 +88,22 @@ index_div_t divide_indeces_for_testing(size_t size)
 
 	std::shuffle(list.begin(), list.end(), gen);
 
-	for (size_t i = 0; i < teach_sz; ++i)
-		result.teach.push_back(list[i]);
+	index_list_t teach_indeces;
+	teach_indeces.reserve(teach_sz);
 
-	for (size_t i = teach_sz; i < size; ++i)
-		result.test.push_back(list[i]);
+	for (size_t i = 0; i < teach_sz; ++i)
+		teach_indeces.push_back(list[i]);
+
+	const auto begin = teach_indeces.begin();
+	const auto end = teach_indeces.end();
+
+	for (int i = size - 1; i >= 0; --i)
+	{
+		if (std::find(begin, end, i) != end)
+			result.teach.push_back(std::move(files[i]));
+		else
+			result.test.push_back(std::move(files[i]));
+	}
 
 	return result;
 }
