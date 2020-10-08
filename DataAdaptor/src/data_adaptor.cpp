@@ -10,6 +10,7 @@ Allows for changing implementation without having to modify the source file list
 // choose implementation
 #include "adaptors/image_file_adaptor.hpp" 
 //#include "adaptors/count_black_pixels.hpp"
+//#include "adaptors/image_sections.hpp"
 
 
 
