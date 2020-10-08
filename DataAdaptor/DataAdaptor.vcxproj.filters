@@ -42,6 +42,9 @@
     <ClInclude Include="src\adaptors\adaptor_skeleton.hpp">
       <Filter>Header Files\adaptors</Filter>
     </ClInclude>
+    <ClInclude Include="src\adaptors\count_black_pixels.hpp">
+      <Filter>Header Files\adaptors</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\utils\dirhelper.cpp">

@@ -7,9 +7,9 @@ Allows for changing implementation without having to modify the source file list
 
 */
 
-#include "adaptors/image_file_adaptor.hpp" // choose implementation
-
-//#include "adaptors/adaptor_skeleton.hpp"
+// choose implementation
+#include "adaptors/image_file_adaptor.hpp" 
+//#include "adaptors/count_black_pixels.hpp"
 
 
 

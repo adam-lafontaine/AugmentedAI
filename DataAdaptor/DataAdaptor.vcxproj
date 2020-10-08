@@ -147,6 +147,7 @@
     <ClInclude Include="..\utils\libimage.hpp" />
     <ClInclude Include="..\utils\test_dir.hpp" />
     <ClInclude Include="src\adaptors\adaptor_skeleton.hpp" />
+    <ClInclude Include="src\adaptors\count_black_pixels.hpp" />
     <ClInclude Include="src\adaptors\image_file_adaptor.hpp" />
     <ClInclude Include="src\data_adaptor.hpp" />
   </ItemGroup>
