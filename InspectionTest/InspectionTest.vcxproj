@@ -144,6 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\DataAdaptor\src\data_adaptor.cpp" />
+    <ClCompile Include="..\DataInspector\src\data_inspector.cpp" />
     <ClCompile Include="..\ModelGenerator\src\ModelGenerator.cpp" />
     <ClCompile Include="..\ModelGenerator\src\pixel_conversion.cpp" />
     <ClCompile Include="..\utils\cluster.cpp" />
@@ -152,6 +153,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\DataAdaptor\src\data_adaptor.hpp" />
+    <ClInclude Include="..\DataInspector\src\data_inspector.hpp" />
     <ClInclude Include="..\ModelGenerator\src\cluster_distance.hpp" />
     <ClInclude Include="..\ModelGenerator\src\ModelGenerator.hpp" />
     <ClInclude Include="..\ModelGenerator\src\pixel_conversion.hpp" />

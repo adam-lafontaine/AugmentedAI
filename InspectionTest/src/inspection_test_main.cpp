@@ -20,7 +20,6 @@ using index_list_t = std::vector<size_t>;
 using file_list_t = dir::str::file_list_t;
 
 
-
 typedef struct
 {
 	file_list_t teach;
@@ -40,6 +39,7 @@ void println(const char* msg);
 file_div_t divide_files_for_testing(file_list_t&& files);
 void save_data_images(file_list_t const&, const char* dst_dir);
 void save_model(const char* pass_dir, const char* fail_dir, const char* model_dir);
+void test_files(file_list_t const& files, const char* model_dir, const char* label);
 
 
 int main()
@@ -72,10 +72,13 @@ int main()
 	println("done.");
 
 	// test fail files
-
+	println("\ntesting fail files");
+	test_files(div_fail.test, MODEL_ROOT, "Fail");
+	println("");
 
 	// test pass files
-
+	println("testing pass files");
+	test_files(div_pass.test, MODEL_ROOT, "Pass");
 
 	std::cout << "\ndone.\n";
 }
@@ -175,4 +178,53 @@ void save_model(const char* pass_dir, const char* fail_dir, const char* model_di
 	gen.add_class_data(fail_dir, MLClass::Fail);
 
 	gen.save_model(model_dir);
+}
+
+
+void print_result_table_title()
+{
+	unsigned wname = 5;
+	unsigned wqty = 6;
+	unsigned wunkn = 9;
+	//unsigned wtime = 14;
+
+	std::cout << std::setw(wname) << "TEST";
+	std::cout << std::setw(wqty) << "PASS";
+	std::cout << std::setw(wqty) << "FAIL";
+	std::cout << std::setw(wunkn) << "UNKNOWN";
+	//std::cout << std::setw(wtime) << "TIME";
+	std::cout << '\n';
+}
+
+
+void print_result_table_row(const char* test, unsigned pass, unsigned fail, unsigned unkn)
+{
+	unsigned wtest = 5;
+	unsigned wqty = 6;
+	unsigned wunkn = 9;
+	//unsigned wtime = 14;
+
+	std::cout << std::setw(wtest) << test;
+	std::cout << std::setw(wqty) << pass;
+	std::cout << std::setw(wqty) << fail;
+	std::cout << std::setw(wunkn) << unkn;
+	//std::cout << std::setw(wtime) << std::to_string(time) + " sec";
+	std::cout << '\n';
+}
+
+
+void test_files(file_list_t const& files, const char* model_dir, const char* label)
+{
+	unsigned pass_count = 0;
+	unsigned fail_count = 0;
+	unsigned unkn_count = 0;
+	print_result_table_title();
+	for (const auto& file : files)
+	{
+		const auto res = di::inspect(file.c_str(), model_dir);
+		pass_count += res == MLClass::Pass;
+		fail_count += res == MLClass::Fail;
+		unkn_count += res == MLClass::Unknown;
+	}
+	print_result_table_row(label, pass_count, fail_count, unkn_count);
 }

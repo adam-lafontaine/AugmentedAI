@@ -31,6 +31,12 @@
     <Filter Include="Source Files\model_generator">
       <UniqueIdentifier>{03e08c49-d79c-4f9e-8ff9-29a447779796}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\data_inspector">
+      <UniqueIdentifier>{ef46b0be-c9a5-45bc-b9dd-50d0ba5fbfc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\data_inspector">
+      <UniqueIdentifier>{45a3961b-695e-447a-8498-14e41671e324}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\inspection_test_main.cpp">
@@ -50,6 +56,9 @@
     </ClCompile>
     <ClCompile Include="..\utils\cluster.cpp">
       <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DataInspector\src\data_inspector.cpp">
+      <Filter>Source Files\data_inspector</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -79,6 +88,9 @@
     </ClInclude>
     <ClInclude Include="..\utils\ml_class.hpp">
       <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DataInspector\src\data_inspector.hpp">
+      <Filter>Header Files\data_inspector</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
