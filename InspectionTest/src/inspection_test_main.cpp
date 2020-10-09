@@ -39,6 +39,7 @@ void print(const char* msg);
 void println(const char* msg);
 file_div_t divide_files_for_testing(file_list_t&& files);
 void save_data_images(file_list_t const&, const char* dst_dir);
+void save_model(const char* pass_dir, const char* fail_dir, const char* model_dir);
 
 
 int main()
@@ -46,25 +47,34 @@ int main()
 	print_title();
 
 	// get the raw data files
-	print("getting files. ");
+	print("getting files... ");
 	auto src_fail = dir::str::get_files_of_type(SRC_FAIL_ROOT, ".png");
 	auto src_pass = dir::str::get_files_of_type(SRC_PASS_ROOT, ".png");
 	println("done.");
 
 	// separate files for teaching and testing
-	print("separating files for teach/test. ");
+	print("separating files for teach/test... ");
 	const auto div_fail = divide_files_for_testing(std::move(src_fail));
 	const auto div_pass = divide_files_for_testing(std::move(src_pass));
 	println("done.");
 
 	// save data for teaching
-	print("saving fail data. ");
+	print("saving fail data... ");
 	save_data_images(div_fail.teach, DATA_FAIL_ROOT);
 	println("done.");
-
-	print("saving pass data. ");
+	print("saving pass data... ");
 	save_data_images(div_pass.teach, DATA_PASS_ROOT);
 	println("done.");
+
+	// generate model
+	print("generating model... ");
+	save_model(DATA_PASS_ROOT, DATA_FAIL_ROOT, MODEL_ROOT);
+	println("done.");
+
+	// test fail files
+
+
+	// test pass files
 
 
 	std::cout << "\ndone.\n";
@@ -73,6 +83,8 @@ int main()
 
 void print_title()
 {
+	println("");
+
 	std::cout << "***************************************************\n";
 	std::cout << "*                                                 *\n";
 	std::cout << "*            DATA INSPECTION TEST                 *\n";
@@ -150,4 +162,17 @@ void save_data_images(file_list_t const& files, const char* dst_dir)
 	const auto data = da::file_list_to_data(files);
 	delete_files(dst_dir);
 	da::save_data_images(data, dst_dir);
+}
+
+
+void save_model(const char* pass_dir, const char* fail_dir, const char* model_dir)
+{
+	delete_files(model_dir);
+
+	mg::ModelGenerator gen;
+
+	gen.add_class_data(pass_dir, MLClass::Pass);
+	gen.add_class_data(fail_dir, MLClass::Fail);
+
+	gen.save_model(model_dir);
 }

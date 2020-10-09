@@ -144,11 +144,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\DataAdaptor\src\data_adaptor.cpp" />
+    <ClCompile Include="..\ModelGenerator\src\ModelGenerator.cpp" />
+    <ClCompile Include="..\ModelGenerator\src\pixel_conversion.cpp" />
+    <ClCompile Include="..\utils\cluster.cpp" />
     <ClCompile Include="..\utils\dirhelper.cpp" />
     <ClCompile Include="src\inspection_test_main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\DataAdaptor\src\data_adaptor.hpp" />
+    <ClInclude Include="..\ModelGenerator\src\cluster_distance.hpp" />
+    <ClInclude Include="..\ModelGenerator\src\ModelGenerator.hpp" />
+    <ClInclude Include="..\ModelGenerator\src\pixel_conversion.hpp" />
+    <ClInclude Include="..\utils\cluster.hpp" />
+    <ClInclude Include="..\utils\cluster_config.hpp" />
     <ClInclude Include="..\utils\dirhelper.hpp" />
+    <ClInclude Include="..\utils\ml_class.hpp" />
     <ClInclude Include="..\utils\test_dir.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

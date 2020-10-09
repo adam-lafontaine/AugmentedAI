@@ -22,6 +22,15 @@
     <Filter Include="Source Files\data_adaptor">
       <UniqueIdentifier>{454180ba-1eb6-4ac9-9def-e1f20cb26254}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\data_adaptor">
+      <UniqueIdentifier>{a90671c9-427d-42cb-8d82-52ed85e3c69a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\model_generator">
+      <UniqueIdentifier>{0a5b489b-864d-4cbc-89e8-83dbfbc5c5cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\model_generator">
+      <UniqueIdentifier>{03e08c49-d79c-4f9e-8ff9-29a447779796}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\inspection_test_main.cpp">
@@ -33,12 +42,42 @@
     <ClCompile Include="..\DataAdaptor\src\data_adaptor.cpp">
       <Filter>Source Files\data_adaptor</Filter>
     </ClCompile>
+    <ClCompile Include="..\ModelGenerator\src\ModelGenerator.cpp">
+      <Filter>Source Files\model_generator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ModelGenerator\src\pixel_conversion.cpp">
+      <Filter>Source Files\model_generator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\utils\cluster.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\utils\dirhelper.hpp">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
     <ClInclude Include="..\utils\test_dir.hpp">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DataAdaptor\src\data_adaptor.hpp">
+      <Filter>Header Files\data_adaptor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ModelGenerator\src\cluster_distance.hpp">
+      <Filter>Header Files\model_generator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ModelGenerator\src\ModelGenerator.hpp">
+      <Filter>Header Files\model_generator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ModelGenerator\src\pixel_conversion.hpp">
+      <Filter>Header Files\model_generator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utils\cluster.hpp">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utils\cluster_config.hpp">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utils\ml_class.hpp">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
   </ItemGroup>
