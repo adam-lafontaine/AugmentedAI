@@ -34,12 +34,11 @@ constexpr auto IMG_EXT = ".png";
 
 
 void print_title();
-void print(const char* msg);
-void println(const char* msg);
 file_div_t divide_files_for_testing(file_list_t&& files);
 void save_data_images(file_list_t const&, const char* dst_dir);
 void save_model(const char* pass_dir, const char* fail_dir, const char* model_dir);
 void test_files(file_list_t const& files, const char* model_dir, const char* label);
+void print_file_div(file_div_t const& div, const char* label);
 
 
 int main()
@@ -47,37 +46,43 @@ int main()
 	print_title();
 
 	// get the raw data files
-	print("getting files... ");
+	std::cout << "getting FAIL files... ";
 	auto src_fail = dir::str::get_files_of_type(SRC_FAIL_ROOT, ".png");
+	std::cout << src_fail.size() << " files found.\n\n";
+
+	std::cout << "getting PASS files... ";
 	auto src_pass = dir::str::get_files_of_type(SRC_PASS_ROOT, ".png");
-	println("done.");
+	std::cout << src_pass.size() << " files found.\n\n";
 
 	// separate files for teaching and testing
-	print("separating files for teach/test... ");
+	std::cout << "separating files for teach/test...\n";
 	const auto div_fail = divide_files_for_testing(std::move(src_fail));
+	print_file_div(div_fail, "FAIL");
+
 	const auto div_pass = divide_files_for_testing(std::move(src_pass));
-	println("done.");
+	print_file_div(div_pass, "PASS");
 
 	// save data for teaching
-	print("saving fail data... ");
+	std::cout << "\nsaving fail data... ";
 	save_data_images(div_fail.teach, DATA_FAIL_ROOT);
-	println("done.");
-	print("saving pass data... ");
+	std::cout << "done.\n";
+
+	std::cout << "\nsaving pass data... ";
 	save_data_images(div_pass.teach, DATA_PASS_ROOT);
-	println("done.");
+	std::cout << "done.\n";
 
 	// generate model
-	print("generating model... ");
+	std::cout << "\ngenerating model... ";
 	save_model(DATA_PASS_ROOT, DATA_FAIL_ROOT, MODEL_ROOT);
-	println("done.");
+	std::cout << "done.\n";
 
 	// test fail files
-	println("\ntesting fail files");
+	std::cout << "\ntesting fail files...\n";
 	test_files(div_fail.test, MODEL_ROOT, "Fail");
-	println("");
+	
 
 	// test pass files
-	println("testing pass files");
+	std::cout << "\ntesting pass files...\n";
 	test_files(div_pass.test, MODEL_ROOT, "Pass");
 
 	std::cout << "\ndone.\n";
@@ -86,8 +91,7 @@ int main()
 
 void print_title()
 {
-	println("");
-
+	std::cout <<'\n';
 	std::cout << "***************************************************\n";
 	std::cout << "*                                                 *\n";
 	std::cout << "*            DATA INSPECTION TEST                 *\n";
@@ -95,18 +99,6 @@ void print_title()
 	std::cout << "***************************************************\n\n";
 }
 
-
-// Lazy
-void print(const char* msg)
-{
-	std::cout << msg;
-}
-
-
-void println(const char* msg)
-{
-	std::cout << msg << '\n';
-}
 
 file_div_t divide_files_for_testing(file_list_t&& files)
 {
@@ -227,4 +219,12 @@ void test_files(file_list_t const& files, const char* model_dir, const char* lab
 		unkn_count += res == MLClass::Unknown;
 	}
 	print_result_table_row(label, pass_count, fail_count, unkn_count);
+}
+
+
+void print_file_div(file_div_t const& div, const char* label)
+{
+	std::cout << label << ":\n";
+	std::cout << "  teach = " << div.teach.size() << "files\n";
+	std::cout << "   test = " << div.test.size() << "files\n";
 }
