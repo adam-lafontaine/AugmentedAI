@@ -12,15 +12,22 @@ std="-std=c++17"
 
 utils="../../utils"
 DataAdaptor="../../DataAdaptor/src"
+ModelGenerator="../../ModelGenerator/src"
+DataInspector="../../DataInspector/src"
 
 dirhelper="$utils/dirhelper.cpp"
+cluster="$utils/cluster.cpp"
+
 data_adaptor="$DataAdaptor/data_adaptor.cpp"
+pixel_conv="$ModelGenerator/pixel_conversion.cpp"
 
-main_cpp="$DataAdaptor/data_adaptor_test.cpp"
+data_insp="$DataInspector/data_inspector.cpp"
 
-cpp_files="$main_cpp $dirhelper $data_adaptor"
+main_cpp="$DataInspector/data_inspector_tests.cpp"
 
-exe="DataAdaptor"
+cpp_files="$main_cpp $dirhelper $cluster $data_adaptor $pixel_conv $data_insp"
+
+exe="DataInspector"
 
 # complile and write to file
 timestamp > $log_file
