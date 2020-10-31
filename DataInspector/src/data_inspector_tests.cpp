@@ -14,17 +14,19 @@ std::string data_fail_root;
 std::string data_pass_root;
 std::string model_root;
 
-void get_directories()
+bool get_directories()
 {
 	TestDirConfig config;
 	if (!config.has_all_keys())
-		return;
+		return false;
 
 	src_fail_root = config.get(TestDir::SRC_FAIL_ROOT);
 	src_pass_root = config.get(TestDir::SRC_PASS_ROOT);
 	data_fail_root = config.get(TestDir::DATA_FAIL_ROOT);
 	data_pass_root = config.get(TestDir::DATA_PASS_ROOT);
 	model_root = config.get(TestDir::MODEL_ROOT);
+
+	return true;
 }
 
 const auto img_ext = ".png";
@@ -46,7 +48,11 @@ int main()
 	const auto run_test = [&](const char* name, const auto& test)
 	{ std::cout << name << ": " << (test() ? "Pass" : "Fail") << '\n'; };
 
-	get_directories();
+	if (!get_directories())
+	{
+		std::cout << "Failed to get directories from configuration file\n";
+		return EXIT_FAILURE;
+	}
 
 	run_test("src_fail_exists_test()   dir exists", src_fail_exists_test);
 	run_test("src_pass_exists_test()   dir exists", src_pass_exists_test);

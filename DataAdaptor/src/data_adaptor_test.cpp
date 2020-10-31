@@ -22,11 +22,11 @@ std::string src_pass_root;
 std::string data_fail_root;
 std::string data_pass_root;
 
-void get_directories()
+bool get_directories()
 {
 	TestDirConfig config;
 	if (!config.has_all_keys())
-		return;
+		return false;
 
 	const auto project_root = config.get(TestDir::PROJECT_ROOT);
 	src_root = project_root + "/src";
@@ -47,6 +47,7 @@ void get_directories()
 		src_root + "/181_F.png",
 	};
 
+	return true;
 }
 
 
@@ -99,7 +100,11 @@ int main()
 	const auto run_test = [&](const char* name, const auto& test) 
 		{ std::cout << name << ": " << (test() ? "Pass" : "Fail") << '\n'; };
 
-	get_directories();
+	if (!get_directories())
+	{
+		std::cout << "Failed to get directories from configuration file\n";
+		return EXIT_FAILURE;
+	}
 
 	run_test("src_root_exists_test()                ", src_root_exists_test);
 	run_test("src_files_exist_test()                ", src_files_exist_test);
