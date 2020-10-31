@@ -66,7 +66,7 @@ void make_data_images()
 	auto data = data::file_list_to_data(src_files);
 	data::save_data_images(data, data_fail_root);
 
-	src_files = dir::str::get_files_of_type(src_fail_root, ".png");
+	src_files = dir::str::get_files_of_type(src_pass_root, ".png");
 	data = data::file_list_to_data(src_files);
 	data::save_data_images(data, data_pass_root);
 }
