@@ -1,5 +1,5 @@
 #!/bin/bash
-# $ chmod 755 rpi_compile.sh
+# $ chmod 755 ...
 
 timestamp() {
   date +"%T"
@@ -14,14 +14,14 @@ log_file="compile.log"
 flags="-Wall -O3"
 std="-std=c++17"
 
-dirhelper="../../utils/dirhelper.cpp"
-data_adaptor="../src/data_adaptor.cpp"
+ImageFactory="../../ImageFactory/src"
 
-main_cpp="../src/data_adaptor_test.cpp"
+image_factory="$ImageFactory/image_factory.cpp"
+main_cpp="$ImageFactory/source_main.cpp"
 
-cpp_files="$main_cpp $dirhelper $data_adaptor"
+cpp_files="$main_cpp $image_factory"
 
-exe="DataAdaptorPi"
+exe="ImageFactory"
 
 # complile and write to file
 timestamp > $log_file

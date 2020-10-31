@@ -1,5 +1,5 @@
 #!/bin/bash
-# $ chmod 755 ubuntu_compile.sh
+# $ chmod 755 ...
 
 timestamp() {
   date +"%T"
@@ -10,8 +10,10 @@ log_file="compile.log"
 flags="-Wall -O3"
 std="-std=c++17"
 
-image_factory="../src/image_factory.cpp"
-main_cpp="../src/source_main.cpp"
+ImageFactory="../../ImageFactory/src"
+
+image_factory="$ImageFactory/image_factory.cpp"
+main_cpp="$ImageFactory/source_main.cpp"
 
 cpp_files="$main_cpp $image_factory"
 

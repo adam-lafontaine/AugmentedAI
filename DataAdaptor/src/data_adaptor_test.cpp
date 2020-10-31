@@ -100,8 +100,6 @@ int main()
 	make_data_images();
 
 	std::cout << "done.\n";
-
-	std::cin.get();
 }
 
 

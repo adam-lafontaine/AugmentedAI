@@ -274,7 +274,6 @@ namespace model_generator
 	// finds the indeces of the data that contribute to determining the class
 	static index_list_t try_find_indeces(class_position_hists_t const& class_pos_hists)
 	{
-		const size_t min_diff = 1;
 		const size_t num_pos = class_pos_hists[0].size();
 
 		std::array<minmax_t, ML_CLASS_COUNT> class_ranges;
