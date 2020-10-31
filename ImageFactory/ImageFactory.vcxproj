@@ -143,11 +143,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\utils\config_reader.hpp" />
     <ClInclude Include="..\utils\libimage.hpp" />
     <ClInclude Include="..\utils\test_dir.hpp" />
     <ClInclude Include="src\image_factory.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\utils\config_reader.cpp" />
     <ClCompile Include="src\image_factory.cpp" />
     <ClCompile Include="src\source_main.cpp" />
   </ItemGroup>
