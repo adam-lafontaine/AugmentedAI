@@ -48,6 +48,9 @@
     <ClInclude Include="src\adaptors\image_sections.hpp">
       <Filter>Header Files\adaptors</Filter>
     </ClInclude>
+    <ClInclude Include="..\utils\config_reader.hpp">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\utils\dirhelper.cpp">
@@ -58,6 +61,9 @@
     </ClCompile>
     <ClCompile Include="src\data_adaptor.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\utils\config_reader.cpp">
+      <Filter>Source Files\utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

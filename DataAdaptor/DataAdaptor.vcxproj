@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\utils\config_reader.hpp" />
     <ClInclude Include="..\utils\dirhelper.hpp" />
     <ClInclude Include="..\utils\libimage.hpp" />
     <ClInclude Include="..\utils\test_dir.hpp" />
@@ -153,6 +154,7 @@
     <ClInclude Include="src\data_adaptor.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\utils\config_reader.cpp" />
     <ClCompile Include="..\utils\dirhelper.cpp" />
     <ClCompile Include="src\data_adaptor.cpp" />
     <ClCompile Include="src\data_adaptor_test.cpp" />

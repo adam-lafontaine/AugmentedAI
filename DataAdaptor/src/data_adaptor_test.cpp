@@ -12,41 +12,64 @@
 namespace data = data_adaptor;
 namespace dir = dirhelper;
 
-const auto project_root = std::string(PROJECT_ROOT);
-const auto src_root = project_root + "/src";
-const auto dst_root = project_root + "/dst";
+std::string src_root;
+std::string dst_root;
+
+std::vector<std::string> src_files;
+
+std::string src_fail_root;
+std::string src_pass_root;
+std::string data_fail_root;
+std::string data_pass_root;
 
 void make_data_images()
 {
-	for (auto const& entry : fs::directory_iterator(DATA_FAIL_ROOT))
+	for (auto const& entry : fs::directory_iterator(data_fail_root))
 	{
 		fs::remove_all(entry);
 	}
 
-	for (auto const& entry : fs::directory_iterator(DATA_PASS_ROOT))
+	for (auto const& entry : fs::directory_iterator(data_pass_root))
 	{
 		fs::remove_all(entry);
 	}
 
-	auto src_files = dir::str::get_files_of_type(SRC_FAIL_ROOT, ".png");
+	auto src_files = dir::str::get_files_of_type(src_fail_root, ".png");
 	auto data = data::file_list_to_data(src_files);
-	data::save_data_images(data, DATA_FAIL_ROOT);
+	data::save_data_images(data, data_fail_root);
 
-	src_files = dir::str::get_files_of_type(SRC_PASS_ROOT, ".png");
+	src_files = dir::str::get_files_of_type(src_fail_root, ".png");
 	data = data::file_list_to_data(src_files);
-	data::save_data_images(data, DATA_PASS_ROOT);
+	data::save_data_images(data, data_pass_root);
 }
 
 
-const auto src_files = std::array
+void get_directories()
 {
-	src_root + "/001_A.png",
-	src_root + "/060_B.png",
-	src_root + "/093_C.png",
-	src_root + "/117_D.png",
-	src_root + "/163_E.png",
-	src_root + "/181_F.png",
-};
+	TestDirConfig config;
+	if (!config.has_all_keys())
+		return;
+
+	const auto project_root = config.get(TestDir::PROJECT_ROOT);
+	src_root = project_root + "/src";
+	dst_root = project_root + "/dst";
+
+	src_fail_root = config.get(TestDir::SRC_FAIL_ROOT);
+	src_pass_root = config.get(TestDir::SRC_PASS_ROOT);
+	data_fail_root = config.get(TestDir::DATA_FAIL_ROOT);
+	data_pass_root = config.get(TestDir::DATA_PASS_ROOT);
+
+	src_files = std::vector<std::string>
+	{
+		src_root + "/001_A.png",
+		src_root + "/060_B.png",
+		src_root + "/093_C.png",
+		src_root + "/117_D.png",
+		src_root + "/163_E.png",
+		src_root + "/181_F.png",
+	};
+
+}
 
 
 const auto dst_file_ext = ".png";
@@ -75,6 +98,8 @@ int main()
 {
 	const auto run_test = [&](const char* name, const auto& test) 
 		{ std::cout << name << ": " << (test() ? "Pass" : "Fail") << '\n'; };
+
+	get_directories();
 
 	run_test("src_root_exists_test()                ", src_root_exists_test);
 	run_test("src_files_exist_test()                ", src_files_exist_test);
