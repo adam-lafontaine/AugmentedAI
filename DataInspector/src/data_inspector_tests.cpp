@@ -8,6 +8,25 @@
 namespace ins = data_inspector;
 namespace dir = dirhelper;
 
+std::string src_fail_root;
+std::string src_pass_root;
+std::string data_fail_root;
+std::string data_pass_root;
+std::string model_root;
+
+void get_directories()
+{
+	TestDirConfig config;
+	if (!config.has_all_keys())
+		return;
+
+	src_fail_root = config.get(TestDir::SRC_FAIL_ROOT);
+	src_pass_root = config.get(TestDir::SRC_PASS_ROOT);
+	data_fail_root = config.get(TestDir::DATA_FAIL_ROOT);
+	data_pass_root = config.get(TestDir::DATA_PASS_ROOT);
+	model_root = config.get(TestDir::MODEL_ROOT);
+}
+
 const auto img_ext = ".png";
 
 bool src_fail_exists_test();
@@ -27,6 +46,8 @@ int main()
 	const auto run_test = [&](const char* name, const auto& test)
 	{ std::cout << name << ": " << (test() ? "Pass" : "Fail") << '\n'; };
 
+	get_directories();
+
 	run_test("src_fail_exists_test()   dir exists", src_fail_exists_test);
 	run_test("src_pass_exists_test()   dir exists", src_pass_exists_test);
 	run_test("model_exists_test()      dir exists", model_exists_test);
@@ -44,13 +65,13 @@ int main()
 
 //======= HELPERS =================
 
-bool is_directory(const char* path)
+bool is_directory(std::string const& path)
 {
 	return fs::exists(path) && fs::is_directory(path);
 }
 
 
-bool files_exist(const char* dir)
+bool files_exist(std::string const& dir)
 {
 	auto const files = dir::get_all_files(dir);
 
@@ -58,7 +79,7 @@ bool files_exist(const char* dir)
 }
 
 
-bool files_same_ext(const char* dir)
+bool files_same_ext(std::string const& dir)
 {
 	auto const files = dir::get_all_files(dir);
 	if (files.empty())
@@ -74,20 +95,20 @@ bool files_same_ext(const char* dir)
 }
 
 
-bool image_files_exist(const char* dir)
+bool image_files_exist(std::string const& dir)
 {
 	return dir::get_files_of_type(dir, img_ext).size() > 0;
 }
 
 
 // all files in the directory should match the class since they were used to generate the model
-bool expected_class(const char* dir, MLClass ml_class)
+bool expected_class(std::string const& dir, MLClass ml_class)
 {
 	auto const files = dir::str::get_all_files(dir);
 	auto begin = files.begin();
 	auto end = files.end(); // begin + 1;
 
-	const auto inspect = [&](auto const& file) { return ins::inspect(file.c_str(), MODEL_ROOT) == ml_class; };
+	const auto inspect = [&](auto const& file) { return ins::inspect(file.c_str(), model_root.c_str()) == ml_class; };
 
 	return std::all_of(begin, end, inspect);
 }
@@ -98,59 +119,59 @@ bool expected_class(const char* dir, MLClass ml_class)
 
 bool src_fail_exists_test()
 {
-	return is_directory(SRC_FAIL_ROOT);
+	return is_directory(src_fail_root);
 }
 
 
 bool src_pass_exists_test()
 {
-	return is_directory(SRC_PASS_ROOT);
+	return is_directory(src_pass_root);
 }
 
 
 bool model_exists_test()
 {
-	return is_directory(MODEL_ROOT);
+	return is_directory(model_root);
 }
 
 
 bool src_fail_files_test()
 {
-	return files_exist(SRC_FAIL_ROOT);
+	return files_exist(src_fail_root);
 }
 
 
 bool src_pass_files_test()
 {
-	return files_exist(SRC_PASS_ROOT);
+	return files_exist(src_pass_root);
 }
 
 
 bool model_file_test()
 {
-	return image_files_exist(MODEL_ROOT);
+	return image_files_exist(model_root);
 }
 
 
 bool src_fail_files_ext_test()
 {
-	return files_same_ext(SRC_FAIL_ROOT);
+	return files_same_ext(src_fail_root);
 }
 
 
 bool src_pass_files_ext_test()
 {
-	return files_same_ext(SRC_PASS_ROOT);
+	return files_same_ext(src_pass_root);
 }
 
 
 bool src_fail_inspect_test()
 {
-	return expected_class(SRC_FAIL_ROOT, MLClass::Fail);
+	return expected_class(src_fail_root, MLClass::Fail);
 }
 
 
 bool src_pass_inspect_test()
 {
-	return expected_class(SRC_PASS_ROOT, MLClass::Pass);
+	return expected_class(src_pass_root, MLClass::Pass);
 }

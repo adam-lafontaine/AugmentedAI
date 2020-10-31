@@ -22,28 +22,6 @@ std::string src_pass_root;
 std::string data_fail_root;
 std::string data_pass_root;
 
-void make_data_images()
-{
-	for (auto const& entry : fs::directory_iterator(data_fail_root))
-	{
-		fs::remove_all(entry);
-	}
-
-	for (auto const& entry : fs::directory_iterator(data_pass_root))
-	{
-		fs::remove_all(entry);
-	}
-
-	auto src_files = dir::str::get_files_of_type(src_fail_root, ".png");
-	auto data = data::file_list_to_data(src_files);
-	data::save_data_images(data, data_fail_root);
-
-	src_files = dir::str::get_files_of_type(src_fail_root, ".png");
-	data = data::file_list_to_data(src_files);
-	data::save_data_images(data, data_pass_root);
-}
-
-
 void get_directories()
 {
 	TestDirConfig config;
@@ -69,6 +47,28 @@ void get_directories()
 		src_root + "/181_F.png",
 	};
 
+}
+
+
+void make_data_images()
+{
+	for (auto const& entry : fs::directory_iterator(data_fail_root))
+	{
+		fs::remove_all(entry);
+	}
+
+	for (auto const& entry : fs::directory_iterator(data_pass_root))
+	{
+		fs::remove_all(entry);
+	}
+
+	auto src_files = dir::str::get_files_of_type(src_fail_root, ".png");
+	auto data = data::file_list_to_data(src_files);
+	data::save_data_images(data, data_fail_root);
+
+	src_files = dir::str::get_files_of_type(src_fail_root, ".png");
+	data = data::file_list_to_data(src_files);
+	data::save_data_images(data, data_pass_root);
 }
 
 
