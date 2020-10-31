@@ -106,7 +106,7 @@ bool expected_class(std::string const& dir, MLClass ml_class)
 {
 	auto const files = dir::str::get_all_files(dir);
 	auto begin = files.begin();
-	auto end = files.end(); // begin + 1;
+	auto end = files.end();
 
 	const auto inspect = [&](auto const& file) { return ins::inspect(file.c_str(), model_root.c_str()) == ml_class; };
 
