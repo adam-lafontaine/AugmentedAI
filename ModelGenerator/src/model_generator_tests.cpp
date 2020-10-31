@@ -13,6 +13,25 @@
 namespace dir = dirhelper;
 namespace gen = model_generator;
 
+std::string src_fail_root;
+std::string src_pass_root;
+std::string data_fail_root;
+std::string data_pass_root;
+std::string model_root;
+
+void get_directories()
+{
+	TestDirConfig config;
+	if (!config.has_all_keys())
+		return;
+
+	src_fail_root = config.get(TestDir::SRC_FAIL_ROOT);
+	src_pass_root = config.get(TestDir::SRC_PASS_ROOT);
+	data_fail_root = config.get(TestDir::DATA_FAIL_ROOT);
+	data_pass_root = config.get(TestDir::DATA_PASS_ROOT);
+	model_root = config.get(TestDir::MODEL_ROOT);
+}
+
 
 const auto img_ext = ".png";
 
@@ -36,6 +55,8 @@ int main()
 	const auto run_test = [&](const char* name, const auto& test)
 	{ std::cout << name << ": " << (test() ? "Pass" : "Fail") << '\n'; };
 
+	get_directories();
+
 	run_test("data_fail_exists_test()  dir exists", data_fail_exists_test);
 	run_test("data_pass_exists_test()  dir exists", data_pass_exists_test);
 	run_test("model_exists_test()      dir exists", model_exists_test);
@@ -57,19 +78,19 @@ int main()
 
 //======= HELPERS =================
 
-bool is_directory(const char* path)
+bool is_directory(std::string const& path)
 {
 	return fs::exists(path) && fs::is_directory(path);
 }
 
 
-bool image_files_exist(const char* dir)
+bool image_files_exist(std::string const& dir)
 {
 	return dir::get_files_of_type(dir, img_ext).size() > 0;
 }
 
 
-void delete_files(const char* dir)
+void delete_files(std::string const& dir)
 {
 	for (auto const& entry : fs::directory_iterator(dir))
 	{
@@ -83,31 +104,31 @@ void delete_files(const char* dir)
 
 bool data_fail_exists_test()
 {
-	return is_directory(DATA_FAIL_ROOT);
+	return is_directory(data_fail_root);
 }
 
 
 bool data_pass_exists_test()
 {
-	return is_directory(DATA_PASS_ROOT);
+	return is_directory(data_pass_root);
 }
 
 
 bool model_exists_test()
 {
-	return is_directory(MODEL_ROOT);
+	return is_directory(model_root);
 }
 
 
 bool data_fail_files_test()
 {
-	return image_files_exist(DATA_FAIL_ROOT);
+	return image_files_exist(data_fail_root);
 }
 
 
 bool data_pass_files_test()
 {
-	return image_files_exist(DATA_PASS_ROOT);
+	return image_files_exist(data_pass_root);
 }
 
 
@@ -125,8 +146,8 @@ bool add_class_data_test()
 {
 	gen::ModelGenerator gen;
 
-	gen.add_class_data(DATA_PASS_ROOT, MLClass::Pass);
-	gen.add_class_data(DATA_FAIL_ROOT, MLClass::Fail);
+	gen.add_class_data(data_pass_root.c_str(), MLClass::Pass);
+	gen.add_class_data(data_fail_root.c_str(), MLClass::Fail);
 
 	return gen.has_class_data();
 }
@@ -137,7 +158,7 @@ bool add_class_data_one_class_test()
 {
 	gen::ModelGenerator gen;
 
-	gen.add_class_data(DATA_PASS_ROOT, MLClass::Pass);
+	gen.add_class_data(data_pass_root.c_str(), MLClass::Pass);
 
 	return !gen.has_class_data();
 }
@@ -148,8 +169,8 @@ bool purge_class_data_test()
 {
 	gen::ModelGenerator gen;
 
-	gen.add_class_data(DATA_PASS_ROOT, MLClass::Pass);
-	gen.add_class_data(DATA_FAIL_ROOT, MLClass::Fail);
+	gen.add_class_data(data_pass_root.c_str(), MLClass::Pass);
+	gen.add_class_data(data_fail_root.c_str(), MLClass::Fail);
 
 	gen.purge_class_data();
 
@@ -160,44 +181,44 @@ bool purge_class_data_test()
 // no model file is created when no class data is available
 bool save_model_no_data_test()
 {
-	delete_files(MODEL_ROOT);
+	delete_files(model_root);
 
 	gen::ModelGenerator gen;
 
-	gen.save_model(MODEL_ROOT);
+	gen.save_model(model_root.c_str());
 
-	return dir::get_files_of_type(MODEL_ROOT, img_ext).empty();
+	return dir::get_files_of_type(model_root, img_ext).empty();
 }
 
 
 // all classes need to have data before a model file is created
 bool save_model_one_class_test()
 {
-	delete_files(MODEL_ROOT);
+	delete_files(model_root);
 
 	gen::ModelGenerator gen;
 
-	gen.add_class_data(DATA_PASS_ROOT, MLClass::Pass);
+	gen.add_class_data(data_pass_root.c_str(), MLClass::Pass);
 
-	gen.save_model(MODEL_ROOT);
+	gen.save_model(model_root.c_str());
 
-	return dir::get_files_of_type(MODEL_ROOT, img_ext).empty();
+	return dir::get_files_of_type(model_root, img_ext).empty();
 }
 
 
 // one file is created when generating a model
 bool save_model_one_file_test()
 {
-	delete_files(MODEL_ROOT);
+	delete_files(model_root);
 
 	gen::ModelGenerator gen;
 
-	gen.add_class_data(DATA_PASS_ROOT, MLClass::Pass);
-	gen.add_class_data(DATA_FAIL_ROOT, MLClass::Fail);
+	gen.add_class_data(data_pass_root.c_str(), MLClass::Pass);
+	gen.add_class_data(data_fail_root.c_str(), MLClass::Fail);
 
-	gen.save_model(MODEL_ROOT);
+	gen.save_model(model_root.c_str());
 
-	return dir::get_files_of_type(MODEL_ROOT, img_ext).size() == 1;;
+	return dir::get_files_of_type(model_root, img_ext).size() == 1;;
 }
 
 
@@ -208,7 +229,7 @@ bool save_model_active_test()
 	if (!save_model_one_file_test())
 		return false;
 
-	const auto model_file = dir::get_files_of_type(MODEL_ROOT, img_ext)[0];
+	const auto model_file = dir::get_files_of_type(model_root, img_ext)[0];
 
 	auto model = img::read_image_from_file(model_file.c_str());
 	const auto view = img::make_view(model);
@@ -233,7 +254,7 @@ bool pixel_conversion_test()
 	if (!save_model_one_file_test())
 		return false;
 
-	const auto model_file = dir::get_files_of_type(MODEL_ROOT, img_ext)[0];
+	const auto model_file = dir::get_files_of_type(model_root, img_ext)[0];
 
 	auto model = img::read_image_from_file(model_file.c_str());
 	const auto view = img::make_view(model);
