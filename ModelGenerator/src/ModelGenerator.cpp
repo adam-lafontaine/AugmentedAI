@@ -129,7 +129,7 @@ namespace model_generator
 				auto data_image = img::read_image_from_file(data_file);
 				auto data_view = img::make_view(data_image);
 
-				assert(data_view.width() == data::data_image_width());
+				assert(static_cast<size_t>(std::abs(data_view.width())) == data::data_image_width());
 
 				append_data(cluster_data[class_index], data_view);
 
