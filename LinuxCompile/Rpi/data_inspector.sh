@@ -21,6 +21,7 @@ DataInspector="../../DataInspector/src"
 
 dirhelper="$utils/dirhelper.cpp"
 cluster="$utils/cluster.cpp"
+config_reader="$utils/config_reader.cpp"
 
 data_adaptor="$DataAdaptor/data_adaptor.cpp"
 pixel_conv="$ModelGenerator/pixel_conversion.cpp"
@@ -29,7 +30,7 @@ data_insp="$DataInspector/data_inspector.cpp"
 
 main_cpp="$DataInspector/data_inspector_tests.cpp"
 
-cpp_files="$main_cpp $dirhelper $cluster $data_adaptor $pixel_conv $data_insp"
+cpp_files="$main_cpp $dirhelper $cluster $data_adaptor $pixel_conv $data_insp $config_reader"
 
 exe="DataInspector"
 
