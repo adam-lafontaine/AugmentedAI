@@ -18,11 +18,13 @@ utils="../../utils"
 DataAdaptor="../../DataAdaptor/src"
 
 dirhelper="$utils/dirhelper.cpp"
+config_reader="$utils/config_reader.cpp"
+
 data_adaptor="$DataAdaptor/data_adaptor.cpp"
 
 main_cpp="$DataAdaptor/data_adaptor_test.cpp"
 
-cpp_files="$main_cpp $dirhelper $data_adaptor"
+cpp_files="$main_cpp $dirhelper $data_adaptor $config_reader"
 
 exe="DataAdaptor"
 
