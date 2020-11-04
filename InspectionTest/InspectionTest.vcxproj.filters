@@ -60,6 +60,9 @@
     <ClCompile Include="..\DataInspector\src\data_inspector.cpp">
       <Filter>Source Files\data_inspector</Filter>
     </ClCompile>
+    <ClCompile Include="..\utils\config_reader.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\utils\dirhelper.hpp">
@@ -91,6 +94,9 @@
     </ClInclude>
     <ClInclude Include="..\DataInspector\src\data_inspector.hpp">
       <Filter>Header Files\data_inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utils\config_reader.hpp">
+      <Filter>Header Files\utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

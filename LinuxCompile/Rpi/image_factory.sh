@@ -14,12 +14,15 @@ log_file="compile.log"
 flags="-Wall -O3"
 std="-std=c++17"
 
+utils="../../utils"
 ImageFactory="../../ImageFactory/src"
+
+config_reader="$utils/config_reader.cpp"
 
 image_factory="$ImageFactory/image_factory.cpp"
 main_cpp="$ImageFactory/source_main.cpp"
 
-cpp_files="$main_cpp $image_factory"
+cpp_files="$main_cpp $image_factory $config_reader"
 
 exe="ImageFactory"
 

@@ -1,30 +1,64 @@
 #pragma once
 
-#ifdef _WIN32
+#include "config_reader.hpp"
 
-#define TEST_FILE_ROOT "D:/test_images"
+#include <string>
 
-#define PROJECT_ROOT "D:/repos/AugmentedAI/DataAdaptor/test"
+namespace cr = config_reader;
+
+enum class TestDir : size_t
+{
+	PROJECT_ROOT = 0,
+	SRC_FAIL_ROOT,
+	SRC_PASS_ROOT,
+	DATA_FAIL_ROOT,
+	DATA_PASS_ROOT,
+	MODEL_ROOT,
+	ALPHA_PATH,
+	BORDER_PATH,	
+	Count
+};
 
 
+constexpr auto TEST_DIR_CONFIG_PATH = "test_dir_config.txt";
 
-#else
 
-#define TEST_FILE_ROOT "/home/adam/projects/test_images"
+class TestDirConfig
+{
+private:
 
-#define PROJECT_ROOT "/home/adam/projects/AugmentedAI/DataAdaptor/test"
+	cr::config_t m_config;
+	cr::key_list_t m_keys;
 
-#endif
+	size_t to_index(TestDir dir) { return static_cast<size_t>(dir); }
 
-// TODO: test
-#define SRC_FAIL_ROOT TEST_FILE_ROOT "/src_fail"
-#define SRC_PASS_ROOT TEST_FILE_ROOT "/src_pass"
 
-// TODO: test
-#define DATA_FAIL_ROOT TEST_FILE_ROOT "/data_fail"
-#define DATA_PASS_ROOT TEST_FILE_ROOT "/data_pass"
+public:
 
-#define ALPHA_PATH TEST_FILE_ROOT "/alphabet/alphabet.png"
-#define BORDER_PATH TEST_FILE_ROOT "/alphabet/border.png"
+	TestDirConfig()
+	{
+		m_keys = cr::key_list_t(static_cast<size_t>(TestDir::Count));
+		m_keys[to_index(TestDir::PROJECT_ROOT)]   = "PROJECT_ROOT";
+		m_keys[to_index(TestDir::SRC_FAIL_ROOT)]  = "SRC_FAIL_ROOT";
+		m_keys[to_index(TestDir::SRC_PASS_ROOT)]  = "SRC_PASS_ROOT";
+		m_keys[to_index(TestDir::DATA_FAIL_ROOT)] = "DATA_FAIL_ROOT";
+		m_keys[to_index(TestDir::DATA_PASS_ROOT)] = "DATA_PASS_ROOT";
+		m_keys[to_index(TestDir::MODEL_ROOT)]     = "MODEL_ROOT";
+		m_keys[to_index(TestDir::ALPHA_PATH)]     = "ALPHA_PATH";		
+		m_keys[to_index(TestDir::BORDER_PATH)]    = "BORDER_PATH";
 
-#define MODEL_ROOT TEST_FILE_ROOT "/model"
+		m_config = cr::read_config(TEST_DIR_CONFIG_PATH, m_keys);
+	}
+
+
+	std::string get(TestDir dir)
+	{
+		return m_config[m_keys[to_index(dir)]];
+	}
+
+	
+	bool has_all_keys() 
+	{
+		return m_config.size() == m_keys.size();
+	}
+};

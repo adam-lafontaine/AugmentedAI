@@ -19,6 +19,27 @@ namespace di = data_inspector;
 using index_list_t = std::vector<size_t>;
 using file_list_t = dir::str::file_list_t;
 
+std::string src_fail_root;
+std::string src_pass_root;
+std::string data_fail_root;
+std::string data_pass_root;
+std::string model_root;
+
+bool get_directories()
+{
+	TestDirConfig config;
+	if (!config.has_all_keys())
+		return false;
+
+	src_fail_root = config.get(TestDir::SRC_FAIL_ROOT);
+	src_pass_root = config.get(TestDir::SRC_PASS_ROOT);
+	data_fail_root = config.get(TestDir::DATA_FAIL_ROOT);
+	data_pass_root = config.get(TestDir::DATA_PASS_ROOT);
+	model_root = config.get(TestDir::MODEL_ROOT);
+
+	return true;
+}
+
 
 typedef struct
 {
@@ -35,23 +56,29 @@ constexpr auto IMG_EXT = ".png";
 
 void print_title();
 file_div_t divide_files_for_testing(file_list_t&& files);
-void save_data_images(file_list_t const&, const char* dst_dir);
-void save_model(const char* pass_dir, const char* fail_dir, const char* model_dir);
-void test_files(file_list_t const& files, const char* model_dir, const char* label);
+void save_data_images(file_list_t const&, std::string const& dst_dir);
+void save_model(std::string const& pass_dir, std::string const& fail_dir, std::string const& model_dir);
+void test_files(file_list_t const& files, std::string const& model_dir, const char* label);
 void print_file_div(file_div_t const& div, const char* label);
 
 
 int main()
 {
+	if (!get_directories())
+	{
+		std::cout << "Failed to get directories from configuration file\n";
+		return EXIT_FAILURE;
+	}
+
 	print_title();
 
 	// get the raw data files
 	std::cout << "getting FAIL files... ";
-	auto src_fail = dir::str::get_files_of_type(SRC_FAIL_ROOT, ".png");
+	auto src_fail = dir::str::get_files_of_type(src_fail_root, ".png");
 	std::cout << src_fail.size() << " files found.\n\n";
 
 	std::cout << "getting PASS files... ";
-	auto src_pass = dir::str::get_files_of_type(SRC_PASS_ROOT, ".png");
+	auto src_pass = dir::str::get_files_of_type(src_pass_root, ".png");
 	std::cout << src_pass.size() << " files found.\n\n";
 
 	// separate files for teaching and testing
@@ -64,26 +91,26 @@ int main()
 
 	// save data for teaching
 	std::cout << "\nsaving fail data... ";
-	save_data_images(div_fail.teach, DATA_FAIL_ROOT);
+	save_data_images(div_fail.teach, data_fail_root);
 	std::cout << "done.\n";
 
 	std::cout << "\nsaving pass data... ";
-	save_data_images(div_pass.teach, DATA_PASS_ROOT);
+	save_data_images(div_pass.teach, data_pass_root);
 	std::cout << "done.\n";
 
 	// generate model
 	std::cout << "\ngenerating model... ";
-	save_model(DATA_PASS_ROOT, DATA_FAIL_ROOT, MODEL_ROOT);
+	save_model(data_pass_root, data_fail_root, model_root);
 	std::cout << "done.\n";
 
 	// test fail files
 	std::cout << "\ntesting fail files...\n";
-	test_files(div_fail.test, MODEL_ROOT, "Fail");
+	test_files(div_fail.test, model_root, "Fail");
 	
 
 	// test pass files
 	std::cout << "\ntesting pass files...\n";
-	test_files(div_pass.test, MODEL_ROOT, "Pass");
+	test_files(div_pass.test, model_root, "Pass");
 
 	std::cout << "\ndone.\n";
 }
@@ -143,7 +170,7 @@ file_div_t divide_files_for_testing(file_list_t&& files)
 }
 
 
-void delete_files(const char* dir)
+void delete_files(std::string const& dir)
 {
 	for (auto const& entry : fs::directory_iterator(dir))
 	{
@@ -152,7 +179,7 @@ void delete_files(const char* dir)
 }
 
 
-void save_data_images(file_list_t const& files, const char* dst_dir)
+void save_data_images(file_list_t const& files, std::string const& dst_dir)
 {
 	const auto data = da::file_list_to_data(files);
 	delete_files(dst_dir);
@@ -160,16 +187,16 @@ void save_data_images(file_list_t const& files, const char* dst_dir)
 }
 
 
-void save_model(const char* pass_dir, const char* fail_dir, const char* model_dir)
+void save_model(std::string const& pass_dir, std::string const& fail_dir, std::string const& model_dir)
 {
 	delete_files(model_dir);
 
 	mg::ModelGenerator gen;
 
-	gen.add_class_data(pass_dir, MLClass::Pass);
-	gen.add_class_data(fail_dir, MLClass::Fail);
+	gen.add_class_data(pass_dir.c_str(), MLClass::Pass);
+	gen.add_class_data(fail_dir.c_str(), MLClass::Fail);
 
-	gen.save_model(model_dir);
+	gen.save_model(model_dir.c_str());
 }
 
 
@@ -205,7 +232,7 @@ void print_result_table_row(const char* test, unsigned pass, unsigned fail, unsi
 }
 
 
-void test_files(file_list_t const& files, const char* model_dir, const char* label)
+void test_files(file_list_t const& files, std::string const& model_dir, const char* label)
 {
 	unsigned pass_count = 0;
 	unsigned fail_count = 0;
@@ -213,7 +240,7 @@ void test_files(file_list_t const& files, const char* model_dir, const char* lab
 	print_result_table_title();
 	for (const auto& file : files)
 	{
-		const auto res = di::inspect(file.c_str(), model_dir);
+		const auto res = di::inspect(file.c_str(), model_dir.c_str());
 		pass_count += res == MLClass::Pass;
 		fail_count += res == MLClass::Fail;
 		unkn_count += res == MLClass::Unknown;
