@@ -281,51 +281,6 @@ namespace libimage // 2020-09-19
 	}
 
 
-	// gets pixels from part of a column
-	//inline pixel_ptr_list_t to_pixel_column(view_t const& img_v, index_t y_begin, index_t y_end, index_t x) // use column_view() instead
-	//{
-	//	pixel_ptr_list_t list;
-	//	list.reserve(y_end - y_begin);
-
-	//	for (index_t y = y_begin; y < y_end; ++y)
-	//	{
-	//		list.push_back(img_v.row_begin(y) + x);
-	//	}
-
-	//	return list;
-	//}
-
-
-	// gets pixels from an entire column
-	//inline pixel_ptr_list_t to_pixel_column(view_t const& img_v, index_t x) // use column_view() instead
-	//{
-	//	return to_pixel_column(img_v, 0, img_v.height(), x);
-	//}
-
-
-	// gets pixels from part of a row
-	//inline pixel_ptr_list_t to_pixel_row(view_t const& img_v, index_t x_begin, index_t x_end, index_t y) // use row_view instead
-	//{
-	//	pixel_ptr_list_t list;
-	//	list.reserve(x_end - x_begin);
-
-	//	auto ptr_begin = img_v.row_begin(y);
-
-	//	for (index_t x = x_begin; x < x_end; ++x)
-	//	{
-	//		list.push_back(ptr_begin + x);
-	//	}
-
-	//	return list;
-	//}
-
-	// gets pixels from an entire row
-	//inline pixel_ptr_list_t to_pixel_row(view_t const& img_v, index_t y) // use row_view instead
-	//{
-	//	return to_pixel_row(img_v, 0, img_v.width(), y);
-	//}
-
-
 	inline rgb_list_t to_rgb_column(view_t const& img_v, index_t y_begin, index_t y_end, index_t x)
 	{
 		rgb_list_t list;
@@ -375,7 +330,7 @@ namespace libimage // 2020-09-19
 	template<typename String>
 	image_t read_image_png(String const& img_path)
 	{
-		gil::image_read_settings<gil::png_tag> read_settings;
+		//gil::image_read_settings<gil::png_tag> read_settings;
 		image_t src_img;
 		gil::read_image(img_path, src_img, /*read_settings*/gil::png_tag());
 
@@ -402,6 +357,18 @@ namespace libimage // 2020-09-19
 	}
 
 
+	template<typename String>
+	image_t read_and_convert_image_from_file(String const& img_path)
+	{
+		/*gil::image_read_settings<gil::jpeg_tag> read_settings;
+		gil::rgb8_image_t src_img;
+		gil::read_and_convert_image(img_path, src_img, read_settings);*/
+
+		image_t src_img;
+		gil::read_and_convert_image(img_path, src_img, gil::png_tag());
+
+		return src_img;
+	}
 
 	//======= WRITE IMAGES =====================
 
