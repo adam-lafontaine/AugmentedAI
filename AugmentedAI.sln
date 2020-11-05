@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DataInspector", "DataInspec
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InspectionTest", "InspectionTest\InspectionTest.vcxproj", "{0820CFF1-6E8F-433C-8FA1-8E2D30C7C9E0}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Cluster", "Cluster\Cluster.vcxproj", "{91CD6A91-32FC-45E2-94DC-43B129B5555B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -61,6 +63,14 @@ Global
 		{0820CFF1-6E8F-433C-8FA1-8E2D30C7C9E0}.Release|x64.Build.0 = Release|x64
 		{0820CFF1-6E8F-433C-8FA1-8E2D30C7C9E0}.Release|x86.ActiveCfg = Release|Win32
 		{0820CFF1-6E8F-433C-8FA1-8E2D30C7C9E0}.Release|x86.Build.0 = Release|Win32
+		{91CD6A91-32FC-45E2-94DC-43B129B5555B}.Debug|x64.ActiveCfg = Debug|x64
+		{91CD6A91-32FC-45E2-94DC-43B129B5555B}.Debug|x64.Build.0 = Debug|x64
+		{91CD6A91-32FC-45E2-94DC-43B129B5555B}.Debug|x86.ActiveCfg = Debug|Win32
+		{91CD6A91-32FC-45E2-94DC-43B129B5555B}.Debug|x86.Build.0 = Debug|Win32
+		{91CD6A91-32FC-45E2-94DC-43B129B5555B}.Release|x64.ActiveCfg = Release|x64
+		{91CD6A91-32FC-45E2-94DC-43B129B5555B}.Release|x64.Build.0 = Release|x64
+		{91CD6A91-32FC-45E2-94DC-43B129B5555B}.Release|x86.ActiveCfg = Release|Win32
+		{91CD6A91-32FC-45E2-94DC-43B129B5555B}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

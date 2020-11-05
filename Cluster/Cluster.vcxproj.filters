@@ -13,5 +13,27 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\data_adaptor">
+      <UniqueIdentifier>{8ac6bafd-7ee8-4dc1-b128-9a605129ef2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\data_adaptor">
+      <UniqueIdentifier>{e937b9be-8561-45ab-9525-0a30502523ac}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\cluster_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cluster_data_adaptor.cpp">
+      <Filter>Source Files\data_adaptor</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\DataAdaptor\src\data_adaptor.hpp">
+      <Filter>Header Files\data_adaptor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\image_data_adaptors\any_image_by_section.hpp">
+      <Filter>Header Files\data_adaptor</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

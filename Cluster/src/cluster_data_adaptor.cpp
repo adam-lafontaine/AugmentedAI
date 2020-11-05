@@ -1,26 +1,11 @@
-/*
-
-This file exists to be the source file when compiling other projects.
-Allows for changing implementation without having to modify the source file list of other projects
-
-*/
-
-// choose implementation
-#include "adaptors/image_file_adaptor.hpp" 
-//#include "adaptors/count_black_pixels.hpp"
-//#include "adaptors/image_sections.hpp"
-
-
-
-
-
+#include "image_data_adaptors/any_image_by_section.hpp"
 
 
 namespace data_adaptor
 {
 	using data_itr_t = data_list_t::const_iterator;
 
-	static void save_data_range(data_itr_t const& first, data_itr_t const& last, std::string const& dst_file_path) // TODO: ranges
+	static void save_data_range(data_itr_t const& first, data_itr_t const& last, std::string const& dst_file_path)
 	{
 		const auto width = DATA_IMAGE_WIDTH;
 		const auto height = std::distance(first, last);
@@ -84,8 +69,6 @@ namespace data_adaptor
 
 			save_data_range(first, last, dst_file_path);
 		}
-
-		// TODO: ranges::views::chunk(max_height), ranges::views::enumerate
 	}
 
 
