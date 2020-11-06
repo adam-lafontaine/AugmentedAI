@@ -1,6 +1,10 @@
 #pragma once
 
-#include "../../../DataAdaptor//src/data_adaptor.hpp"
+#include "../../../DataAdaptor/src/data_adaptor.hpp"
+
+#include <boost/gil/extension/io/bmp.hpp>
+
+namespace gil = boost::gil;
 
 #ifdef __linux
 
@@ -18,7 +22,7 @@ using src_data_t = data_adaptor::src_data_t;
 constexpr size_t NUM_GRAY_SHADES = 256;
 constexpr size_t MAX_DATA_IMAGE_SIZE = 500 * 500;
 
-constexpr size_t DATA_IMAGE_WIDTH = NUM_GRAY_SHADES;
+constexpr size_t DATA_IMAGE_WIDTH = 1;// NUM_GRAY_SHADES;
 constexpr double DATA_MIN_VALUE = 0;
 constexpr double DATA_MAX_VALUE = 1;
 
@@ -89,7 +93,9 @@ namespace impl
 
 	inline src_data_t file_to_data(const char* src_file)
 	{
-		auto image = img::gray::read_image_from_file(src_file);
+
+		gil::rgb8_image_t image;
+		gil::read_and_convert_image(src_file, image, gil::bmp_tag());
 		
 
 		src_data_t data{ 0 };

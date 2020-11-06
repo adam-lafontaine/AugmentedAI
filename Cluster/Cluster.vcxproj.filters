@@ -19,6 +19,12 @@
     <Filter Include="Source Files\data_adaptor">
       <UniqueIdentifier>{e937b9be-8561-45ab-9525-0a30502523ac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\utils">
+      <UniqueIdentifier>{80ae1f6a-6fe5-42f2-a516-696d2a04bb2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\utils">
+      <UniqueIdentifier>{525ac517-4dae-4925-baf9-7efc7227c2a7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\cluster_test.cpp">
@@ -27,6 +33,12 @@
     <ClCompile Include="src\cluster_data_adaptor.cpp">
       <Filter>Source Files\data_adaptor</Filter>
     </ClCompile>
+    <ClCompile Include="..\utils\cluster.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\utils\dirhelper.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\DataAdaptor\src\data_adaptor.hpp">
@@ -34,6 +46,15 @@
     </ClInclude>
     <ClInclude Include="src\image_data_adaptors\any_image_by_section.hpp">
       <Filter>Header Files\data_adaptor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utils\cluster.hpp">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utils\cluster_config.hpp">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utils\dirhelper.hpp">
+      <Filter>Header Files\utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
