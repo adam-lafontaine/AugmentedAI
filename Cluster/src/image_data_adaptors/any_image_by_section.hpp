@@ -4,6 +4,8 @@
 
 #include <boost/gil/extension/io/bmp.hpp>
 
+#include <array>
+
 namespace gil = boost::gil;
 
 #ifdef __linux
@@ -16,8 +18,28 @@ namespace gil = boost::gil;
 using data_pixel_t = data_adaptor::data_pixel_t;
 using src_data_t = data_adaptor::src_data_t;
 
+typedef struct
+{
+	size_t x_min;
+	size_t x_max;
+	size_t y_min;
+	size_t y_max;
+} range_t;
+
+
+// for getting bytes from 32 bit values
+union four_bytes_t
+{
+	img::bits32 value;
+	img::bits8 bytes[4];
+};
+
 
 //======= DATA PROPERTIES =================
+
+constexpr size_t SRC_IMAGE_WIDTH = 2448;
+constexpr size_t SRC_IMAGE_HEIGHT = 2048;
+constexpr size_t RANGE_COUNT = 2;
 
 constexpr size_t NUM_GRAY_SHADES = 256;
 constexpr size_t MAX_DATA_IMAGE_SIZE = 500 * 500;
@@ -28,12 +50,9 @@ constexpr double DATA_MAX_VALUE = 1;
 
 constexpr auto BITS32_MAX = img::to_bits32(255, 255, 255, 255);
 
-
-// for getting bytes from 32 bit values
-union four_bytes_t
+constexpr std::array<range_t, RANGE_COUNT> pixel_ranges = 
 {
-	img::bits32 value;
-	img::bits8 bytes[4];
+	{{150, 480, 500, 1600}, {1750, 2080, 500, 1600}}
 };
 
 
@@ -94,7 +113,7 @@ namespace impl
 	inline src_data_t file_to_data(const char* src_file)
 	{
 
-		gil::rgb8_image_t image;
+		gil::gray8_image_t image;
 		gil::read_and_convert_image(src_file, image, gil::bmp_tag());
 		
 

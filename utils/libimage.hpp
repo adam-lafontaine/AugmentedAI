@@ -356,20 +356,6 @@ namespace libimage // 2020-09-19
 		return read_image_png(img_path);
 	}
 
-
-	template<typename String>
-	image_t read_and_convert_image_from_file(String const& img_path)
-	{
-		/*gil::image_read_settings<gil::jpeg_tag> read_settings;
-		gil::rgb8_image_t src_img;
-		gil::read_and_convert_image(img_path, src_img, read_settings);*/
-
-		image_t src_img;
-		gil::read_and_convert_image(img_path, src_img, gil::png_tag());
-
-		return src_img;
-	}
-
 	//======= WRITE IMAGES =====================
 
 	template<typename String>
