@@ -5,6 +5,8 @@
 #include <boost/gil/extension/io/bmp.hpp>
 
 #include <array>
+#include <vector>
+#include <algorithm>
 
 namespace gil = boost::gil;
 
@@ -18,13 +20,9 @@ namespace gil = boost::gil;
 using data_pixel_t = data_adaptor::data_pixel_t;
 using src_data_t = data_adaptor::src_data_t;
 
-typedef struct
-{
-	size_t x_min;
-	size_t x_max;
-	size_t y_min;
-	size_t y_max;
-} range_t;
+using src_image_t = img::gray::image_t;
+using src_view_t = img::gray::view_t;
+using src_pixel_t = img::gray::pixel_t;
 
 
 // for getting bytes from 32 bit values
@@ -44,19 +42,69 @@ constexpr size_t RANGE_COUNT = 2;
 constexpr size_t NUM_GRAY_SHADES = 256;
 constexpr size_t MAX_DATA_IMAGE_SIZE = 500 * 500;
 
-constexpr size_t DATA_IMAGE_WIDTH = 1;// NUM_GRAY_SHADES;
+constexpr size_t DATA_IMAGE_WIDTH = 200;// NUM_GRAY_SHADES;
 constexpr double DATA_MIN_VALUE = 0;
 constexpr double DATA_MAX_VALUE = 1;
 
 constexpr auto BITS32_MAX = img::to_bits32(255, 255, 255, 255);
 
-constexpr std::array<range_t, RANGE_COUNT> pixel_ranges = 
+constexpr std::array<img::pixel_range_t, RANGE_COUNT> pixel_ranges = 
 {
 	{{150, 480, 500, 1600}, {1750, 2080, 500, 1600}}
 };
 
+using view_list_t = std::vector<src_view_t>;
 
 
+
+
+//======= HELPERS ==============
+
+src_view_t make_subimage_view(src_view_t& view, img::pixel_range_t const& range)
+{
+	auto const width = range.x_end - range.x_begin;
+	auto const height = range.y_end - range.y_begin;
+	
+	return gil::subimage_view(view, range.x_begin, range.y_begin, width, height);
+}
+
+
+view_list_t make_view_list(src_image_t& image)
+{
+	auto view = img::make_view(image);
+
+	view_list_t list;
+	img::index_t width = 0;
+	img::index_t height = 0;
+
+	auto const add_slice = [&](auto x, auto y) { list.push_back(gil::subimage_view(view, x, y, width, height)); };
+
+	// horizontal slices of each range
+	for (auto const& range : pixel_ranges)
+	{
+		width = range.x_end - range.x_begin;
+		height = (range.y_end - range.y_begin) / 100;
+
+		for (auto y = range.y_begin; y < range.y_end; y += height)
+		{
+			add_slice(range.x_begin, y);
+		}
+	}
+
+	return list;
+}
+
+
+double average_shade(src_view_t const& view)
+{
+	auto const count = view.height() * view.width();
+	double total = 0;
+	auto const pred = [&](auto const& p) { total += p; };
+
+	gil::for_each_pixel(view, pred);
+
+	return total / count;
+}
 
 
 
@@ -112,12 +160,16 @@ namespace impl
 
 	inline src_data_t file_to_data(const char* src_file)
 	{
-
-		gil::gray8_image_t image;
+		src_image_t image;
 		gil::read_and_convert_image(src_file, image, gil::bmp_tag());
-		
 
-		src_data_t data{ 0 };
+		auto const views = make_view_list(image);
+
+		src_data_t data;
+
+		auto const pred = [](auto const& view) { return average_shade(view) / NUM_GRAY_SHADES; };
+
+		std::transform(views.begin(), views.end(), std::back_inserter(data), pred);			
 
 		assert(data.size() == DATA_IMAGE_WIDTH);
 

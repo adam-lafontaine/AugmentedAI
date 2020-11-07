@@ -8,6 +8,7 @@ namespace data = data_adaptor;
 
 constexpr auto IMAGE_DIR = "E:/BOS Images/Weld";
 constexpr auto CLUSTER_ROOT = "D:/test_images/clusters";
+constexpr auto CLUSTER_DATA_DIR = "D:/test_images/clusters/data";
 constexpr auto SRC_IMAGE_EXTENSION = ".BMP";
 
 
@@ -25,7 +26,7 @@ int main()
 	std::cout << "done\n";
 
 	std::cout << "saving data images...";
-	data::save_data_images(data, CLUSTER_ROOT);
+	data::save_data_images(data, CLUSTER_DATA_DIR);
 	std::cout << "done";
 
 	// data_adaptor::file_to_data
