@@ -33,6 +33,13 @@ union four_bytes_t
 };
 
 
+union three_bytes_t
+{
+	img::bits32 value;
+	img::bits32 bytes[3];
+};
+
+
 //======= DATA PROPERTIES =================
 
 constexpr size_t SRC_IMAGE_WIDTH = 2448;
@@ -48,6 +55,7 @@ constexpr double DATA_MIN_VALUE = 0;
 constexpr double DATA_MAX_VALUE = 1;
 
 constexpr auto BITS32_MAX = img::to_bits32(255, 255, 255, 255);
+constexpr auto BITS24_MAX = img::to_bits32(255, 255, 255);
 
 constexpr std::array<img::pixel_range_t, RANGE_COUNT> pixel_ranges = 
 {
@@ -161,17 +169,16 @@ namespace impl
 		assert(val >= DATA_MIN_VALUE);
 		assert(val <= DATA_MAX_VALUE);
 
-		const auto ratio = (val - DATA_MIN_VALUE) / (DATA_MAX_VALUE - DATA_MIN_VALUE);
+		// scale to 32 bit value
+		three_bytes_t x;
+		const auto ratio = (val - DATA_MIN_VALUE) / (DATA_MAX_VALUE - DATA_MIN_VALUE);		
+		x.value = static_cast<img::bits32>(ratio * BITS24_MAX);
 
-		four_bytes_t x;
-		x.value = static_cast<img::bits32>(ratio * BITS32_MAX);
+		const auto r = x.bytes[2];
+		const auto g = x.bytes[1];
+		const auto b = x.bytes[0];
 
-		const auto r = x.bytes[3];
-		const auto g = x.bytes[2];
-		const auto b = x.bytes[1];
-		const auto a = x.bytes[0];
-
-		return img::to_pixel(r, g, b, a);
+		return img::to_pixel(r, g, b, MAX_SHADE); // full alpha channel
 	}
 
 
@@ -179,14 +186,15 @@ namespace impl
 	{
 		const auto rgba = img::to_rgba(pix);
 
-		four_bytes_t x;
+		assert(rgba.a == MAX_SHADE);
 
-		x.bytes[3] = rgba.r;
-		x.bytes[2] = rgba.g;
-		x.bytes[1] = rgba.b;
-		x.bytes[0] = rgba.a;
+		three_bytes_t x;
 
-		return static_cast<double>(x.value) / BITS32_MAX;
+		x.bytes[2] = rgba.r;
+		x.bytes[1] = rgba.g;
+		x.bytes[0] = rgba.b;
+
+		return static_cast<double>(x.value) / BITS24_MAX;
 	}
 
 

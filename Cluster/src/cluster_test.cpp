@@ -9,7 +9,7 @@ namespace data = data_adaptor;
 
 constexpr auto IMAGE_DIR = "E:/BOS Images/Weld";
 constexpr auto CLUSTER_ROOT = "D:/test_images/clusters";
-constexpr auto CLUSTER_DATA_DIR = "D:/test_images/clusters/data_c";
+constexpr auto CLUSTER_DATA_DIR = "D:/test_images/clusters/data_a";
 constexpr auto SRC_IMAGE_EXTENSION = ".BMP";
 
 
@@ -44,6 +44,7 @@ void save_data(dir::str::file_list_t src_files, size_t max_files = 0)
 }
 
 
+
 int main()
 {
 	auto src_files = dir::str::get_files_of_type(IMAGE_DIR, SRC_IMAGE_EXTENSION);
@@ -53,7 +54,9 @@ int main()
 
 	
 
-	save_data(src_files);
+	//save_data(src_files);
+
+	save_data(src_files, 100);
 
 	
 
