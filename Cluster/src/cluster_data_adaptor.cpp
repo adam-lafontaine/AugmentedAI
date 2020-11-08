@@ -31,7 +31,6 @@ namespace data_adaptor
 	data_list_t file_list_to_data(file_list_t const& files)
 	{
 		data_list_t data;
-		data.reserve(files.size());
 
 		const auto pred = [&](path_t const& file_path) { return file_to_data(file_path); };
 

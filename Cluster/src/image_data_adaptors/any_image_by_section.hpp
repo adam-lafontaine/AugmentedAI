@@ -39,6 +39,7 @@ constexpr size_t SRC_IMAGE_WIDTH = 2448;
 constexpr size_t SRC_IMAGE_HEIGHT = 2048;
 constexpr size_t RANGE_COUNT = 2;
 
+constexpr img::bits8 MAX_SHADE = 255;
 constexpr size_t NUM_GRAY_SHADES = 256;
 constexpr size_t MAX_DATA_IMAGE_SIZE = 500 * 500;
 
@@ -107,6 +108,37 @@ double average_shade(src_view_t const& view)
 }
 
 
+double max_shade(src_view_t const& view)
+{
+	double max = *(view.at(0, 0));
+
+	auto const pred = [&](auto const& p) 
+	{
+		if (p > max)
+			max = p;
+	};
+
+	gil::for_each_pixel(view, pred);
+
+	return max;
+}
+
+double min_shade(src_view_t const& view)
+{
+	double min = *(view.at(0, 0));
+
+	auto const pred = [&](auto const& p)
+	{
+		if (p < min)
+			min = p;
+	};
+
+	gil::for_each_pixel(view, pred);
+
+	return min;
+}
+
+
 
 namespace impl
 {
@@ -167,7 +199,9 @@ namespace impl
 
 		src_data_t data;
 
-		auto const pred = [](auto const& view) { return average_shade(view) / NUM_GRAY_SHADES; };
+		//auto const pred = [](auto const& view) { return average_shade(view) / MAX_SHADE; };
+		//auto const pred = [](auto const& view) { return max_shade(view) / MAX_SHADE; };
+		auto const pred = [](auto const& view) { return min_shade(view) / MAX_SHADE; };
 
 		std::transform(views.begin(), views.end(), std::back_inserter(data), pred);			
 
