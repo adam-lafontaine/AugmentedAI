@@ -36,9 +36,17 @@ union four_bytes_t
 union three_bytes_t
 {
 	img::bits32 value;
-	img::bits32 bytes[3];
+	img::bits8 bytes[3];
 };
 
+
+typedef struct
+{
+	img::bits8 min;
+	img::bits8 max;
+	img::bits8 mean;
+
+} src_view_stats_t;
 
 //======= DATA PROPERTIES =================
 
@@ -131,6 +139,7 @@ double max_shade(src_view_t const& view)
 	return max;
 }
 
+
 double min_shade(src_view_t const& view)
 {
 	double min = *(view.at(0, 0));
@@ -169,14 +178,14 @@ namespace impl
 		assert(val >= DATA_MIN_VALUE);
 		assert(val <= DATA_MAX_VALUE);
 
-		// scale to 32 bit value
+		// scale to 24 bit value
 		three_bytes_t x;
 		const auto ratio = (val - DATA_MIN_VALUE) / (DATA_MAX_VALUE - DATA_MIN_VALUE);		
 		x.value = static_cast<img::bits32>(ratio * BITS24_MAX);
 
-		const auto r = x.bytes[2];
+		const auto r = x.bytes[0];
 		const auto g = x.bytes[1];
-		const auto b = x.bytes[0];
+		const auto b = x.bytes[2];
 
 		return img::to_pixel(r, g, b, MAX_SHADE); // full alpha channel
 	}
@@ -190,9 +199,9 @@ namespace impl
 
 		three_bytes_t x;
 
-		x.bytes[2] = rgba.r;
+		x.bytes[0] = rgba.r;
 		x.bytes[1] = rgba.g;
-		x.bytes[0] = rgba.b;
+		x.bytes[2] = rgba.b;
 
 		return static_cast<double>(x.value) / BITS24_MAX;
 	}
@@ -200,16 +209,18 @@ namespace impl
 
 	inline src_data_t file_to_data(const char* src_file)
 	{
+		gil::image_read_settings<gil::bmp_tag> read_settings;
 		src_image_t image;
-		gil::read_and_convert_image(src_file, image, gil::bmp_tag());
+		gil::read_and_convert_image(src_file, image, read_settings);
+		//gil::read_and_convert_image(src_file, image, gil::bmp_tag());
 
 		auto const views = make_view_list(image);
 
 		src_data_t data;
 
-		//auto const pred = [](auto const& view) { return average_shade(view) / MAX_SHADE; };
+		auto const pred = [](auto const& view) { return average_shade(view) / MAX_SHADE; };
 		//auto const pred = [](auto const& view) { return max_shade(view) / MAX_SHADE; };
-		auto const pred = [](auto const& view) { return min_shade(view) / MAX_SHADE; };
+		//auto const pred = [](auto const& view) { return min_shade(view) / MAX_SHADE; };
 
 		std::transform(views.begin(), views.end(), std::back_inserter(data), pred);			
 

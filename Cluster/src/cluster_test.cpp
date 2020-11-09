@@ -45,6 +45,7 @@ void save_data(dir::str::file_list_t src_files, size_t max_files = 0)
 
 
 
+
 int main()
 {
 	auto src_files = dir::str::get_files_of_type(IMAGE_DIR, SRC_IMAGE_EXTENSION);
@@ -56,7 +57,7 @@ int main()
 
 	//save_data(src_files);
 
-	save_data(src_files, 100);
+	save_data(src_files, 1);
 
 	
 
