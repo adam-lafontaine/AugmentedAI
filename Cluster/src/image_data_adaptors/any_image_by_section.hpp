@@ -33,13 +33,6 @@ union four_bytes_t
 };
 
 
-union three_bytes_t
-{
-	img::bits32 value;
-	img::bits8 bytes[3];
-};
-
-
 typedef struct
 {
 	img::bits8 min;
@@ -58,7 +51,7 @@ constexpr img::bits8 MAX_SHADE = 255;
 constexpr size_t NUM_GRAY_SHADES = 256;
 constexpr size_t MAX_DATA_IMAGE_SIZE = 500 * 500;
 
-constexpr size_t DATA_IMAGE_WIDTH = 200;// NUM_GRAY_SHADES;
+constexpr size_t DATA_IMAGE_WIDTH = 400;// NUM_GRAY_SHADES;
 constexpr double DATA_MIN_VALUE = 0;
 constexpr double DATA_MAX_VALUE = 1;
 
@@ -67,7 +60,7 @@ constexpr auto BITS24_MAX = img::to_bits32(255, 255, 255);
 
 constexpr std::array<img::pixel_range_t, RANGE_COUNT> pixel_ranges = 
 {
-	{{150, 480, 500, 1600}, {1750, 2080, 500, 1600}}
+	{{150, 480, 500, 1600}, {1730, 2060, 500, 1600}}
 };
 
 using view_list_t = std::vector<src_view_t>;
@@ -99,12 +92,15 @@ view_list_t make_view_list(src_image_t& image)
 	// horizontal slices of each range
 	for (auto const& range : pixel_ranges)
 	{
-		width = range.x_end - range.x_begin;
+		width = (range.x_end - range.x_begin) / 2;
 		height = (range.y_end - range.y_begin) / 100;
 
 		for (auto y = range.y_begin; y < range.y_end; y += height)
 		{
-			add_slice(range.x_begin, y);
+			for (auto x = range.x_begin; x < range.x_end; x += width)
+			{
+				add_slice(x, y);
+			}			
 		}
 	}
 
@@ -156,6 +152,64 @@ double min_shade(src_view_t const& view)
 }
 
 
+using shade_qty_t = unsigned;
+using color_hist_t = std::array<shade_qty_t, NUM_GRAY_SHADES>;
+
+double from_stats(src_view_t const& view)
+{
+	// build histogram of pixel shades
+	color_hist_t hist = { 0 };
+	gil::for_each_pixel(view, [&](auto const& p) { ++hist[p]; });
+
+	// calculate mean shade
+	size_t qty_total = 0;
+	double val_total = 0;
+	for (size_t shade = 0; shade < hist.size(); ++shade)
+	{
+		auto qty = hist[shade];
+		if (!qty)
+			continue;
+
+		qty_total += qty;
+		val_total += qty * shade;
+	}
+
+	auto const mean = qty_total == 0 ? 0 : val_total / qty_total;
+	assert(mean <= static_cast<double>(MAX_SHADE));
+
+	// calculate standard deviation
+	double s_total = 0;
+	qty_total = 0;
+	for (size_t shade = 0; shade < hist.size(); ++shade)
+	{
+		auto val = shade;
+		auto qty = hist[shade];
+
+		if (!qty)
+			continue;
+
+		qty_total += qty;
+		auto diff = val - mean;
+
+		s_total += qty * diff * diff;
+	}
+
+	auto const sigma = qty_total == 0 ? 0 : std::sqrt(s_total / qty_total);
+
+	auto const min = std::max(0.0, mean - sigma);
+	auto const max = std::min(static_cast<double>(MAX_SHADE), mean + sigma);
+
+	four_bytes_t bits24;
+	
+	bits24.bytes[0] = static_cast<img::bits8>(mean);
+	bits24.bytes[1] = static_cast<img::bits8>(min);
+	bits24.bytes[2] = static_cast<img::bits8>(max);
+	bits24.bytes[3] = 0;
+
+	return static_cast<double>(bits24.value) / BITS24_MAX;
+}
+
+
 
 namespace impl
 {
@@ -179,9 +233,11 @@ namespace impl
 		assert(val <= DATA_MAX_VALUE);
 
 		// scale to 24 bit value
-		three_bytes_t x;
+		four_bytes_t x;
 		const auto ratio = (val - DATA_MIN_VALUE) / (DATA_MAX_VALUE - DATA_MIN_VALUE);		
 		x.value = static_cast<img::bits32>(ratio * BITS24_MAX);
+
+		assert(x.bytes[3] == 0);
 
 		const auto r = x.bytes[0];
 		const auto g = x.bytes[1];
@@ -197,11 +253,13 @@ namespace impl
 
 		assert(rgba.a == MAX_SHADE);
 
-		three_bytes_t x;
+		four_bytes_t x;
 
+		
 		x.bytes[0] = rgba.r;
 		x.bytes[1] = rgba.g;
 		x.bytes[2] = rgba.b;
+		x.bytes[3] = 0;
 
 		return static_cast<double>(x.value) / BITS24_MAX;
 	}
@@ -218,11 +276,12 @@ namespace impl
 
 		src_data_t data;
 
-		auto const pred = [](auto const& view) { return average_shade(view) / MAX_SHADE; };
+		//auto const pred = [](auto const& view) { return average_shade(view) / MAX_SHADE; };
 		//auto const pred = [](auto const& view) { return max_shade(view) / MAX_SHADE; };
 		//auto const pred = [](auto const& view) { return min_shade(view) / MAX_SHADE; };
 
-		std::transform(views.begin(), views.end(), std::back_inserter(data), pred);			
+
+		std::transform(views.begin(), views.end(), std::back_inserter(data), from_stats);			
 
 		assert(data.size() == DATA_IMAGE_WIDTH);
 
