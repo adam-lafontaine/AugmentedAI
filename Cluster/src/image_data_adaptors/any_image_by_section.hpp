@@ -37,9 +37,8 @@ typedef struct
 {
 	img::bits8 min;
 	img::bits8 max;
-	img::bits8 mean;
 
-} src_view_stats_t;
+} bits8_range_t;
 
 //======= DATA PROPERTIES =================
 
@@ -57,6 +56,7 @@ constexpr double DATA_MAX_VALUE = 1;
 
 constexpr auto BITS32_MAX = img::to_bits32(255, 255, 255, 255);
 constexpr auto BITS24_MAX = img::to_bits32(255, 255, 255);
+constexpr auto BITS16_MAX = UINT16_MAX;
 
 constexpr std::array<img::pixel_range_t, RANGE_COUNT> pixel_ranges = 
 {
@@ -152,11 +152,57 @@ double min_shade(src_view_t const& view)
 }
 
 
-using shade_qty_t = unsigned;
-using color_hist_t = std::array<shade_qty_t, NUM_GRAY_SHADES>;
+double to_value(bits8_range_t const& range)
+{
+	four_bytes_t bytes;
+	bytes.bytes[0] = range.min;
+	bytes.bytes[1] = range.max;
+	bytes.bytes[2] = 0;
+	bytes.bytes[3] = 0;
+
+	return static_cast<double>(bytes.value) / BITS32_MAX;
+}
+
+
+
+bits8_range_t to_range(double val)
+{
+	assert(val >= 0);
+	assert(val <= 1);
+
+	auto value = static_cast<uint32_t>(val * BITS32_MAX);
+
+	four_bytes_t bytes;
+	bytes.value = value;
+
+	assert(bytes.bytes[0] < bytes.bytes[1]);
+	assert(bytes.bytes[2] == 0);
+	assert(bytes.bytes[3] == 0);
+
+	return { bytes.bytes[0], bytes.bytes[1] };
+}
+
+
+double range_diff(bits8_range_t const& lhs, bits8_range_t const& rhs)
+{
+	auto const min = std::max(lhs.min, rhs.min);
+	auto const max = std::min(lhs.max, rhs.max);
+
+	// if the ranges overlap, no difference
+	if (min <= max)
+		return 0;
+
+	return min - max;
+}
+
+
+
 
 double from_stats(src_view_t const& view)
 {
+	using shade_qty_t = unsigned;
+	using color_hist_t = std::array<shade_qty_t, NUM_GRAY_SHADES>;
+
 	// build histogram of pixel shades
 	color_hist_t hist = { 0 };
 	gil::for_each_pixel(view, [&](auto const& p) { ++hist[p]; });
@@ -199,14 +245,7 @@ double from_stats(src_view_t const& view)
 	auto const min = std::max(0.0, mean - sigma);
 	auto const max = std::min(static_cast<double>(MAX_SHADE), mean + sigma);
 
-	four_bytes_t bits24;
-	
-	bits24.bytes[0] = static_cast<img::bits8>(mean);
-	bits24.bytes[1] = static_cast<img::bits8>(min);
-	bits24.bytes[2] = static_cast<img::bits8>(max);
-	bits24.bytes[3] = 0;
-
-	return static_cast<double>(bits24.value) / BITS24_MAX;
+	return to_value({ static_cast<img::bits8>(min), static_cast<img::bits8>(max) });
 }
 
 

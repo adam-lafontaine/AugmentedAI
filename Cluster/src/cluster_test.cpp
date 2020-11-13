@@ -54,12 +54,14 @@ int main()
 	std::cout << "Files found: " << src_files.size() << '\n';
 
 	
+#ifdef  _DEBUG
+
+	save_data(src_files, 10);
+
+#else
 
 	save_data(src_files);
 
-	//save_data(src_files, 100);
-
-	
-
+#endif //  _DEBUG
 
 }
