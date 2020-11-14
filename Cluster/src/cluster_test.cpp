@@ -1,6 +1,7 @@
 #include "../../DataAdaptor/src/data_adaptor.hpp"
 #include "../../utils/dirhelper.hpp"
 #include "../../utils/stopwatch.hpp"
+#include "bits8.hpp"
 
 #include <iostream>
 
@@ -9,7 +10,7 @@ namespace data = data_adaptor;
 
 constexpr auto IMAGE_DIR = "E:/BOS Images/Weld";
 constexpr auto CLUSTER_ROOT = "D:/test_images/clusters";
-constexpr auto CLUSTER_DATA_DIR = "D:/test_images/clusters/data_a";
+constexpr auto CLUSTER_DATA_DIR = "D:/test_images/clusters/data_b";
 constexpr auto SRC_IMAGE_EXTENSION = ".BMP";
 
 
@@ -35,12 +36,16 @@ void save_data(dir::str::file_list_t src_files, size_t max_files = 0)
 	auto time = sw.get_time_sec();
 	std::cout << "done.  Time = " << time / 60 << " minutes\n";
 
-	
-
 	std::cout << "saving data images...";
 	data::save_data_images(data, CLUSTER_DATA_DIR);
 	time = sw.get_time_sec();
 	std::cout << "done.  Time = " << time / 60 << " minutes\n";
+}
+
+
+void cluster_data()
+{
+	
 }
 
 
@@ -56,11 +61,11 @@ int main()
 	
 #ifdef  _DEBUG
 
-	save_data(src_files, 10);
+	save_data(src_files, 20);
 
 #else
 
-	save_data(src_files);
+	save_data(src_files, 1000);
 
 #endif //  _DEBUG
 

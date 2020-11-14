@@ -1,12 +1,14 @@
 #pragma once
 
 #include "../../../DataAdaptor/src/data_adaptor.hpp"
+#include "../bits8.hpp"
 
 #include <boost/gil/extension/io/bmp.hpp>
 
 #include <array>
 #include <vector>
 #include <algorithm>
+#include <functional>
 
 namespace gil = boost::gil;
 
@@ -25,20 +27,7 @@ using src_view_t = img::gray::view_t;
 using src_pixel_t = img::gray::pixel_t;
 
 
-// for getting bytes from 32 bit values
-union four_bytes_t
-{
-	img::bits32 value;
-	img::bits8 bytes[4];
-};
 
-
-typedef struct
-{
-	img::bits8 min;
-	img::bits8 max;
-
-} bits8_range_t;
 
 //======= DATA PROPERTIES =================
 
@@ -54,9 +43,7 @@ constexpr size_t DATA_IMAGE_WIDTH = 400;// NUM_GRAY_SHADES;
 constexpr double DATA_MIN_VALUE = 0;
 constexpr double DATA_MAX_VALUE = 1;
 
-constexpr auto BITS32_MAX = img::to_bits32(255, 255, 255, 255);
-constexpr auto BITS24_MAX = img::to_bits32(255, 255, 255);
-constexpr auto BITS16_MAX = UINT16_MAX;
+constexpr auto BITS24_MAX = img::to_bits32(0, 255, 255, 255);
 
 constexpr std::array<img::pixel_range_t, RANGE_COUNT> pixel_ranges = 
 {
@@ -64,6 +51,11 @@ constexpr std::array<img::pixel_range_t, RANGE_COUNT> pixel_ranges =
 };
 
 using view_list_t = std::vector<src_view_t>;
+
+
+using pixel_func_t = std::function<void(src_pixel_t const& p)>;
+
+
 
 
 
@@ -86,10 +78,7 @@ view_list_t make_view_list(src_image_t& image)
 	view_list_t list;
 	img::index_t width = 0;
 	img::index_t height = 0;
-
-	auto const add_slice = [&](auto x, auto y) { list.push_back(gil::subimage_view(view, x, y, width, height)); };
-
-	// horizontal slices of each range
+	
 	for (auto const& range : pixel_ranges)
 	{
 		width = (range.x_end - range.x_begin) / 2;
@@ -99,7 +88,7 @@ view_list_t make_view_list(src_image_t& image)
 		{
 			for (auto x = range.x_begin; x < range.x_end; x += width)
 			{
-				add_slice(x, y);
+				list.push_back(gil::subimage_view(view, x, y, width, height));
 			}			
 		}
 	}
@@ -108,97 +97,148 @@ view_list_t make_view_list(src_image_t& image)
 }
 
 
-double average_shade(src_view_t const& view)
+void for_each_pixel(src_view_t const& view, img::pixel_range_t const& range, pixel_func_t const& func)
 {
-	auto const count = view.height() * view.width();
-	double total = 0;
-	auto const pred = [&](auto const& p) { total += p; };
-
-	gil::for_each_pixel(view, pred);
-
-	return total / count;
-}
-
-
-double max_shade(src_view_t const& view)
-{
-	double max = *(view.at(0, 0));
-
-	auto const pred = [&](auto const& p) 
+	for (auto y = range.y_begin; y < range.y_end; ++y)
 	{
-		if (p > max)
-			max = p;
-	};
-
-	gil::for_each_pixel(view, pred);
-
-	return max;
+		auto begin = view.row_begin(y);
+		std::for_each(begin + range.x_begin, begin + range.x_end, func);
+	}
 }
 
 
-double min_shade(src_view_t const& view)
+double from_stats(src_view_t const& view, img::pixel_range_t const& range)
 {
-	double min = *(view.at(0, 0));
+	using shade_qty_t = unsigned;
+	using color_hist_t = std::array<shade_qty_t, NUM_GRAY_SHADES>;
 
-	auto const pred = [&](auto const& p)
+	// build histogram of pixel shades
+	color_hist_t hist = { 0 };
+	for_each_pixel(view, range, [&](auto const& p) { ++hist[p]; });
+
+	// calculate mean shade
+	size_t qty_total = 0;
+	double val_total = 0;
+	for (size_t shade = 0; shade < hist.size(); ++shade)
 	{
-		if (p < min)
-			min = p;
-	};
+		auto qty = hist[shade];
+		if (!qty)
+			continue;
 
-	gil::for_each_pixel(view, pred);
+		qty_total += qty;
+		val_total += qty * shade;
+	}
 
-	return min;
+	auto const mean = qty_total == 0 ? 0 : val_total / qty_total;
+	assert(mean <= static_cast<double>(MAX_SHADE));
+
+	// calculate standard deviation
+	double s_total = 0;
+	qty_total = 0;
+	for (size_t shade = 0; shade < hist.size(); ++shade)
+	{
+		auto val = shade;
+		auto qty = hist[shade];
+
+		if (!qty)
+			continue;
+
+		qty_total += qty;
+		auto diff = val - mean;
+
+		s_total += qty * diff * diff;
+	}
+
+	auto const sigma = qty_total == 0 ? 0 : std::sqrt(s_total / qty_total);
+
+	auto const min = std::max(0.0, mean - sigma);
+	auto const max = std::min(static_cast<double>(MAX_SHADE), mean + sigma);
+
+	return to_value({ static_cast<img::bits8>(min), static_cast<img::bits8>(max) });
 }
 
 
-double to_value(bits8_range_t const& range)
+void process_image(src_image_t& image)
 {
-	four_bytes_t bytes;
-	bytes.bytes[0] = range.min;
-	bytes.bytes[1] = range.max;
-	bytes.bytes[2] = 0;
-	bytes.bytes[3] = 0;
+	auto view = img::make_view(image);
+	img::index_t width = 0;
+	img::index_t height = 0;
+	img::pixel_range_t sub_range;
+	
+	for (auto const& range : pixel_ranges)
+	{
+		width = (range.x_end - range.x_begin) / 2;
+		height = (range.y_end - range.y_begin) / 100;
 
-	return static_cast<double>(bytes.value) / BITS32_MAX;
-}
+		for (auto y = range.y_begin; y < range.y_end; y += height)
+		{
+			for (auto x = range.x_begin; x < range.x_end; x += width)
+			{				
+				sub_range.x_begin = x;
+				sub_range.x_end = x + width;
+				sub_range.y_begin = y;
+				sub_range.y_end = y + height;
 
-
-
-bits8_range_t to_range(double val)
-{
-	assert(val >= 0);
-	assert(val <= 1);
-
-	auto value = static_cast<uint32_t>(val * BITS32_MAX);
-
-	four_bytes_t bytes;
-	bytes.value = value;
-
-	assert(bytes.bytes[0] < bytes.bytes[1]);
-	assert(bytes.bytes[2] == 0);
-	assert(bytes.bytes[3] == 0);
-
-	return { bytes.bytes[0], bytes.bytes[1] };
-}
-
-
-double range_diff(bits8_range_t const& lhs, bits8_range_t const& rhs)
-{
-	auto const min = std::max(lhs.min, rhs.min);
-	auto const max = std::min(lhs.max, rhs.max);
-
-	// if the ranges overlap, no difference
-	if (min <= max)
-		return 0;
-
-	return min - max;
+				from_stats(view, sub_range);
+			}
+		}
+	}
 }
 
 
 
 
-double from_stats(src_view_t const& view)
+
+//double average_shade(src_view_t const& view)
+//{
+//	auto const count = view.height() * view.width();
+//	double total = 0;
+//	auto const pred = [&](auto const& p) { total += p; };
+//
+//	gil::for_each_pixel(view, pred);
+//
+//	return total / count;
+//}
+//
+//
+//double max_shade(src_view_t const& view)
+//{
+//	double max = *(view.at(0, 0));
+//
+//	auto const pred = [&](auto const& p) 
+//	{
+//		if (p > max)
+//			max = p;
+//	};
+//
+//	gil::for_each_pixel(view, pred);
+//
+//	return max;
+//}
+//
+//
+//double min_shade(src_view_t const& view)
+//{
+//	double min = *(view.at(0, 0));
+//
+//	auto const pred = [&](auto const& p)
+//	{
+//		if (p < min)
+//			min = p;
+//	};
+//
+//	gil::for_each_pixel(view, pred);
+//
+//	return min;
+//}
+
+
+
+
+
+
+
+double from_stats_old(src_view_t const& view)
 {
 	using shade_qty_t = unsigned;
 	using color_hist_t = std::array<shade_qty_t, NUM_GRAY_SHADES>;
@@ -264,7 +304,7 @@ namespace impl
 	}
 
 
-	//======= TODO: IMPLEMENT =================
+	
 
 	inline data_pixel_t data_value_to_data_pixel(double val)
 	{
@@ -309,18 +349,41 @@ namespace impl
 		gil::image_read_settings<gil::bmp_tag> read_settings;
 		src_image_t image;
 		gil::read_and_convert_image(src_file, image, read_settings);
-		//gil::read_and_convert_image(src_file, image, gil::bmp_tag());
-
-		auto const views = make_view_list(image);
 
 		src_data_t data;
 
-		//auto const pred = [](auto const& view) { return average_shade(view) / MAX_SHADE; };
-		//auto const pred = [](auto const& view) { return max_shade(view) / MAX_SHADE; };
-		//auto const pred = [](auto const& view) { return min_shade(view) / MAX_SHADE; };
+
+		auto const views = make_view_list(image);
+		std::transform(views.begin(), views.end(), std::back_inserter(data), from_stats_old);
 
 
-		std::transform(views.begin(), views.end(), std::back_inserter(data), from_stats);			
+		/*auto view = img::make_view(image);
+		img::index_t width = 0;
+		img::index_t height = 0;
+		img::pixel_range_t sub_range;
+
+		for (auto const& range : pixel_ranges)
+		{
+			width = (range.x_end - range.x_begin) / 2;
+			height = (range.y_end - range.y_begin) / 100;
+
+			for (auto y = range.y_begin; y < range.y_end; y += height)
+			{
+				for (auto x = range.x_begin; x < range.x_end; x += width)
+				{
+					sub_range.x_begin = x;
+					sub_range.x_end = x + width;
+					sub_range.y_begin = y;
+					sub_range.y_end = y + height;
+
+					data.push_back(from_stats(view, sub_range));
+				}
+			}
+		}*/
+
+
+		/*auto const views = make_view_list(image);
+		std::transform(views.begin(), views.end(), std::back_inserter(data), [&](src_view_t const& view) { return 0; });*/
 
 		assert(data.size() == DATA_IMAGE_WIDTH);
 

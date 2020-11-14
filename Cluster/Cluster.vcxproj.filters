@@ -59,5 +59,8 @@
     <ClInclude Include="..\utils\stopwatch.hpp">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
+    <ClInclude Include="src\bits8.hpp">
+      <Filter>Header Files\data_adaptor</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -217,11 +217,11 @@ namespace cluster
 
 	distance_result_t Cluster::closest(data_row_t const& data, value_row_list_t const& value_list) const
 	{
-		distance_result_t res = { 0, m_dist_func(data, value_list[0]) };
+		distance_result_t res = { 0, m_distance(data, value_list[0]) };
 
 		for (size_t i = 1; i < value_list.size(); ++i)
 		{
-			auto dist = m_dist_func(data, value_list[i]);
+			auto dist = m_distance(data, value_list[i]);
 			if (dist < res.distance)
 			{
 				res.distance = dist;
@@ -249,7 +249,17 @@ namespace cluster
 			return closest(data, value_list);
 		};
 
-		auto centroids = random_values(x_list, num_clusters); // start with random centroids
+		value_row_list_t centroids;
+		auto start_data = random_values(x_list, num_clusters); // start with random data as centroids
+
+		std::transform(start_data.begin(), start_data.end(), std::back_inserter(centroids), 
+			[&](value_row_t const& data) 
+			{ 
+				data_row_t centroid;
+				std::transform(data.begin(), data.end(), std::back_inserter(centroid), m_to_centroid);
+				return centroid;
+			});
+
 		auto result = assign_clusters(x_list, centroids, closest_f);
 		relabel_clusters(result, num_clusters);
 
