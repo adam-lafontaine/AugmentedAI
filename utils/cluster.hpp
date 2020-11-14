@@ -27,7 +27,7 @@ namespace cluster
 		using index_list_t = std::vector<size_t>;
 
 		using dist_func_t = std::function<double(data_row_t const& data, value_row_t const& centroid)>;
-		using to_centroid_funct_t = std::function<value_t(data_t data)>;
+		using to_value_funct_t = std::function<value_t(data_t data)>;
 
 
 		typedef struct ClusterResult
@@ -49,7 +49,7 @@ namespace cluster
 	private:
 
 		dist_func_t m_distance;
-		to_centroid_funct_t m_to_centroid;
+		to_value_funct_t m_to_value;
 
 		distance_result_t closest(data_row_t const& data, value_row_list_t const& value_list) const;
 
@@ -60,12 +60,12 @@ namespace cluster
 		Cluster()
 		{
 			m_distance = [](data_row_t const& data, value_row_t const& centroid) { return 0.0; };
-			m_to_centroid = [](data_t data) { return data; };
+			m_to_value = [](data_t data) { return data; };
 		}
 
 		void set_distance(dist_func_t const& f) { m_distance = f; }
 
-		void set_to_centroid(to_centroid_funct_t const& f) { m_to_centroid = f; }
+		void set_to_value(to_value_funct_t const& f) { m_to_value = f; }
 
 		// determines clusters given the data and the number of clusters
 		value_row_list_t cluster_data(data_row_list_t const& x_list, size_t num_clusters) const;
@@ -85,6 +85,7 @@ namespace cluster
 	using value_row_list_t = Cluster::value_row_list_t;
 	using index_list_t = Cluster::index_list_t;
 	using dist_func_t = Cluster::dist_func_t;
+	using to_value_funct_t = Cluster::to_value_funct_t;
 
 }
 
