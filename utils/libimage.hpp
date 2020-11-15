@@ -13,6 +13,7 @@
 
 #include <vector>
 #include <string>
+#include <functional>
 
 namespace libimage // 2020-09-19
 {
@@ -97,7 +98,7 @@ namespace libimage // 2020-09-19
 	constexpr gil::alpha_t GIL_ALPHA;
 
 	
-
+	//====== MAKE VIEWS ====================
 
 	inline view_t get_view(image_t& img)
 	{
@@ -154,6 +155,55 @@ namespace libimage // 2020-09-19
 		auto pixel_count = x_end - x_begin;
 		return gil::subimage_view(view, x_begin, y, pixel_count, 1);
 	}
+
+
+	//====== ALGORITHMS ================
+
+	//using pixel_func_t = std::function<void(pixel_t const& p)>;
+	using view_func_t = std::function<void(view_t const& v)>;
+
+	/*void for_each_row(view_t const& view, pixel_func_t const& func)
+	{
+		for (index_t y = 0; y < view.height(); ++y)
+		{
+			auto const begin = view.row_begin(y);
+			auto const end = begin + view.width();
+			std::for_each(begin, end, func);
+		}
+	}
+
+
+	void for_each_column(view_t const& view, pixel_func_t const& func)
+	{
+		for (index_t x = 0; x < view.width(); ++x)
+		{
+			auto const column = column_view(view, x);
+			gil::for_each_pixel(column, func);
+		}
+	}*/
+
+
+	inline void for_each_row(view_t const& view, view_func_t const& func)
+	{
+		for (index_t y = 0; y < view.height(); ++y)
+		{
+			auto const row = row_view(view, y);
+			func(view);
+		}
+	}
+
+
+	inline void for_each_column(view_t const& view, view_func_t const& func)
+	{
+		for (index_t x = 0; x < view.width(); ++x)
+		{
+			auto const column = column_view(view, x);
+			func(view);
+		}
+	}
+
+
+
 	
 
 

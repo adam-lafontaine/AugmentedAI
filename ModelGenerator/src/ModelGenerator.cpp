@@ -335,6 +335,20 @@ namespace model_generator
 
 	static void append_data(data_list_t& data, img::view_t const& data_view)
 	{
+		
+
+		/*img::view_func_t add_data_row = [&](img::view_t const& row_view)
+		{
+			cluster::data_row_t data_row;
+
+			gil::for_each_pixel(row_view, [&](auto const& p) { data_row.push_back(data_pixel_to_model_value(p)); });
+
+			data.push_back(std::move(data_row));
+		};
+
+		img::for_each_row(data_view, add_data_row);*/
+
+
 		for (auto y = 0; y < data_view.height(); ++y)
 		{
 			cluster::data_row_t data_row;
@@ -344,7 +358,7 @@ namespace model_generator
 				data_row.push_back(data_pixel_to_model_value(ptr[x]));
 			}
 
-			data.push_back(data_row);
+			data.push_back(std::move(data_row));
 		}
 	}
 

@@ -56,6 +56,12 @@ inline bits8_range_t to_range(double val)
 }
 
 
+inline double to_mean(bits8_range_t const& range)
+{
+	return (static_cast<double>(range.min) + range.max) / 2;
+}
+
+
 inline double range_diff(bits8_range_t const& lhs, bits8_range_t const& rhs)
 {
 	auto const min = std::max(lhs.min, rhs.min);
@@ -74,8 +80,7 @@ inline double range_diff(bits8_range_t const& lhs, bits8 rhs)
 	if (rhs >= lhs.min && rhs <= lhs.max)
 		return 0;
 
-	auto const mean = (static_cast<double>(lhs.min) + lhs.max) / 2;
-	return std::abs(mean - rhs);
+	return std::abs(to_mean(lhs) - rhs);
 }
 
 
