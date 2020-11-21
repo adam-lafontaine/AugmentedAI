@@ -154,7 +154,7 @@ namespace model_generator
 
 		const auto cluster_class_data = [&](auto c)
 		{
-			const auto cents = cluster.cluster_data(cluster_data[c], class_clusters[c]);
+			const auto cents = cluster.cluster_data(cluster_data[c], class_clusters[c]).centroids;
 			centroids.insert(centroids.end(), cents.begin(), cents.end());
 		};
 

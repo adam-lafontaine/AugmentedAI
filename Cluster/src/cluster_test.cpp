@@ -106,6 +106,8 @@ cluster_count_t cluster_data(unsigned num_clusters)
 
 	data_row_list_t data;
 
+	cluster_count_t counts(num_clusters, 0);
+
 	for (auto const& file : data_files)
 	{
 		auto image = img::read_image_from_file(file);
@@ -113,18 +115,18 @@ cluster_count_t cluster_data(unsigned num_clusters)
 		append_image_data(data, view);
 	}
 
-
 	cluster_t cluster;
 	cluster.set_distance(distance);
 	cluster.set_to_value(to_centroid_value);
 
-	auto const centroids = cluster.cluster_data(data, num_clusters);
+	auto const result = cluster.cluster_data(data, num_clusters);
 
-	cluster_count_t counts = { 0 };
-
-	for (auto const& row : data)
+	for (auto const i : result.x_clusters)
 	{
-		counts[cluster.find_centroid(row, centroids)]++;
+		assert(i < num_clusters);
+		if (i >= num_clusters)
+			std::cout << "ERROR i = " << i << '\n';
+		++counts[i];
 	}
 
 	return counts;

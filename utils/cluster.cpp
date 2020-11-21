@@ -319,7 +319,7 @@ namespace cluster
 	}
 
 
-	value_row_list_t Cluster::cluster_data(data_row_list_t const& x_list, size_t num_clusters) const
+	cluster_result_t Cluster::cluster_data(data_row_list_t const& x_list, size_t num_clusters) const
 	{
 		// wrap member function in a lambda to pass it to algorithm
 		auto const cluster_once_f = [&](data_row_list_t const& x_list, size_t num_clusters)
@@ -327,9 +327,7 @@ namespace cluster
 			return cluster_once(x_list, num_clusters);
 		};
 
-		auto result = cluster_min_distance(x_list, num_clusters, cluster_once_f);
-
-		return result.centroids;
+		return cluster_min_distance(x_list, num_clusters, cluster_once_f);
 	}
 }
 

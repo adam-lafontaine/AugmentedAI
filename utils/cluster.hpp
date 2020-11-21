@@ -68,7 +68,7 @@ namespace cluster
 		void set_to_value(to_value_funct_t const& f) { m_to_value = f; }
 
 		// determines clusters given the data and the number of clusters
-		value_row_list_t cluster_data(data_row_list_t const& x_list, size_t num_clusters) const;
+		cluster_result_t cluster_data(data_row_list_t const& x_list, size_t num_clusters) const;
 
 		// The index of the closest centroid in the list
 		size_t find_centroid(data_row_t const& data, value_row_list_t const& centroids) const;
