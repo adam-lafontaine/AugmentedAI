@@ -6,7 +6,7 @@
 #include "../../utils/libimage.hpp"
 
 #include <iostream>
-#include <array>
+#include <string>
 
 namespace dir = dirhelper;
 namespace data = data_adaptor;
@@ -17,9 +17,16 @@ constexpr auto CLUSTER_DATA_DIR = "D:/test_images/clusters/data_a";
 constexpr auto SRC_IMAGE_EXTENSION = ".BMP";
 
 
-
-void save_data(dir::str::file_list_t src_files, size_t max_files = 0)
+std::vector<std::string> get_source_data_files()
 {
+	return dir::str::get_files_of_type(SRC_IMAGE_DIR, SRC_IMAGE_EXTENSION);
+}
+
+
+void save_data(size_t max_files = 0)
+{
+	auto src_files = get_source_data_files();
+
 	if (max_files > 0 && max_files < src_files.size())
 	{
 		src_files.resize(max_files);
@@ -59,7 +66,7 @@ double distance(cluster::data_row_t const& data, cluster::value_row_t const& cen
 {
 	assert(data.size() == centroid.size());
 
-	double diff = 0;
+	double diff_sq = 0;
 
 	for (size_t i = 0; i < data.size(); ++i)
 	{
@@ -67,10 +74,11 @@ double distance(cluster::data_row_t const& data, cluster::value_row_t const& cen
 
 		assert(centroid[i] <= 255);
 
-		diff += range_diff(range, static_cast<bits8>(centroid[i]));
+		auto const diff = range_diff(range, static_cast<bits8>(centroid[i]));
+		diff_sq = diff * diff;
 	}
 
-	return diff;
+	return std::sqrt(diff_sq);
 }
 
 
@@ -97,16 +105,11 @@ void append_image_data(data_row_list_t& data, img::view_t const& view)
 }
 
 
-
-using cluster_count_t = std::vector<unsigned>;
-
-cluster_count_t cluster_data(unsigned num_clusters)
+data_row_list_t get_data()
 {
 	auto const data_files = dir::str::get_files_of_type(CLUSTER_DATA_DIR, ".png");
 
 	data_row_list_t data;
-
-	cluster_count_t counts(num_clusters, 0);
 
 	for (auto const& file : data_files)
 	{
@@ -114,6 +117,43 @@ cluster_count_t cluster_data(unsigned num_clusters)
 		auto const view = img::make_view(image);
 		append_image_data(data, view);
 	}
+
+	return data;
+}
+
+
+using cluster_count_t = std::vector<unsigned>;
+
+typedef struct
+{
+	size_t id;
+	unsigned count;
+} cluster_info_t;
+
+cluster_info_t find_smallest_cluster(cluster::index_list_t const& cluster_ids)
+{
+	std::vector<unsigned> counts = { 0, 0 };
+	for (auto id : cluster_ids)
+	{
+		while (counts.size() <= id)
+			counts.push_back(0);
+
+		++counts[id];
+	}
+
+	auto itr = std::min_element(counts.begin(), counts.end());
+
+	return { static_cast<size_t>(std::distance(counts.begin(), itr)), *itr };
+}
+
+
+
+cluster_count_t cluster_data(unsigned num_clusters)
+{
+	auto const data = get_data();
+
+
+	cluster_count_t counts(num_clusters, 0);
 
 	cluster_t cluster;
 	cluster.set_distance(distance);
@@ -133,34 +173,47 @@ cluster_count_t cluster_data(unsigned num_clusters)
 }
 
 
+void print_counts(cluster_count_t const& counts)
+{
+	for (auto const c : counts)
+		std::cout << c << ' ';
+
+	std::cout << '\n';
+}
+
 
 
 int main()
 {
-	/*auto src_files = dir::str::get_files_of_type(SRC_IMAGE_DIR, SRC_IMAGE_EXTENSION);
+	auto const data = get_data();
 
-	std::cout << "Searching " << SRC_IMAGE_DIR << '\n';
-	std::cout << "Files found: " << src_files.size() << '\n';*/
+	cluster_t cluster;
+	cluster.set_distance(distance);
+	cluster.set_to_value(to_centroid_value);
 
+	size_t num_clusters = 5;
 	
-#ifdef  _DEBUG
-
-	//save_data(src_files, 20);
-
-#else
-
-	//save_data(src_files, 1000);
-
-#endif //  _DEBUG
 
 	Stopwatch sw;
 
 	sw.start();
-	auto counts = cluster_data(5);
+	auto result = cluster.cluster_data(data, num_clusters);
+
+	cluster_count_t counts(num_clusters, 0);
+	for (auto const i : result.x_clusters)
+	{
+		assert(i < num_clusters);
+		if (i >= num_clusters)
+			std::cout << "ERROR i = " << i << '\n';
+		++counts[i];
+	}
+
+	print_counts(counts);
+
+	auto smallest = find_smallest_cluster(result.x_clusters);
+
+	std::cout << "smallest = " << smallest.id << " x " << smallest.count << '\n';
 
 	auto time = sw.get_time_sec();
 	std::cout << "done.  Time = " << time / 60 << " minutes\n";
-
-	for (auto c : counts)
-		std::cout << c << '\n';
 }
