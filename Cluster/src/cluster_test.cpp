@@ -5,6 +5,8 @@
 #include "../../utils/cluster.hpp"
 #include "../../utils/libimage.hpp"
 
+#include <boost/gil/extension/io/bmp.hpp>
+
 #include <iostream>
 #include <string>
 
@@ -12,9 +14,11 @@ namespace dir = dirhelper;
 namespace data = data_adaptor;
 
 constexpr auto SRC_IMAGE_DIR = "E:/BOS Images/Weld";
+constexpr auto SRC_IMAGE_EXTENSION = ".BMP";
 constexpr auto CLUSTER_ROOT = "D:/test_images/clusters";
 constexpr auto CLUSTER_DATA_DIR = "D:/test_images/clusters/data_a";
-constexpr auto SRC_IMAGE_EXTENSION = ".BMP";
+constexpr auto CLUSTER_DST = "D:/test_images/clusters/dst_a";
+
 
 
 using file_list_t = std::vector<std::string>;
@@ -54,6 +58,30 @@ void save_data(size_t max_files = 0)
 	data::save_data_images(data, CLUSTER_DATA_DIR);
 	time = sw.get_time_sec();
 	std::cout << "done.  Time = " << time / 60 << " minutes\n";
+}
+
+
+void copy_image(std::string file_path)
+{
+	namespace fs = std::filesystem;
+	namespace gil = boost::gil;
+
+	gil::image_read_settings<gil::bmp_tag> read_settings;
+	img::gray::image_t image;
+	gil::read_and_convert_image(file_path, image, read_settings);
+	
+	auto height = image.height() / 2;
+	auto width = image.width() / 2;
+
+	img::gray::image_t copy(width, height);
+
+	auto view = img::make_resized_view(image, copy);
+
+	auto file_name = fs::path(file_path).filename();
+
+	auto dst_path = std::string(CLUSTER_DATA_DIR) + "/" + file_name.string();
+
+	img::write_image_view(dst_path, view);
 }
 
 
@@ -171,8 +199,11 @@ void print_files_in_cluster(cluster::index_list_t data_clusters, file_list_t con
 	assert(result.x_clusters.size() == files.size());
 	for (size_t data_id = 0; data_id < files.size(); ++data_id)
 	{
-		if (data_clusters[data_id] == cluster_id)
-			std::cout << files[data_id] << '\n';
+		if (data_clusters[data_id] != cluster_id)
+			continue;
+
+		std::cout << files[data_id] << '\n';
+		copy_image(files[data_id]);
 	}
 }
 
@@ -208,5 +239,7 @@ int main()
 
 	auto files = get_source_data_files();
 
-	print_files_in_cluster(result.x_clusters, files, selected_cluster_id);	
+	print_files_in_cluster(result.x_clusters, files, selected_cluster_id);
+
+
 }
