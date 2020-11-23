@@ -17,7 +17,10 @@ constexpr auto CLUSTER_DATA_DIR = "D:/test_images/clusters/data_a";
 constexpr auto SRC_IMAGE_EXTENSION = ".BMP";
 
 
-std::vector<std::string> get_source_data_files()
+using file_list_t = std::vector<std::string>;
+
+
+file_list_t get_source_data_files()
 {
 	return dir::str::get_files_of_type(SRC_IMAGE_DIR, SRC_IMAGE_EXTENSION);
 }
@@ -124,64 +127,54 @@ data_row_list_t get_data()
 
 using cluster_count_t = std::vector<unsigned>;
 
-typedef struct
+cluster_count_t count_clusters(cluster::index_list_t const& cluster_ids)
 {
-	size_t id;
-	unsigned count;
-} cluster_info_t;
+	assert(cluster_ids.size() > 0);
 
-cluster_info_t find_smallest_cluster(cluster::index_list_t const& cluster_ids)
-{
-	std::vector<unsigned> counts = { 0, 0 };
+	auto max_id = *std::max_element(cluster_ids.begin(), cluster_ids.end());
+
+	std::vector<unsigned> counts(max_id + 1, 0);
 	for (auto id : cluster_ids)
-	{
-		while (counts.size() <= id)
-			counts.push_back(0);
-
 		++counts[id];
-	}
-
-	auto itr = std::min_element(counts.begin(), counts.end());
-
-	return { static_cast<size_t>(std::distance(counts.begin(), itr)), *itr };
-}
-
-
-
-cluster_count_t cluster_data(unsigned num_clusters)
-{
-	auto const data = get_data();
-
-
-	cluster_count_t counts(num_clusters, 0);
-
-	cluster_t cluster;
-	cluster.set_distance(distance);
-	cluster.set_to_value(to_centroid_value);
-
-	auto const result = cluster.cluster_data(data, num_clusters);
-
-	for (auto const i : result.x_clusters)
-	{
-		assert(i < num_clusters);
-		if (i >= num_clusters)
-			std::cout << "ERROR i = " << i << '\n';
-		++counts[i];
-	}
 
 	return counts;
 }
 
 
-void print_counts(cluster_count_t const& counts)
+
+cluster::index_list_t rank_clusters(cluster_count_t const& counts)
 {
-	for (auto const c : counts)
-		std::cout << c << ' ';
+	auto const pred = [&](size_t lhs, size_t rhs) { return counts[lhs] < counts[rhs]; };
+
+	cluster::index_list_t ranks(counts.size());
+	std::iota(ranks.begin(), ranks.end(), 0);
+
+	std::sort(ranks.begin(), ranks.end(), pred);
+
+	return ranks;
+}
+
+
+
+template<typename T>
+void print_list(std::vector<T> list, char delim = ' ')
+{
+	for (auto const item : list)
+		std::cout << item << delim;
 
 	std::cout << '\n';
 }
 
 
+void print_files_in_cluster(cluster::index_list_t data_clusters, file_list_t const& files, size_t cluster_id)
+{
+	assert(result.x_clusters.size() == files.size());
+	for (size_t data_id = 0; data_id < files.size(); ++data_id)
+	{
+		if (data_clusters[data_id] == cluster_id)
+			std::cout << files[data_id] << '\n';
+	}
+}
 
 int main()
 {
@@ -199,21 +192,21 @@ int main()
 	sw.start();
 	auto result = cluster.cluster_data(data, num_clusters);
 
-	cluster_count_t counts(num_clusters, 0);
-	for (auto const i : result.x_clusters)
-	{
-		assert(i < num_clusters);
-		if (i >= num_clusters)
-			std::cout << "ERROR i = " << i << '\n';
-		++counts[i];
-	}
+	auto const counts = count_clusters(result.x_clusters);
+	auto const rank = rank_clusters(counts);
 
-	print_counts(counts);
+	std::cout << "counts:\n";
+	print_list(counts);
 
-	auto smallest = find_smallest_cluster(result.x_clusters);
-
-	std::cout << "smallest = " << smallest.id << " x " << smallest.count << '\n';
+	std::cout << "rank:\n";
+	print_list(rank);
 
 	auto time = sw.get_time_sec();
 	std::cout << "done.  Time = " << time / 60 << " minutes\n";
+
+	auto selected_cluster_id = rank[0]; // smallest cluster
+
+	auto files = get_source_data_files();
+
+	print_files_in_cluster(result.x_clusters, files, selected_cluster_id);	
 }
