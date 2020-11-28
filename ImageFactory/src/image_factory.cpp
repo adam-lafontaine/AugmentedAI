@@ -17,13 +17,15 @@ using index_t = img::index_t;
 
 using color = img::rgb_t;
 
-typedef struct
-{
-	img::index_t x_begin;
-	img::index_t x_end;
-	img::index_t y_begin;
-	img::index_t y_end;
-} pixel_range_t;
+//typedef struct
+//{
+//	img::index_t x_begin;
+//	img::index_t x_end;
+//	img::index_t y_begin;
+//	img::index_t y_end;
+//} pixel_range_t;
+
+using pixel_range_t = img::pixel_range_t;
 
 using range_list_t = std::vector<pixel_range_t>;
 
@@ -310,6 +312,7 @@ void build_images(const char* alpha_path, const char* border_path, const char* p
 		auto width = range.x_end - range.x_begin;
 		auto height = range.y_end - range.y_begin;
 		auto dst_v = img::view_t(width, height, alpha_v.xy_at(range.x_begin, range.y_begin));
+		dst_v = img::sub_view(alpha_v, range);
 
 		letters.push_back(dst_v);
 	}

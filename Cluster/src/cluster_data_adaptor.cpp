@@ -1,7 +1,6 @@
 #include "image_data_adaptors/any_image_by_section.hpp"
 
 #include <execution>
-#include <mutex>
 
 
 namespace data_adaptor
@@ -33,35 +32,11 @@ namespace data_adaptor
 
 	data_list_t file_list_to_data(file_list_t const& files)
 	{
-		data_list_t data;
-		data.reserve(files.size());
+		data_list_t data(files.size());
 
 		const auto pred = [&](path_t const& file_path) { return file_to_data(file_path); };
 
-		std::transform(files.begin(), files.end(), std::back_inserter(data), pred);
-
-		return data;
-	}
-
-
-	data_list_t file_list_to_data_par(file_list_t const& files)
-	{
-		data_list_t data;
-		data.reserve(files.size());
-
-		std::mutex m;
-		auto const add_data = [&](auto&& data_row)
-		{
-			std::lock_guard<std::mutex> guard(m);
-			data.push_back(std::move(data_row));
-		};
-
-		auto const convert_and_add = [&](auto const& file_path)
-		{
-			add_data(file_to_data(file_path));
-		};
-
-		std::for_each(std::execution::par, files.begin(), files.end(), convert_and_add);
+		std::transform(std::execution::par, files.begin(), files.end(), data.begin(), pred);
 
 		return data;
 	}

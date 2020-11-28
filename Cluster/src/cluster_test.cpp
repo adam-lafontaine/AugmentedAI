@@ -50,45 +50,7 @@ file_list_t get_source_data_files()
 }
 
 
-void save_seq(file_list_t const& src_files)
-{
-	Stopwatch sw;
-
-	sw.start();
-
-	std::cout << "converting sequential " << src_files.size() << " images... ";
-	auto data = data::file_list_to_data(src_files);
-
-	auto time = sw.get_time_sec();
-	std::cout << "done.  Time = " << time / 60 << " minutes\n";
-
-	std::cout << "saving data images...";
-	data::save_data_images(data, (std::string(CLUSTER_DATA_DIR) + "/seq").c_str());
-	time = sw.get_time_sec();
-	std::cout << "done.  Time = " << time / 60 << " minutes\n\n";
-}
-
-
-void save_par(file_list_t const& src_files)
-{
-	Stopwatch sw;
-
-	sw.start();
-
-	std::cout << "converting parallel " << src_files.size() << " images... ";
-	auto data = data::file_list_to_data_par(src_files);
-
-	auto time = sw.get_time_sec();
-	std::cout << "done.  Time = " << time / 60 << " minutes\n";
-
-	std::cout << "saving data images...";
-	data::save_data_images(data, (std::string(CLUSTER_DATA_DIR) + "/par").c_str());
-	time = sw.get_time_sec();
-	std::cout << "done.  Time = " << time / 60 << " minutes\n\n";
-}
-
-
-void save_data(size_t max_files = 0, bool seq_first = true)
+void save_data(size_t max_files = 0)
 {
 	auto src_files = get_source_data_files();
 
@@ -101,16 +63,20 @@ void save_data(size_t max_files = 0, bool seq_first = true)
 		max_files = src_files.size();
 	}
 
-	if (seq_first)
-	{
-		save_seq(src_files);
-		save_par(src_files);		
-	}
-	else
-	{
-		save_par(src_files);
-		save_seq(src_files);
-	}
+	Stopwatch sw;
+
+	sw.start();
+
+	std::cout << "converting " << src_files.size() << " images... ";
+	auto data = data::file_list_to_data(src_files);
+
+	auto time = sw.get_time_sec();
+	std::cout << "done.  Time = " << time / 60 << " minutes\n";
+
+	std::cout << "saving data images...";
+	data::save_data_images(data, CLUSTER_DATA_DIR);
+	time = sw.get_time_sec();
+	std::cout << "done.  Time = " << time / 60 << " minutes\n\n";
 }
 
 
@@ -203,22 +169,6 @@ data_row_list_t get_data()
 		append_image_data(data, view);
 	}
 
-	/*std::mutex m;
-	auto const mtx_append_image_data = [&](auto const& view) 
-	{
-		std::lock_guard<std::mutex> guard(m);
-		append_image_data(data, view);
-	};
-
-	auto const add_data = [&](auto const& file) 
-	{
-		auto image = img::read_image_from_file(file);
-		auto const view = img::make_view(image);
-		mtx_append_image_data(view);
-	};
-
-	std::for_each(std::execution::par, data_files.begin(), data_files.end(), add_data);*/
-
 	return data;
 }
 
@@ -308,6 +258,5 @@ void cluster_data()
 
 int main()
 {
-	//save_data(100, true);
-	save_data(10000, false);
+	save_data(100);
 }
