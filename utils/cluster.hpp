@@ -63,14 +63,17 @@ namespace cluster
 			m_to_value = [](data_t data) { return data; };
 		}
 
+		// define how distance is calculated between data and a centroid
 		void set_distance(dist_func_t const& f) { m_distance = f; }
 
+		// define how a data value is to be interpreted as if it were a centroid value
+		// used when building a new centroid from a set of data
 		void set_to_value(to_value_funct_t const& f) { m_to_value = f; }
 
 		// determines clusters given the data and the number of clusters
 		cluster_result_t cluster_data(data_row_list_t const& x_list, size_t num_clusters) const;
 
-		// The index of the closest centroid in the list
+		// The index of the closest centroid for the given data row
 		size_t find_centroid(data_row_t const& data, value_row_list_t const& centroids) const;
 	};
 

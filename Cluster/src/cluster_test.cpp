@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 namespace dir = dirhelper;
 namespace data = data_adaptor;
@@ -16,12 +17,31 @@ namespace data = data_adaptor;
 constexpr auto SRC_IMAGE_DIR = "E:/BOS Images/Weld";
 constexpr auto SRC_IMAGE_EXTENSION = ".BMP";
 constexpr auto CLUSTER_ROOT = "D:/test_images/clusters";
-constexpr auto CLUSTER_DATA_DIR = "D:/test_images/clusters/data_a";
+constexpr auto CLUSTER_DATA_DIR = "D:/test_images/clusters/data_c";
 constexpr auto CLUSTER_DST = "D:/test_images/clusters/dst_a";
 
 
-
+using os_list_t = std::vector<std::ostream>;
 using file_list_t = std::vector<std::string>;
+
+template<typename T>
+void print(T const& msg)
+{
+	std::cout << msg;
+}
+
+
+template<typename T>
+void print_list(std::vector<T> list, char delim = ' ')
+{
+	for (auto const& item : list)
+	{
+		std::cout << item << delim;
+	}		
+
+	std::cout << '\n';
+}
+
 
 
 file_list_t get_source_data_files()
@@ -30,7 +50,45 @@ file_list_t get_source_data_files()
 }
 
 
-void save_data(size_t max_files = 0)
+void save_seq(file_list_t const& src_files)
+{
+	Stopwatch sw;
+
+	sw.start();
+
+	std::cout << "converting sequential " << src_files.size() << " images... ";
+	auto data = data::file_list_to_data(src_files);
+
+	auto time = sw.get_time_sec();
+	std::cout << "done.  Time = " << time / 60 << " minutes\n";
+
+	std::cout << "saving data images...";
+	data::save_data_images(data, (std::string(CLUSTER_DATA_DIR) + "/seq").c_str());
+	time = sw.get_time_sec();
+	std::cout << "done.  Time = " << time / 60 << " minutes\n\n";
+}
+
+
+void save_par(file_list_t const& src_files)
+{
+	Stopwatch sw;
+
+	sw.start();
+
+	std::cout << "converting parallel " << src_files.size() << " images... ";
+	auto data = data::file_list_to_data_par(src_files);
+
+	auto time = sw.get_time_sec();
+	std::cout << "done.  Time = " << time / 60 << " minutes\n";
+
+	std::cout << "saving data images...";
+	data::save_data_images(data, (std::string(CLUSTER_DATA_DIR) + "/par").c_str());
+	time = sw.get_time_sec();
+	std::cout << "done.  Time = " << time / 60 << " minutes\n\n";
+}
+
+
+void save_data(size_t max_files = 0, bool seq_first = true)
 {
 	auto src_files = get_source_data_files();
 
@@ -42,22 +100,17 @@ void save_data(size_t max_files = 0)
 	{
 		max_files = src_files.size();
 	}
-		
 
-	Stopwatch sw;
-
-	sw.start();
-
-	std::cout << "converting " << max_files <<" images... ";
-	auto data = data::file_list_to_data(src_files);
-
-	auto time = sw.get_time_sec();
-	std::cout << "done.  Time = " << time / 60 << " minutes\n";
-
-	std::cout << "saving data images...";
-	data::save_data_images(data, CLUSTER_DATA_DIR);
-	time = sw.get_time_sec();
-	std::cout << "done.  Time = " << time / 60 << " minutes\n";
+	if (seq_first)
+	{
+		save_seq(src_files);
+		save_par(src_files);		
+	}
+	else
+	{
+		save_par(src_files);
+		save_seq(src_files);
+	}
 }
 
 
@@ -70,18 +123,19 @@ void copy_image(std::string file_path)
 	img::gray::image_t image;
 	gil::read_and_convert_image(file_path, image, read_settings);
 	
-	auto height = image.height() / 2;
-	auto width = image.width() / 2;
+	auto height = image.height() / 4;
+	auto width = image.width() / 4;
 
 	img::gray::image_t copy(width, height);
 
-	auto view = img::make_resized_view(image, copy);
+	auto dst_view = img::make_resized_view(image, copy);
 
 	auto file_name = fs::path(file_path).filename();
 
-	auto dst_path = std::string(CLUSTER_DATA_DIR) + "/" + file_name.string();
+	auto dst_path = std::string(CLUSTER_DST) + "/" + file_name.string() + ".png";
 
-	img::write_image_view(dst_path, view);
+
+	img::write_image_view(dst_path, dst_view);
 }
 
 
@@ -149,6 +203,22 @@ data_row_list_t get_data()
 		append_image_data(data, view);
 	}
 
+	/*std::mutex m;
+	auto const mtx_append_image_data = [&](auto const& view) 
+	{
+		std::lock_guard<std::mutex> guard(m);
+		append_image_data(data, view);
+	};
+
+	auto const add_data = [&](auto const& file) 
+	{
+		auto image = img::read_image_from_file(file);
+		auto const view = img::make_view(image);
+		mtx_append_image_data(view);
+	};
+
+	std::for_each(std::execution::par, data_files.begin(), data_files.end(), add_data);*/
+
 	return data;
 }
 
@@ -184,19 +254,12 @@ cluster::index_list_t rank_clusters(cluster_count_t const& counts)
 
 
 
-template<typename T>
-void print_list(std::vector<T> list, char delim = ' ')
-{
-	for (auto const item : list)
-		std::cout << item << delim;
 
-	std::cout << '\n';
-}
 
 
 void print_files_in_cluster(cluster::index_list_t data_clusters, file_list_t const& files, size_t cluster_id)
 {
-	assert(result.x_clusters.size() == files.size());
+	//assert(result.x_clusters.size() == files.size());
 	for (size_t data_id = 0; data_id < files.size(); ++data_id)
 	{
 		if (data_clusters[data_id] != cluster_id)
@@ -207,7 +270,8 @@ void print_files_in_cluster(cluster::index_list_t data_clusters, file_list_t con
 	}
 }
 
-int main()
+
+void cluster_data()
 {
 	auto const data = get_data();
 
@@ -215,8 +279,7 @@ int main()
 	cluster.set_distance(distance);
 	cluster.set_to_value(to_centroid_value);
 
-	size_t num_clusters = 5;
-	
+	size_t num_clusters = 3;
 
 	Stopwatch sw;
 
@@ -225,6 +288,7 @@ int main()
 
 	auto const counts = count_clusters(result.x_clusters);
 	auto const rank = rank_clusters(counts);
+
 
 	std::cout << "counts:\n";
 	print_list(counts);
@@ -237,9 +301,13 @@ int main()
 
 	auto selected_cluster_id = rank[0]; // smallest cluster
 
-	auto files = get_source_data_files();
+	auto const files = get_source_data_files();
 
 	print_files_in_cluster(result.x_clusters, files, selected_cluster_id);
+}
 
-
+int main()
+{
+	//save_data(100, true);
+	save_data(10000, false);
 }

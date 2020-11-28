@@ -22,6 +22,8 @@ namespace data_adaptor
 
 	data_list_t file_list_to_data(file_list_t const& files);
 
+	data_list_t file_list_to_data_par(file_list_t const& files);  // experimental
+
 	// Define how data is to be saved as a "data image"
 	void save_data_images(data_list_t const& data, const char* dst_dir);
 	void save_data_images(data_list_t const& data, path_t const& dst_dir);

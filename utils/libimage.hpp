@@ -113,7 +113,7 @@ namespace libimage // 2020-09-19
 
 
 	// returns a resized image view
-	inline view_t make_resized_view(image_t& img_src, image_t img_dst)
+	inline view_t make_resized_view(image_t& img_src, image_t& img_dst)
 	{
 		const auto& view = gil::view(img_dst);
 
@@ -486,12 +486,11 @@ namespace libimage // 2020-09-19
 	}
 
 
-	inline gray::view_t make_resized_view(gray::image_t& img_src, gray::image_t img_dst)
+	inline gray::view_t make_resized_view(gray::image_t& img_src, gray::image_t& img_dst)
 	{
-		const auto& view = gil::view(img_dst);
+		gil::resize_view(gil::const_view(img_src), gil::view(img_dst), gil::bilinear_sampler());
 
-		gil::resize_view(gil::const_view(img_src), view, gil::bilinear_sampler());
-		return view;
+		return gil::view(img_dst);
 	}
 
 
