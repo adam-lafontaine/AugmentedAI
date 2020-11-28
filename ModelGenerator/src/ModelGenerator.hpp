@@ -32,4 +32,5 @@ namespace model_generator
 		// saves properties based on all of the data read
 		void save_model(const char* save_dir);
 	};
+
 }

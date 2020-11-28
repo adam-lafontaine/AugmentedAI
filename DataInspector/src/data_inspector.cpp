@@ -105,7 +105,7 @@ namespace data_inspector
 
 		cluster.set_distance(model::build_cluster_distance(data_indeces));
 
-		const auto clusters_per_class = cluster::CLUSTER_COUNT;
+		const auto clusters_per_class = model::CLUSTERS_PER_CLASS;
 		std::array<size_t, ML_CLASS_COUNT> class_clusters = { clusters_per_class, clusters_per_class };
 
 		// map centroid index to class

@@ -26,7 +26,7 @@ namespace model_generator
 	constexpr hist_value_t MAX_COLOR_VALUE = 255;
 
 	using color_qty_t = unsigned;
-	constexpr color_qty_t MAX_RELATIVE_QTY = 255;
+	constexpr color_qty_t MAX_RELATIVE_QTY = 255;	
 
 	// provides a count for every shade that is found
 	using color_hist_t = std::array<color_qty_t, MAX_COLOR_VALUE>;
@@ -146,8 +146,7 @@ namespace model_generator
 		cluster_t cluster;
 		centroid_list_t centroids;
 
-		const auto clusters_per_class = cluster::CLUSTER_COUNT;
-		std::array<size_t, ML_CLASS_COUNT> class_clusters = { clusters_per_class, clusters_per_class };
+		std::array<size_t, ML_CLASS_COUNT> class_clusters = { CLUSTERS_PER_CLASS, CLUSTERS_PER_CLASS };
 
 
 		cluster.set_distance(build_cluster_distance(data_indeces));
