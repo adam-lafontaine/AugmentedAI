@@ -17,14 +17,6 @@ using index_t = img::index_t;
 
 using color = img::rgb_t;
 
-//typedef struct
-//{
-//	img::index_t x_begin;
-//	img::index_t x_end;
-//	img::index_t y_begin;
-//	img::index_t y_end;
-//} pixel_range_t;
-
 using pixel_range_t = img::pixel_range_t;
 
 using range_list_t = std::vector<pixel_range_t>;
@@ -302,39 +294,27 @@ void build_images(const char* alpha_path, const char* border_path, const char* p
 	auto alpha_img = img::read_image_from_file(alpha_path);
 	auto alpha_v = img::make_view(alpha_img);
 
-	auto ranges = get_letter_ranges(alpha_v);
-
-	std::vector<img::view_t> letters;
-	letters.reserve(ranges.size());
-
-	for (auto const& range : ranges)
-	{
-		auto width = range.x_end - range.x_begin;
-		auto height = range.y_end - range.y_begin;
-		auto dst_v = img::view_t(width, height, alpha_v.xy_at(range.x_begin, range.y_begin));
-		dst_v = img::sub_view(alpha_v, range);
-
-		letters.push_back(dst_v);
-	}
+	auto const letter_ranges = get_letter_ranges(alpha_v);
 
 	auto border_img = img::read_image_from_file(border_path);
 	auto border_v = img::make_view(border_img);
 
 	// decide the image dimensions
-	const auto dst_w = border_v.width() + 96;
-	const auto dst_h = border_v.height() + 96;
+	auto const dst_w = border_v.width() + 96;
+	auto const dst_h = border_v.height() + 96;
 
-	const auto num_images = letters.size() * SURFACE_COLRS.size() * LETTER_COLORS.size();
-	const auto idx_len = std::to_string(num_images).length();
+	auto const num_images = letter_ranges.size() * SURFACE_COLRS.size() * LETTER_COLORS.size();
+	auto const idx_len = std::to_string(num_images).length();
 	unsigned idx = 1;
 	char idx_str[100];
 	size_t pass_idx = 0;
-	size_t fail_idx = 1;
+	size_t fail_idx = 1;	
 
 	uint8_t letter_index = 0; // for naming files after their letter
 
-	for (auto const& letter_v : letters)
+	for (auto const& range : letter_ranges)
 	{
+		auto const letter_v = img::sub_view(alpha_v, range);
 		char block_letter = 'A' + letter_index;
 
 		for (auto const& sc : SURFACE_COLRS)
@@ -342,9 +322,9 @@ void build_images(const char* alpha_path, const char* border_path, const char* p
 			for (auto const& lc : LETTER_COLORS)
 			{
 				sprintf_s(idx_str, "%0*d", (int)idx_len, idx++); // zero pad index number
-				const auto file_name = std::string(idx_str) + "_" + block_letter + ".png";
-				const auto pass_path = str_append_sub(pass_dir, file_name);
-				const auto fail_path = str_append_sub(fail_dir, file_name);
+				auto const file_name = std::string(idx_str) + "_" + block_letter + ".png";
+				auto const pass_path = str_append_sub(pass_dir, file_name);
+				auto const fail_path = str_append_sub(fail_dir, file_name);
 				
 				img::image_t pass_img(dst_w, dst_h);
 				img::image_t fail_img(dst_w, dst_h);
