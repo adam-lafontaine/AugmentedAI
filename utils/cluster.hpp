@@ -55,6 +55,21 @@ namespace cluster
 
 		cluster_result_t cluster_once(data_row_list_t const& x_list, size_t num_clusters) const;
 
+		double root_mean_square(data_row_t const& data, value_row_t const& centroid)
+		{
+			//assert(data.size() == centroid.size());
+
+			double diff_sq = 0;
+
+			for (size_t i = 0; i < data.size(); ++i)
+			{
+				auto diff = data[i] - centroid[i];
+				diff_sq += diff * diff;
+			}
+
+			return std::sqrt(diff_sq);
+		}
+
 	public:
 
 		Cluster()

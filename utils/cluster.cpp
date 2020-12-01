@@ -6,6 +6,7 @@
 #include <iterator>
 #include <iostream>
 #include <functional>
+#include <execution>
 
 namespace cluster
 {
@@ -77,15 +78,23 @@ namespace cluster
 
 
 	// convert a list of data_row_t to value_row_t
-	static value_row_list_t to_value_row_list(data_row_list_t const& data_row_list, to_value_funct_t const& converter)
+	static value_row_list_t to_value_row_list(data_row_list_t const& data_row_list, to_value_funct_t const& to_value)
 	{
-		auto list = make_value_row_list(data_row_list.size(), data_row_list[0].size());
-		for (size_t i = 0; i < data_row_list.size(); ++i)
+		auto list = make_value_row_list(data_row_list.size(), data_row_list[0].size()); // TODO
+
+		auto const row_converter = [&](auto const& row) 
 		{
-			auto data_row = data_row_list[i];
-			for (size_t j = 0; j < data_row.size(); ++j)
-				list[i][j] = converter(data_row[j]);
-		}
+			value_row_t values(row.size());
+
+			std::transform(row.begin(), row.end(), values.begin(), to_value);
+
+			return values;
+		};
+
+		auto const src_begin = data_row_list.begin();
+		auto const src_end = data_row_list.end();
+
+		std::transform(/*std::execution::par, */src_begin, src_end, list.begin(), row_converter);
 
 		return list;
 	}

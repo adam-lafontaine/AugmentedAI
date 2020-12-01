@@ -308,7 +308,7 @@ void build_images(const char* alpha_path, const char* border_path, const char* p
 	unsigned idx = 1;
 	char idx_str[100];
 	size_t pass_idx = 0;
-	size_t fail_idx = 1;	
+	size_t fail_idx = 1;
 
 	uint8_t letter_index = 0; // for naming files after their letter
 

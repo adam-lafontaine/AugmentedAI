@@ -17,7 +17,7 @@ namespace data = data_adaptor;
 constexpr auto SRC_IMAGE_DIR = "E:/BOS Images/Weld";
 constexpr auto SRC_IMAGE_EXTENSION = ".BMP";
 constexpr auto CLUSTER_ROOT = "D:/test_images/clusters";
-constexpr auto CLUSTER_DATA_DIR = "D:/test_images/clusters/data_c";
+constexpr auto CLUSTER_DATA_DIR = "D:/test_images/clusters/data_a";
 constexpr auto CLUSTER_DST = "D:/test_images/clusters/dst_a";
 
 
@@ -126,10 +126,21 @@ double distance(cluster::data_row_t const& data, cluster::value_row_t const& cen
 		assert(centroid[i] <= 255);
 
 		auto const diff = range_diff(range, static_cast<bits8>(centroid[i]));
-		diff_sq = diff * diff;
+		diff_sq += diff * diff;
 	}
 
 	return std::sqrt(diff_sq);
+}
+
+
+double distance_last_only(cluster::data_row_t const& data, cluster::value_row_t const& centroid)
+{
+	assert(data.size() == centroid.size());
+
+	auto i = data.size() - 1;
+
+	auto const range = to_range(data[i]);
+	return range_diff(range, static_cast<bits8>(centroid[i]));
 }
 
 
@@ -251,12 +262,14 @@ void cluster_data()
 
 	auto selected_cluster_id = rank[0]; // smallest cluster
 
-	auto const files = get_source_data_files();
+	//auto const files = get_source_data_files();
 
-	print_files_in_cluster(result.x_clusters, files, selected_cluster_id);
+	//print_files_in_cluster(result.x_clusters, files, selected_cluster_id);
 }
 
 int main()
 {
-	save_data(100);
+	//save_data();
+
+	cluster_data();
 }
