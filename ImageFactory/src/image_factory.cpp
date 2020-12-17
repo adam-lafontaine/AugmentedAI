@@ -215,10 +215,7 @@ static void assemble_blocks(
 	for (index_t y = 0; y < dst_list[0].height(); ++y)
 	{
 		img::pixel_ptr_list_t dst_it_list;
-		dst_it_list.reserve(dst_list.size());
-
-		for(size_t i = 0; i < dst_list.size(); ++i)
-			dst_it_list.push_back(dst_list[i].row_begin(y));
+		std::transform(dst_list.begin(), dst_list.end(), std::back_inserter(dst_it_list), [&](auto const& v) { return v.row_begin(y); });
 
 		for (index_t x = 0; x < dst_list[0].width(); ++x)
 		{
@@ -304,7 +301,7 @@ void build_images(const char* alpha_path, const char* border_path, const char* p
 	auto const dst_h = border_v.height() + 96;
 
 	auto const num_images = letter_ranges.size() * SURFACE_COLRS.size() * LETTER_COLORS.size();
-	auto const idx_len = std::to_string(num_images).length();
+	auto const idx_len = static_cast<int>(std::to_string(num_images).length());
 	unsigned idx = 1;
 	char idx_str[100];
 	size_t pass_idx = 0;
@@ -321,7 +318,7 @@ void build_images(const char* alpha_path, const char* border_path, const char* p
 		{
 			for (auto const& lc : LETTER_COLORS)
 			{
-				sprintf_s(idx_str, "%0*d", (int)idx_len, idx++); // zero pad index number
+				sprintf_s(idx_str, "%0*d", idx_len, idx++); // zero pad index number
 				auto const file_name = std::string(idx_str) + "_" + block_letter + ".png";
 				auto const pass_path = str_append_sub(pass_dir, file_name);
 				auto const fail_path = str_append_sub(fail_dir, file_name);

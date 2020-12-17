@@ -82,7 +82,7 @@ namespace cluster
 	{
 		auto list = make_value_row_list(data_row_list.size(), data_row_list[0].size()); // TODO
 
-		auto const row_converter = [&](auto const& row) 
+		auto const row_converter = [&](data_row_t const& row) 
 		{
 			value_row_t values(row.size());
 
@@ -91,10 +91,10 @@ namespace cluster
 			return values;
 		};
 
-		auto const src_begin = data_row_list.begin();
-		auto const src_end = data_row_list.end();
+		auto src_begin = data_row_list.begin();
+		auto src_end = data_row_list.end();
 
-		std::transform(/*std::execution::par, */src_begin, src_end, list.begin(), row_converter);
+		std::transform(src_begin, src_end, list.begin(), row_converter);
 
 		return list;
 	}

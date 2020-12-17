@@ -14,6 +14,7 @@
 #include <vector>
 #include <string>
 #include <functional>
+#include <execution>
 
 namespace libimage // 2020-09-19
 {
@@ -432,6 +433,33 @@ namespace libimage // 2020-09-19
 		write_image_view_png(file_path, view);
 	}
 
+
+	//======= ALGORITHMS =================
+
+
+	using pixel_func_t = std::function<void(pixel_t const& p)>;
+
+	inline void for_each_pixel_par(view_t const& view, pixel_func_t const& func)
+	{
+		auto width = static_cast<size_t>(view.width());
+		auto const height = static_cast<size_t>(view.height());
+
+		size_t id_size = width * height;
+
+		std::vector<int> ids(id_size);
+		std::iota(ids.begin(), ids.end(), 0);
+
+		auto const get_y = [&](int id) { return id / width; };
+		auto const get_x = [&](int id) { return id % height; };
+
+		auto const id_func = [&](int id)
+		{
+			func(view.row_begin(get_y(id))[get_x(id)]);
+		};
+
+		std::for_each(std::execution::par, ids.begin(), ids.end(), id_func);
+	}
+
 	namespace gray
 	{
 		using image_t = gil::gray8_image_t;
@@ -454,6 +482,8 @@ namespace libimage // 2020-09-19
 			gil::write_view(file_path, view, gil::png_tag());
 		}
 
+
+
 		using hist_t = std::array<unsigned, CHANNEL_SIZE>; // histogram of shades of gray
 
 		inline hist_t make_histogram(view_t const& view)
@@ -465,6 +495,33 @@ namespace libimage // 2020-09-19
 			gil::for_each_pixel(view, update_hist);
 
 			return hist;
+		}
+
+
+		//======= ALGORITHMS =================
+
+
+		using pixel_func_t = std::function<void(pixel_t const& p)>;
+
+		inline void for_each_pixel_par(view_t const& view, pixel_func_t const& func)
+		{
+			auto width = static_cast<size_t>(view.width());
+			auto const height = static_cast<size_t>(view.height());
+
+			size_t id_size = width * height;
+
+			std::vector<int> ids(id_size);
+			std::iota(ids.begin(), ids.end(), 0);
+
+			auto const get_y = [&](int id) { return id / width; };
+			auto const get_x = [&](int id) { return id % height; };
+
+			auto const id_func = [&](int id)
+			{
+				func(view.row_begin(get_y(id))[get_x(id)]);
+			};
+
+			std::for_each(std::execution::par, ids.begin(), ids.end(), id_func);
 		}
 	}
 
