@@ -243,7 +243,7 @@ namespace model_generator
 					continue;
 
 				qty_total += qty;
-				auto diff = val - mean;
+				double diff = val - mean;
 				
 				total += qty * diff * diff;
 			}
@@ -365,8 +365,8 @@ namespace model_generator
 	// sets all values in the histograms to a value between 0 and MAX_RELATIVE_QTY
 	static void normalize_histograms(position_hists_t& pos)
 	{
-		std::vector<unsigned> hists;
-		hists.reserve(pos.size());
+		std::vector<unsigned> hist_maximums;
+		hist_maximums.reserve(pos.size());
 
 		const auto max_val = [](auto const& list)
 		{
@@ -374,9 +374,9 @@ namespace model_generator
 			return *it;
 		};
 
-		std::transform(pos.begin(), pos.end(), std::back_inserter(hists), max_val);
+		std::transform(pos.begin(), pos.end(), std::back_inserter(hist_maximums), max_val);
 
-		const double max = max_val(hists);
+		const double max = max_val(hist_maximums);
 
 		const auto norm = [&](unsigned count)
 		{
