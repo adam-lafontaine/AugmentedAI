@@ -4,6 +4,16 @@
 
 namespace img = libimage;
 
+/*
+
+Functions used for converting values in the model to pixels for saving as an image and vice versa.
+You can use your own implementations in pixel_conversion.cpp.
+There are tests for these functions and if they don't pass then there is a problem.
+But even if they all pass, it doesn't mean your application will work.
+This is ML/AI afterall.  It's only as good as the data and the developer.
+
+*/
+
 namespace model_generator
 {
 	using data_pixel_t = img::pixel_t;

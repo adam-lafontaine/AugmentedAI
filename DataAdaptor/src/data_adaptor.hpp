@@ -17,6 +17,7 @@ This particular project uses png files as the source data and a K-means clusteri
 Any file type and algorithm can used.
 The idea is to be able to "compress" large amounts of files for later use with several algorithms.
 The data images are png files with 4 8bit channel pixels.  The channels/bits can be used to store data however you like.
+Binary files could be used instead but images allow users to see what their data "looks like"
 
 */
 namespace data_adaptor

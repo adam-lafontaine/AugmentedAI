@@ -118,7 +118,7 @@ namespace data_inspector
 			}
 		};
 
-		for_each_class(update_map);
+		mlclass::for_each_class(update_map);
 
 
 		// convert data into values for the model

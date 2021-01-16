@@ -6,6 +6,16 @@
 #include <array>
 #include <vector>
 
+/*
+
+A "model" is used for determining how to classify a new row of data.
+It is generated after teaching/training with the saved data images from DataAdaptor.
+It is saved as png for later use.
+A binary file could be used as well but an image is more visual and user-friendly
+Each row in the model image is a centroid found by the clustering algorithm
+
+*/
+
 namespace model_generator
 {
 	class ModelGenerator
