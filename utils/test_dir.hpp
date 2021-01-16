@@ -20,7 +20,7 @@ enum class TestDir : size_t
 };
 
 
-constexpr auto TEST_DIR_CONFIG_PATH = "test_dir_config.txt";
+constexpr auto TEST_DIR_CONFIG_PATH = "D:/repos/AugmentedAI/utils/test_dir_config.txt";
 
 
 class TestDirConfig
