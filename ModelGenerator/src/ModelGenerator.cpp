@@ -101,7 +101,7 @@ namespace model_generator
 	void ModelGenerator::add_class_data(const char* src_dir, MLClass class_index)
 	{
 		// convert the class enum to an array index
-		auto const index = to_class_index(class_index);
+		auto const index = mlclass::to_class_index(class_index);
 
 		// data is organized in directories by class
 		auto data_files = dir::get_files_of_type(src_dir, img::IMAGE_FILE_EXTENSION);
@@ -154,8 +154,7 @@ namespace model_generator
 		cluster_t cluster;
 		centroid_list_t centroids;
 
-		auto const clusters_per_class = cluster::CLUSTER_COUNT;
-		std::array<size_t, ML_CLASS_COUNT> class_clusters = { clusters_per_class, clusters_per_class };
+		auto const class_clusters = mlclass::make_class_clusters(cluster::CLUSTER_COUNT);
 
 		cluster.set_distance(build_cluster_distance(data_indeces));
 

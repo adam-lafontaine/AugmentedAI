@@ -6,6 +6,8 @@
 #include "../../utils/dirhelper.hpp"
 #include "../../utils/cluster_config.hpp"
 
+#include <cassert>
+
 
 namespace data = data_adaptor;
 namespace model = model_generator;
@@ -34,16 +36,22 @@ static index_list_t find_positions(value_list_t const& saved_centroid)
 }
 
 
-
+// read the model from file and convert to centroids
 static centroid_list_t read_model(const char* model_file)
 {
 	auto image = img::read_image_from_file(model_file);
 	auto view = img::make_view(image);
 
-	const auto width = view.width();
-	const auto height = view.height();
+	auto const width = view.width();
+	auto const height = view.height();
 
 	centroid_list_t centroids;
+
+	assert(width == data::data_image_width());
+	if(width != data::data_image_width())
+		return centroids;
+
+
 	centroids.reserve(height);
 
 	for (auto y = 0; y < height; ++y)
@@ -64,11 +72,11 @@ static centroid_list_t read_model(const char* model_file)
 }
 
 
-double data_value_to_model_value(double data_val)
+// convert a value from a data image to model/centroid value
+// uses data pixel as intermediary
+static double data_value_to_model_value(double data_val)
 {
-	const auto pix = data::data_value_to_data_pixel(data_val);
-
-	return model::data_pixel_to_model_value(pix);
+	return model::data_pixel_to_model_value(data::data_value_to_data_pixel(data_val));
 }
 
 
@@ -79,7 +87,7 @@ namespace data_inspector
 {
 	using model_row_t = std::vector<double>;
 
-	model_row_t to_model_value_row(src_data_t const& data_row)
+	static model_row_t to_model_value_row(src_data_t const& data_row)
 	{
 		model_row_t row;
 
@@ -94,45 +102,57 @@ namespace data_inspector
 		if (data_row.empty())
 			return MLClass::Error;
 
-		const auto file = dir::get_first_file_of_type(model_dir, img::IMAGE_FILE_EXTENSION);
-		if (file.empty())
+		/*
+		
+		The following must done every time data is provided
+		A class can be created with centroids, cluster, centroid_class_map build in the constructor
+
+		*/
+
+		// use the first model found in the directory
+		auto const model_file = dir::get_first_file_of_type(model_dir, img::IMAGE_FILE_EXTENSION);
+		if (model_file.empty())
 			return MLClass::Error;
 
-		const auto centroids = read_model(file.c_str());
-		const auto data_indeces = find_positions(centroids[0]);
+		auto const centroids = read_model(model_file.c_str());
+		if(centroids.empty())
+			return MLClass::Error;
+
+		auto const data_indeces = find_positions(centroids[0]);
 
 		cluster_t cluster;
-
 		cluster.set_distance(model::build_cluster_distance(data_indeces));
+		
 
-		const auto clusters_per_class = cluster::CLUSTER_COUNT;
-		std::array<size_t, ML_CLASS_COUNT> class_clusters = { clusters_per_class, clusters_per_class };
+		// cluster will find a centroid and the centroid will be mapped to a MLClass
+		auto const class_clusters = mlclass::make_class_clusters(cluster::CLUSTER_COUNT);
 
 		// map centroid index to class
-		std::vector<MLClass> map;
-		const auto update_map = [&](auto c)
+		std::vector<MLClass> centroid_class_map;
+		auto const update_map = [&](auto c)
 		{
 			for (size_t i = 0; i < class_clusters[c]; ++i)
 			{
-				map.push_back(static_cast<MLClass>(c));
+				centroid_class_map.push_back(mlclass::to_class(c));
 			}
 		};
 
 		mlclass::for_each_class(update_map);
 
+		/*****************************************************************/
 
 		// convert data into values for the model
-		const auto model_row = to_model_value_row(data_row);
+		auto const model_row = to_model_value_row(data_row);	
 
 		auto centroid_index = cluster.find_centroid(model_row, centroids);
 
-		return map[centroid_index];
+		return centroid_class_map[centroid_index];
 	}
 
 
 	MLClass inspect(const char* data_file, const char* model_dir)
 	{
-		const auto data = data::file_to_data(data_file);
+		auto const data = data::file_to_data(data_file);
 
 		return inspect(data, model_dir);
 	}
