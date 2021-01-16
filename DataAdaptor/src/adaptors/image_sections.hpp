@@ -14,12 +14,7 @@ using src_data_t = data_adaptor::src_data_t;
 
 constexpr size_t HORIZONTAL_SECTIONS = 16;
 constexpr size_t VERTICAL_SECTIONS = 16;
-
-
 constexpr size_t MAX_DATA_IMAGE_SIZE = 300000;
-constexpr size_t DATA_IMAGE_WIDTH = HORIZONTAL_SECTIONS * VERTICAL_SECTIONS;
-constexpr double DATA_MIN_VALUE = 0;
-constexpr double DATA_MAX_VALUE = 1;
 constexpr auto BITS32_MAX = img::to_bits32(255, 255, 255, 255);
 
 
@@ -36,6 +31,11 @@ union four_bytes_t
 
 namespace impl
 {
+	constexpr size_t DATA_IMAGE_WIDTH = HORIZONTAL_SECTIONS * VERTICAL_SECTIONS;
+	constexpr double DATA_MIN_VALUE = 0;
+	constexpr double DATA_MAX_VALUE = 1;
+
+
 	// Define how to name save files
 	inline std::string make_numbered_file_name(unsigned index, size_t index_length)
 	{

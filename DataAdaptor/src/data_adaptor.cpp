@@ -2,29 +2,24 @@
 
 /*
 
-This file exists to be the source file when compiling other projects.
+This file exists to be the source file when compiling other projects in this solution.
 Allows for changing implementation without having to modify the source file list of other projects
 
 */
 
-// choose implementation
+// choose an implementation
 #include "adaptors/image_file_adaptor.hpp" 
 //#include "adaptors/count_black_pixels.hpp"
 //#include "adaptors/image_sections.hpp"
-
-
-
-
-
 
 
 namespace data_adaptor
 {
 	using data_itr_t = data_list_t::const_iterator;
 
-	static void save_data_range(data_itr_t const& first, data_itr_t const& last, std::string const& dst_file_path) // TODO: ranges
+	static void save_data_range(data_itr_t const& first, data_itr_t const& last, std::string const& dst_file_path)
 	{
-		const auto width = DATA_IMAGE_WIDTH;
+		const auto width = impl::DATA_IMAGE_WIDTH;
 		const auto height = std::distance(first, last);
 
 		img::image_t image(width, height);
@@ -60,7 +55,7 @@ namespace data_adaptor
 
 	void save_data_images(data_list_t const& data, const char* dst_dir)
 	{
-		const auto max_height = MAX_DATA_IMAGE_SIZE / DATA_IMAGE_WIDTH;
+		const auto max_height = MAX_DATA_IMAGE_SIZE / impl::DATA_IMAGE_WIDTH;
 
 		unsigned idx = 1;
 
@@ -86,8 +81,6 @@ namespace data_adaptor
 
 			save_data_range(first, last, dst_file_path);
 		}
-
-		// TODO: ranges::views::chunk(max_height), ranges::views::enumerate
 	}
 
 
@@ -99,11 +92,11 @@ namespace data_adaptor
 
 	src_data_t data_image_row_to_data(img::view_t const& pixel_row)
 	{
-		assert(pixel_row.width() == DATA_IMAGE_WIDTH);
+		assert(pixel_row.width() == impl::DATA_IMAGE_WIDTH);
 		assert(pixel_row.height() == 1);
 
 		src_data_t data;
-		data.reserve(DATA_IMAGE_WIDTH);
+		data.reserve(impl::DATA_IMAGE_WIDTH);
 
 		const auto ptr = pixel_row.row_begin(0);
 		for (img::index_t x = 0; x < pixel_row.width(); ++x)
@@ -112,24 +105,6 @@ namespace data_adaptor
 		}
 
 		return data;
-	}
-
-
-	size_t data_image_width()
-	{
-		return DATA_IMAGE_WIDTH;
-	}
-
-
-	double data_min_value()
-	{
-		return DATA_MIN_VALUE;
-	}
-
-
-	double data_max_value()
-	{
-		return DATA_MAX_VALUE;
 	}
 
 
@@ -156,5 +131,23 @@ namespace data_adaptor
 	src_data_t file_to_data(path_t const& src_file)
 	{
 		return file_to_data(src_file.c_str());
+	}
+
+
+	size_t data_image_width()
+	{
+		return impl::DATA_IMAGE_WIDTH;
+	}
+
+
+	double data_min_value()
+	{
+		return impl::DATA_MIN_VALUE;
+	}
+
+
+	double data_max_value()
+	{
+		return impl::DATA_MAX_VALUE;
 	}
 }
