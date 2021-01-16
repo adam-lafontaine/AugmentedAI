@@ -35,13 +35,13 @@ namespace model_generator
 	using column_hists_t = std::vector<color_hist_t>;
 
 	// shade counts by column for each class
-	using class_column_hists_t = std::array<column_hists_t, ML_CLASS_COUNT>;
+	using class_column_hists_t = std::array<column_hists_t, mlclass::ML_CLASS_COUNT>;
 
 	using cluster_t = cluster::Cluster;
 	using centroid_list_t = cluster::value_row_list_t;
 
 	using data_list_t = std::vector<cluster::data_row_t>;
-	using class_cluster_data_t = std::array<data_list_t, ML_CLASS_COUNT>;
+	using class_cluster_data_t = std::array<data_list_t, mlclass::ML_CLASS_COUNT>;
 
 	using index_list_t = std::vector<size_t>;
 
@@ -275,7 +275,7 @@ namespace model_generator
 	
 
 	// determine if any of the ranges overlap each other
-	static bool has_overlap(std::array<minmax_t, ML_CLASS_COUNT> const& ranges)
+	static bool has_overlap(std::array<minmax_t, mlclass::ML_CLASS_COUNT> const& ranges)
 	{
 		assert(ranges.size() >= 2);
 
@@ -292,7 +292,7 @@ namespace model_generator
 	{
 		const size_t num_pos = class_pos_hists[0].size();
 
-		std::array<minmax_t, ML_CLASS_COUNT> class_ranges;
+		std::array<minmax_t, mlclass::ML_CLASS_COUNT> class_ranges;
 
 		index_list_t list;
 

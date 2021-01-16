@@ -23,7 +23,7 @@ namespace model_generator
 	public:
 		using file_path_t = std::string;
 		using file_list_t = std::vector<file_path_t>;
-		using class_file_list_t = std::array<file_list_t, ML_CLASS_COUNT>;
+		using class_file_list_t = std::array<file_list_t, mlclass::ML_CLASS_COUNT>;
 
 	private:
 		// file paths of raw data images by class
