@@ -161,6 +161,16 @@ namespace dirhelper
 	}
 
 
+	void delete_files_of_type(const char* src_dir, const char* extension)
+	{
+		auto const files = get_files_of_type(src_dir, extension);
+		for (auto const& file : files)
+		{
+			fs::remove(file);
+		}
+	}
+
+
 	// string overloads
 	namespace str
 	{

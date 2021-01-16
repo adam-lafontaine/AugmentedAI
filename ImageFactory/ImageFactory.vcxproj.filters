@@ -33,6 +33,9 @@
     <ClInclude Include="..\utils\config_reader.hpp">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\utils\dirhelper.hpp">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\image_factory.cpp">
@@ -42,6 +45,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\utils\config_reader.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\utils\dirhelper.cpp">
       <Filter>Source Files\utils</Filter>
     </ClCompile>
   </ItemGroup>

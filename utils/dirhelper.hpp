@@ -42,6 +42,9 @@ namespace dirhelper
 	std::string get_first_file_of_type(const char* src_dir, const char* extension);
 
 
+	void delete_files_of_type(const char* src_dir, const char* extension);
+
+
 
 	// for testing/debugging
 	std::string dbg_get_file_name(path_t const& file_path);
