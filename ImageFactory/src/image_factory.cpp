@@ -1,3 +1,9 @@
+/*
+
+Copyright (c) 2021 Adam Lafontaine
+
+*/
+
 #include "../../utils/libimage.hpp"
 #include "image_factory.hpp"
 

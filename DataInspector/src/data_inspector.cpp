@@ -1,3 +1,9 @@
+/*
+
+Copyright (c) 2021 Adam Lafontaine
+
+*/
+
 #include "data_inspector.hpp"
 #include "../../DataAdaptor/src/data_adaptor.hpp"
 #include "../../ModelGenerator/src/pixel_conversion.hpp"

@@ -1,4 +1,9 @@
 #pragma once
+/*
+
+Copyright (c) 2021 Adam Lafontaine
+
+*/
 
 #include "config_reader.hpp"
 
@@ -20,6 +25,7 @@ enum class TestDir : size_t
 };
 
 
+// change this path to match your system
 constexpr auto TEST_DIR_CONFIG_PATH = "D:/repos/AugmentedAI/utils/test_dir_config.txt";
 
 
