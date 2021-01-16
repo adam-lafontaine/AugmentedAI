@@ -14,11 +14,12 @@ utils="../../utils"
 ImageFactory="../../ImageFactory/src"
 
 config_reader="$utils/config_reader.cpp"
+dirhelper="$utils/dirhelper.cpp"
 
 image_factory="$ImageFactory/image_factory.cpp"
 main_cpp="$ImageFactory/source_main.cpp"
 
-cpp_files="$main_cpp $image_factory $config_reader"
+cpp_files="$main_cpp $image_factory $config_reader $dirhelper"
 
 exe="ImageFactory"
 

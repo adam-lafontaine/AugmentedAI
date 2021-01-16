@@ -1,9 +1,16 @@
+/*
+
+Copyright (c) 2021 Adam Lafontaine
+
+*/
+
 #include "../../utils/libimage.hpp"
 #include "image_factory.hpp"
 
 #include <random>
 #include <vector>
 #include <string>
+#include <filesystem>
 
 #ifdef __linux
 
@@ -11,6 +18,7 @@
 
 #endif
 
+namespace fs = std::filesystem;
 namespace img = libimage;
 
 using index_t = img::index_t;
@@ -61,16 +69,8 @@ constexpr color GREEN = { 0, 128, 0 };
 constexpr color GREEN_1 = { 10, 220, 10 };
 
 
-//constexpr std::array<color, 3> LETTER_COLORS = { ORANGE, PURPLE, YELLOW };
-//constexpr std::array<color, 3> SURFACE_COLRS = { RED, BLUE, GREEN };
-
-
 constexpr std::array<color, 6> LETTER_COLORS = { ORANGE, PURPLE, YELLOW, ORANGE_1, PURPLE_1, YELLOW_1 };
 constexpr std::array<color, 6> SURFACE_COLRS = { RED, BLUE, GREEN, RED_1, BLUE_1, GREEN_1 };
-
-
-static bool str_ends_with(std::string const& full_string, std::string const& end);
-static std::string str_append_sub(std::string const& parent_dir, std::string const& sub);
 
 
 static img::bits32 to_bits32(img::ref_t const& p)
@@ -340,8 +340,8 @@ void build_images(const char* alpha_path, const char* border_path, const char* p
 			{
 				sprintf_s(idx_str, "%0*d", (int)idx_len, idx++); // zero pad index number
 				const auto file_name = std::string(idx_str) + "_" + block_letter + ".png";
-				const auto pass_path = str_append_sub(pass_dir, file_name);
-				const auto fail_path = str_append_sub(fail_dir, file_name);
+				const auto pass_path = fs::path(pass_dir) / file_name;
+				const auto fail_path = fs::path(fail_dir) / file_name;
 				
 				img::image_t pass_img(dst_w, dst_h);
 				img::image_t fail_img(dst_w, dst_h);
@@ -353,31 +353,11 @@ void build_images(const char* alpha_path, const char* border_path, const char* p
 				// modify fail images
 				add_defects(view_list[fail_idx]);
 
-				img::write_image_view(pass_path, view_list[pass_idx]);
-				img::write_image_view(fail_path, view_list[fail_idx]);
+				img::write_image_view(pass_path.c_str(), view_list[pass_idx]);
+				img::write_image_view(fail_path.c_str(), view_list[fail_idx]);
 			}
 		}
 
 		++letter_index;
 	}	
-}
-
-
-//======= OTHER HELPERS ====================
-
-// checks if a string ends with another string
-static bool str_ends_with(std::string const& full_string, std::string const& end) {
-
-	return end.length() <= full_string.length() &&
-		full_string.compare(full_string.length() - end.length(), end.length(), end) == 0;
-
-}
-
-// appends sub file/directory to a directory path string
-static std::string str_append_sub(std::string const& parent_dir, std::string const& sub) {
-	constexpr auto back_slash = R"(\)";
-	constexpr auto forward_slash = R"(/)";
-
-	return str_ends_with(parent_dir, back_slash) || str_ends_with(parent_dir, forward_slash) ?
-		parent_dir + sub : parent_dir + forward_slash + sub;
 }

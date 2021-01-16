@@ -1,3 +1,9 @@
+/*
+
+Copyright (c) 2021 Adam Lafontaine
+
+*/
+
 #include "dirhelper.hpp"
 
 namespace dirhelper
@@ -158,6 +164,16 @@ namespace dirhelper
 	std::string get_first_file_of_type(const char* src_dir, const char* extension)
 	{
 		return get_first_file_of_type(std::string(src_dir), std::string(extension));
+	}
+
+
+	void delete_files_of_type(const char* src_dir, const char* extension)
+	{
+		auto const files = get_files_of_type(src_dir, extension);
+		for (auto const& file : files)
+		{
+			fs::remove(file);
+		}
 	}
 
 

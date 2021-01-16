@@ -1,14 +1,29 @@
 #pragma once
+/*
+
+Copyright (c) 2021 Adam Lafontaine
+
+*/
 
 #include "../../utils/cluster.hpp"
+
+/*
+
+Used to build a function for calculating distance between a data row and a centroid for clustering purposes.
+To save time, another part of the program finds which indeces of the data actually contributes to the
+  the result and only those indeces are considered.
+Any function can be used here as appropriate for the application.
+
+*/
 
 namespace model_generator
 {
 	using index_list_t = std::vector<size_t>;
 
-	// build function for evaluating distance between data and a cluster centroid
+	
 	inline cluster::dist_func_t build_cluster_distance(index_list_t const& relevant_indeces)
 	{
+		// average absolute difference
 		return [&](auto const& data, auto const& centroid)
 		{
 			double total = 0;
@@ -20,5 +35,27 @@ namespace model_generator
 
 			return total / relevant_indeces.size();
 		};
+
+
+		/*
+
+		// Root mean square difference
+		return [&](auto const& data, auto const& centroid)
+		{
+			double total = 0;
+
+			for (auto i : relevant_indeces)
+			{
+				auto const diff = data[i] - centroid[i];
+				total += diff * diff;
+			}
+
+			auto const mean_square = total / relevant_indeces.size();
+
+			return std::sqrt(mean_square);
+		};
+
+		*/
 	}
+
 }

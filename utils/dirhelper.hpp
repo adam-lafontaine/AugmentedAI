@@ -1,4 +1,9 @@
 #pragma once
+/*
+
+Copyright (c) 2021 Adam Lafontaine
+
+*/
 
 #include <vector>
 #include <string>
@@ -40,6 +45,9 @@ namespace dirhelper
 	std::string get_first_file_of_type(std::string const& src_dir, const char* extension);
 
 	std::string get_first_file_of_type(const char* src_dir, const char* extension);
+
+
+	void delete_files_of_type(const char* src_dir, const char* extension);
 
 
 

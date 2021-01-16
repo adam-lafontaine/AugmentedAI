@@ -1,4 +1,9 @@
 #pragma once
+/*
+
+Copyright (c) 2021 Adam Lafontaine
+
+*/
 
 // Add _CRT_SECURE_NO_WARNINGS to Preprocessor Definitions
 

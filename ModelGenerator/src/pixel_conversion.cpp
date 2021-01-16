@@ -1,3 +1,9 @@
+/*
+
+Copyright (c) 2021 Adam Lafontaine
+
+*/
+
 #include "pixel_conversion.hpp"
 
 #include <cassert>
@@ -12,8 +18,8 @@ constexpr auto MODEL_VALUE_MAX = BITS32_MAX;
 
 using shade_t = img::bits8;
 
-constexpr shade_t ACTIVE = 255;
-constexpr shade_t INACTIVE = 254;
+constexpr shade_t PIXEL_ACTIVE = 255;
+constexpr shade_t PIXEL_INACTIVE = 254;
 
 namespace model_generator
 {
@@ -53,7 +59,7 @@ namespace model_generator
 		const shade_t b = static_cast<shade_t>(ratio * max);
 
 		// use alpha channel to flag if pixel is used in the model
-		const shade_t a = is_active ? ACTIVE : INACTIVE;
+		const shade_t a = is_active ? PIXEL_ACTIVE : PIXEL_INACTIVE;
 
 		return img::to_pixel(r, g, b, a);
 	}
@@ -65,10 +71,11 @@ namespace model_generator
 
 		// if alpha channel has been flagged as inactive,
 		// return value makes is_relevant() == false
-		if (rgba.a == INACTIVE)
+		if (rgba.a != PIXEL_ACTIVE)
 			return MODEL_VALUE_MIN - 1;
 
-		// only the blue channel is used to store value
+		// only the blue channel is used to store a value
+		// the red and green channels are random values used to make the model image look more interesting
 		const auto ratio = rgba.b / BITS8_MAX;
 		return ratio * MODEL_VALUE_MAX;
 	}
