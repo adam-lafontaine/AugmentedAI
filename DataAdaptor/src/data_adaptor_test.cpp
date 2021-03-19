@@ -1,6 +1,7 @@
 #include "../src/data_adaptor.hpp"
 #include "../../utils/dirhelper.hpp"
 #include "../../utils/test_dir.hpp"
+#include "../../utils/libimage/libimage_fs.hpp"
 
 #include <string>
 #include <iostream>
@@ -11,6 +12,7 @@
 
 namespace data = data_adaptor;
 namespace dir = dirhelper;
+namespace img = libimage;
 
 std::string src_root;
 std::string dst_root;
@@ -299,7 +301,11 @@ bool data_image_row_to_data_size_test()
 	img::image_t data_image;
 	img::read_image_from_file(data_images[0], data_image);
 	const auto view = img::make_view(data_image);
-	const auto converted = img::row_view(view, test_index);
+	auto converted_view = img::row_view(view, test_index);
+
+	data::pixel_row_t converted;
+	std::transform(converted_view.begin(), converted_view.end(), 
+		std::back_inserter(converted), [](img::pixel_t const& p) { return p.value; });
 
 	const auto new_data = data::data_image_row_to_data(converted);
 
@@ -327,7 +333,11 @@ bool data_image_row_to_data_values_test()
 	img::image_t data_image;
 	img::read_image_from_file(data_images[0], data_image);
 	const auto view = img::make_view(data_image);
-	const auto converted = img::row_view(view, test_index);
+	auto converted_view = img::row_view(view, test_index);
+
+	data::pixel_row_t converted;
+	std::transform(converted_view.begin(), converted_view.end(),
+		std::back_inserter(converted), [](img::pixel_t const& p) { return p.value; });
 
 	const auto new_data = data::data_image_row_to_data(converted);	
 

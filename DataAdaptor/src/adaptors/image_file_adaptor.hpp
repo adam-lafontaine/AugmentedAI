@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../data_adaptor.hpp"
+#include "../../../utils/libimage/libimage.hpp"
 #include "../../../utils/libimage/libimage_math_256.hpp"
 
 #include <algorithm>
@@ -17,6 +18,8 @@
 #define sprintf_s sprintf
 
 #endif
+
+namespace img = libimage;
 
 
 using data_pixel_t = data_adaptor::data_pixel_t;
@@ -87,13 +90,13 @@ namespace impl
 		img::pixel_t color;
 		color.value = static_cast<u32>(ratio * BITS32_MAX);
 
-		return color;
+		return color.value;
 	}
 
 
 	inline double data_pixel_to_data_value(data_pixel_t const& pix)
 	{
-		return static_cast<double>(pix.value) / BITS32_MAX;
+		return static_cast<double>(pix) / BITS32_MAX;
 	}
 
 

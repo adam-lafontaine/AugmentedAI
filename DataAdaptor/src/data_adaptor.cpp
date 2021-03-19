@@ -5,6 +5,9 @@ Copyright (c) 2021 Adam Lafontaine
 */
 
 #include "data_adaptor.hpp"
+#include "../../utils/libimage/libimage_fs.hpp"
+
+namespace img = libimage;
 
 /*
 
@@ -41,7 +44,7 @@ namespace data_adaptor
 			auto ptr = view.row_begin(y);
 			for (u32 x = 0; x < view.width; ++x)
 			{
-				ptr[x] = data_value_to_data_pixel(data_row[x]);
+				ptr[x].value = data_value_to_data_pixel(data_row[x]);
 			}
 		}
 
@@ -98,19 +101,20 @@ namespace data_adaptor
 	}
 
 
-	src_data_t data_image_row_to_data(img::view_t const& pixel_row)
+	src_data_t data_image_row_to_data(pixel_row_t const& pixel_row)
 	{
-		assert(pixel_row.width == impl::DATA_IMAGE_WIDTH);
-		assert(pixel_row.height == 1);
+		assert(pixel_row.size() == impl::DATA_IMAGE_WIDTH);
 
 		src_data_t data;
-		data.reserve(impl::DATA_IMAGE_WIDTH);
+		/*data.reserve(impl::DATA_IMAGE_WIDTH);
 
 		const auto ptr = pixel_row.row_begin(0);
 		for (u32 x = 0; x < pixel_row.width; ++x)
 		{
-			data.push_back(data_pixel_to_data_value(ptr[x]));
-		}
+			data.push_back(data_pixel_to_data_value(ptr[x].value));
+		}*/
+
+		std::transform(pixel_row.begin(), pixel_row.end(), std::back_inserter(data), data_pixel_to_data_value);
 
 		return data;
 	}

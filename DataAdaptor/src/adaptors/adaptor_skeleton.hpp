@@ -2,6 +2,8 @@
 
 #include "../data_adaptor.hpp"
 
+#include <cassert>
+
 #ifdef __linux
 
 #define sprintf_s sprintf
@@ -44,7 +46,7 @@ namespace impl
 		assert(val >= DATA_MIN_VALUE);
 		assert(val <= DATA_MAX_VALUE);
 
-		return img::to_pixel(255, 255, 255, 255);
+		return 0;
 	}
 
 
