@@ -22,6 +22,12 @@
     <Filter Include="Header Files\adaptors">
       <UniqueIdentifier>{3c04b8db-da79-414b-8e27-a20d26cdb286}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\utils\libimage">
+      <UniqueIdentifier>{36b1634a-b86a-4604-b226-409f78fd29ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\utils\libimage">
+      <UniqueIdentifier>{0f52073f-ab8d-4585-9488-f0bfd12f24db}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\utils\libimage.hpp">
@@ -51,6 +57,30 @@
     <ClInclude Include="..\utils\config_reader.hpp">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\utils\libimage\image_view.hpp">
+      <Filter>Header Files\utils\libimage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utils\libimage\libimage.hpp">
+      <Filter>Header Files\utils\libimage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utils\libimage\libimage_algorithm.hpp">
+      <Filter>Header Files\utils\libimage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utils\libimage\libimage_fs.hpp">
+      <Filter>Header Files\utils\libimage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utils\libimage\stb_all.hpp">
+      <Filter>Header Files\utils\libimage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utils\libimage\stb_image.h">
+      <Filter>Header Files\utils\libimage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utils\libimage\stb_image_write.h">
+      <Filter>Header Files\utils\libimage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utils\libimage\libimage_math_256.hpp">
+      <Filter>Header Files\utils\libimage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\utils\dirhelper.cpp">
@@ -64,6 +94,12 @@
     </ClCompile>
     <ClCompile Include="..\utils\config_reader.cpp">
       <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\utils\libimage\libimage.cpp">
+      <Filter>Source Files\utils\libimage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\utils\libimage\libimage_math.cpp">
+      <Filter>Source Files\utils\libimage</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

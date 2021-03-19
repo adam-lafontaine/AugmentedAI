@@ -11,7 +11,7 @@ Copyright (c) 2021 Adam Lafontaine
 #include <functional>
 
 //#define LIBIMAGE_NO_WRITE
-#define LIBIMAGE_NO_RESIZE
+//#define LIBIMAGE_NO_RESIZE
 
 using u8 = uint8_t;
 using u32 = uint32_t;

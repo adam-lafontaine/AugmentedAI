@@ -33,7 +33,7 @@ namespace impl
 		char idx_str[10];
 		sprintf_s(idx_str, "%0*d", (int)index_length, index); // zero pad index number
 
-		return std::string(idx_str) + img::IMAGE_FILE_EXTENSION;
+		return std::string(idx_str) + data_adaptor::DATA_IMAGE_EXTENSION;
 	}
 
 

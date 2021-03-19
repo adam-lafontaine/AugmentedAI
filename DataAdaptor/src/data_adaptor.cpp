@@ -23,33 +23,35 @@ namespace data_adaptor
 {
 	using data_itr_t = data_list_t::const_iterator;
 
-	static void save_data_range(data_itr_t const& first, data_itr_t const& last, std::string const& dst_file_path)
+	static void save_data_range(data_itr_t const& first, data_itr_t const& last, path_t const& dst_file_path)
 	{
 		const auto width = impl::DATA_IMAGE_WIDTH;
 		const auto height = std::distance(first, last);
 
-		img::image_t image(width, height);
+		assert(height <= MAX_DATA_IMAGE_SIZE / width);
+
+		img::image_t image;
+		img::make_image(image, width, static_cast<u32>(height));
 		auto view = img::make_view(image);
 
-		for (auto y = 0; y < view.height(); ++y)
+		for (u32 y = 0; y < view.height; ++y)
 		{
 			auto data_row = *(first + y);
 
 			auto ptr = view.row_begin(y);
-			for (auto x = 0; x < view.width(); ++x)
+			for (u32 x = 0; x < view.width; ++x)
 			{
 				ptr[x] = data_value_to_data_pixel(data_row[x]);
 			}
 		}
 
-		img::write_image_view(dst_file_path, view);
+		img::write_view(view, dst_file_path);
 	}
 
 
 	data_list_t file_list_to_data(file_list_t const& files)
 	{
 		data_list_t data;
-		data.reserve(files.size());
 
 		const auto pred = [&](path_t const& file_path) { return file_to_data(file_path); };
 
@@ -83,7 +85,7 @@ namespace data_adaptor
 			first = last, last = get_last())
 		{
 			const auto name = impl::make_numbered_file_name(idx++, idx_len);
-			const auto dst_file_path = std::string(dst_dir) + '/' + name;
+			const auto dst_file_path = fs::path(dst_dir) / name;
 
 			save_data_range(first, last, dst_file_path);
 		}
@@ -92,20 +94,20 @@ namespace data_adaptor
 
 	void save_data_images(data_list_t const& data, path_t const& dst_dir)
 	{
-		save_data_images(data, dst_dir.c_str());
+		save_data_images(data, dst_dir.string().c_str());
 	}
 
 
 	src_data_t data_image_row_to_data(img::view_t const& pixel_row)
 	{
-		assert(pixel_row.width() == impl::DATA_IMAGE_WIDTH);
-		assert(pixel_row.height() == 1);
+		assert(pixel_row.width == impl::DATA_IMAGE_WIDTH);
+		assert(pixel_row.height == 1);
 
 		src_data_t data;
 		data.reserve(impl::DATA_IMAGE_WIDTH);
 
 		const auto ptr = pixel_row.row_begin(0);
-		for (img::index_t x = 0; x < pixel_row.width(); ++x)
+		for (u32 x = 0; x < pixel_row.width; ++x)
 		{
 			data.push_back(data_pixel_to_data_value(ptr[x]));
 		}
@@ -136,7 +138,7 @@ namespace data_adaptor
 
 	src_data_t file_to_data(path_t const& src_file)
 	{
-		return file_to_data(src_file.c_str());
+		return file_to_data(src_file.string().c_str());
 	}
 
 
