@@ -19,6 +19,12 @@
     <Filter Include="Source Files\utils">
       <UniqueIdentifier>{040f56e7-e771-4f49-8f8d-df1d99f495af}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\utils\libimage">
+      <UniqueIdentifier>{fed0d7fb-e441-4b91-9803-13bd7f1eee28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\utils\libimage">
+      <UniqueIdentifier>{2392ba54-052d-4868-bafb-d3e051774506}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\image_factory.hpp">
@@ -36,12 +42,24 @@
     <ClInclude Include="..\utils\dirhelper.hpp">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\utils\libimage\image_view.hpp">
+      <Filter>Header Files\utils\libimage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utils\libimage\libimage.hpp">
+      <Filter>Header Files\utils\libimage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utils\libimage\libimage_algorithm.hpp">
+      <Filter>Header Files\utils\libimage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utils\libimage\libimage_fs.hpp">
+      <Filter>Header Files\utils\libimage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utils\libimage\stb_all.hpp">
+      <Filter>Header Files\utils\libimage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\image_factory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\source_main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\utils\config_reader.cpp">
@@ -49,6 +67,12 @@
     </ClCompile>
     <ClCompile Include="..\utils\dirhelper.cpp">
       <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\utils\libimage\libimage.cpp">
+      <Filter>Source Files\utils\libimage</Filter>
+    </ClCompile>
+    <ClCompile Include="src\image_factory_main.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
