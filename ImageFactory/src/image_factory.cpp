@@ -312,8 +312,6 @@ void build_images(const char* alpha_path, const char* border_path, const char* p
 				const auto file_name = std::string(idx_str) + "_" + block_letter + ".png";
 				const auto pass_path = fs::path(pass_dir) / file_name;
 				const auto fail_path = fs::path(fail_dir) / file_name;
-				
-				
 
 				std::vector<img::view_t> view_list { img::make_view(pass_img), img::make_view(fail_img) };
 

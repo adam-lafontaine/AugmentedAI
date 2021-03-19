@@ -152,6 +152,7 @@
     <ClInclude Include="..\utils\libimage\libimage_fs.hpp" />
     <ClInclude Include="..\utils\libimage\stb_all.hpp" />
     <ClInclude Include="..\utils\test_dir.hpp" />
+    <ClInclude Include="..\utils\win32_leak_check.h" />
     <ClInclude Include="src\image_factory.hpp" />
   </ItemGroup>
   <ItemGroup>
