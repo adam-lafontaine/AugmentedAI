@@ -42,23 +42,11 @@
     <ClInclude Include="..\utils\dirhelper.hpp">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\utils\libimage\image_view.hpp">
-      <Filter>Header Files\utils\libimage</Filter>
+    <ClInclude Include="..\utils\win32_leak_check.h">
+      <Filter>Header Files\utils</Filter>
     </ClInclude>
     <ClInclude Include="..\utils\libimage\libimage.hpp">
       <Filter>Header Files\utils\libimage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\utils\libimage\libimage_algorithm.hpp">
-      <Filter>Header Files\utils\libimage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\utils\libimage\libimage_fs.hpp">
-      <Filter>Header Files\utils\libimage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\utils\libimage\stb_all.hpp">
-      <Filter>Header Files\utils\libimage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\utils\win32_leak_check.h">
-      <Filter>Header Files\utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
