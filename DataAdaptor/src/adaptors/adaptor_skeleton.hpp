@@ -2,6 +2,8 @@
 
 #include "../data_adaptor.hpp"
 
+#include <cassert>
+
 #ifdef __linux
 
 #define sprintf_s sprintf
@@ -19,10 +21,6 @@ constexpr double DATA_MIN_VALUE = 0;
 constexpr double DATA_MAX_VALUE = 1;
 
 
-
-
-
-
 namespace impl
 {
 	// Define how to name save files
@@ -33,7 +31,7 @@ namespace impl
 		char idx_str[10];
 		sprintf_s(idx_str, "%0*d", (int)index_length, index); // zero pad index number
 
-		return std::string(idx_str) + img::IMAGE_FILE_EXTENSION;
+		return std::string(idx_str) + data_adaptor::DATA_IMAGE_EXTENSION;
 	}
 
 
@@ -44,7 +42,7 @@ namespace impl
 		assert(val >= DATA_MIN_VALUE);
 		assert(val <= DATA_MAX_VALUE);
 
-		return img::to_pixel(255, 255, 255, 255);
+		return 0;
 	}
 
 

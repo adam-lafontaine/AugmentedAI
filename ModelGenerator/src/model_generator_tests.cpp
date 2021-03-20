@@ -243,13 +243,14 @@ bool save_model_active_test()
 
 	const auto model_file = dir::get_files_of_type(model_root, img_ext)[0];
 
-	auto model = img::read_image_from_file(model_file.c_str());
+	img::image_t model;
+	img::read_image_from_file(model_file, model);
 	const auto view = img::make_view(model);
 
 	unsigned active_count = 0;
 	const auto row = img::row_view(view, 0);
 	auto ptr = row.row_begin(0);
-	for (auto x = 0; x < row.width(); ++x)
+	for (u32 x = 0; x < row.width; ++x)
 	{
 		const auto value = gen::model_pixel_to_model_value(ptr[x]);
 		active_count += gen::is_relevant(value);
@@ -268,12 +269,13 @@ bool pixel_conversion_test()
 
 	const auto model_file = dir::get_files_of_type(model_root, img_ext)[0];
 
-	auto model = img::read_image_from_file(model_file.c_str());
+	img::image_t model;
+	img::read_image_from_file(model_file, model);
 	const auto view = img::make_view(model);
 
 	const auto row = img::row_view(view, 0);
 	auto ptr = row.row_begin(0);
-	for (auto x = 0; x < row.width(); ++x)
+	for (u32 x = 0; x < row.width; ++x)
 	{
 		const auto value = gen::model_pixel_to_model_value(ptr[x]);
 		if (!gen::is_relevant(value))

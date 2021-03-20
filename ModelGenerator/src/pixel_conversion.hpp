@@ -5,7 +5,7 @@ Copyright (c) 2021 Adam Lafontaine
 
 */
 
-#include "../../utils/libimage.hpp"
+#include "../../utils/libimage/libimage.hpp"
 
 namespace img = libimage;
 
@@ -23,6 +23,8 @@ namespace model_generator
 {
 	using data_pixel_t = img::pixel_t;
 	using model_pixel_t = img::pixel_t;
+
+	constexpr auto MODEL_FILE_EXTENSION = ".png";
 
 
 	// is this a value that contributes to the clusters

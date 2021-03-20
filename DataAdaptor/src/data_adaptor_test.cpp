@@ -1,6 +1,7 @@
 #include "../src/data_adaptor.hpp"
 #include "../../utils/dirhelper.hpp"
 #include "../../utils/test_dir.hpp"
+#include "../../utils/libimage/libimage.hpp"
 
 #include <string>
 #include <iostream>
@@ -11,6 +12,7 @@
 
 namespace data = data_adaptor;
 namespace dir = dirhelper;
+namespace img = libimage;
 
 std::string src_root;
 std::string dst_root;
@@ -63,11 +65,11 @@ void make_data_images()
 		fs::remove_all(entry);
 	}
 
-	auto src_files = dir::str::get_files_of_type(src_fail_root, ".png");
+	auto src_files = dir::get_files_of_type(src_fail_root, ".png");
 	auto data = data::file_list_to_data(src_files);
 	data::save_data_images(data, data_fail_root);
 
-	src_files = dir::str::get_files_of_type(src_pass_root, ".png");
+	src_files = dir::get_files_of_type(src_pass_root, ".png");
 	data = data::file_list_to_data(src_files);
 	data::save_data_images(data, data_pass_root);
 }
@@ -90,7 +92,6 @@ bool data_image_row_to_data_size_test();
 bool data_image_row_to_data_values_test();
 
 void delete_files(std::string dir);
-img::rgba_list_t get_first_color_row(std::string const& image_file);
 
 
 
@@ -245,8 +246,9 @@ bool save_data_images_height_test()
 
 	const auto pred = [](size_t total, dir::path_t const& file)
 	{
-		auto image = img::read_image_from_file(file.c_str());
-		return total + image.height();
+		img::image_t image;
+		img::read_image_from_file(file, image);
+		return total + image.height;
 	};
 
 	size_t init = 0;
@@ -293,12 +295,17 @@ bool data_image_row_to_data_size_test()
 
 	delete_files(dst_root);
 
-	data::save_data_images(data, dst_root.c_str());
+	data::save_data_images(data, dst_root);
 	const auto data_images = dir::get_files_of_type(dst_root, dst_file_ext);
 
-	auto data_image = img::read_image_from_file(data_images[0].c_str());
+	img::image_t data_image;
+	img::read_image_from_file(data_images[0], data_image);
 	const auto view = img::make_view(data_image);
-	const auto converted = img::row_view(view, test_index);
+	auto converted_view = img::row_view(view, test_index);
+
+	data::pixel_row_t converted;
+	std::transform(converted_view.begin(), converted_view.end(), 
+		std::back_inserter(converted), [](img::pixel_t const& p) { return p.value; });
 
 	const auto new_data = data::data_image_row_to_data(converted);
 
@@ -323,9 +330,14 @@ bool data_image_row_to_data_values_test()
 	data::save_data_images(data, dst_root.c_str());
 	const auto data_images = dir::get_files_of_type(dst_root, dst_file_ext);
 
-	auto data_image = img::read_image_from_file(data_images[0].c_str());
+	img::image_t data_image;
+	img::read_image_from_file(data_images[0], data_image);
 	const auto view = img::make_view(data_image);
-	const auto converted = img::row_view(view, test_index);
+	auto converted_view = img::row_view(view, test_index);
+
+	data::pixel_row_t converted;
+	std::transform(converted_view.begin(), converted_view.end(),
+		std::back_inserter(converted), [](img::pixel_t const& p) { return p.value; });
 
 	const auto new_data = data::data_image_row_to_data(converted);	
 
@@ -346,23 +358,4 @@ void delete_files(std::string dir)
 	{
 		fs::remove_all(entry);
 	}
-}
-
-
-img::rgba_list_t get_first_color_row(std::string const& image_file)
-{
-	auto image = img::read_image_from_file(image_file);
-	const auto view = img::make_view(image);
-
-	img::rgba_list_t colors;
-	colors.reserve(view.width());
-
-	using index_t = img::index_t;
-	auto ptr = view.row_begin(0);
-	for (index_t x = 0; x < view.width(); ++x)
-	{
-		colors.push_back(img::to_rgba(ptr[x]));
-	}
-
-	return colors;
 }

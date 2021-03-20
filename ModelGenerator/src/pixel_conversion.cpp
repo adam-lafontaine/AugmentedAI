@@ -10,13 +10,13 @@ Copyright (c) 2021 Adam Lafontaine
 #include <random>
 
 
-constexpr auto BITS32_MAX = static_cast<double>(img::to_bits32(255, 255, 255, 255));
+constexpr auto BITS32_MAX = UINT32_MAX;
 constexpr double BITS8_MAX = 255;
 
 constexpr auto MODEL_VALUE_MIN = 0.0;
 constexpr auto MODEL_VALUE_MAX = BITS32_MAX;
 
-using shade_t = img::bits8;
+using shade_t = u8;
 
 constexpr shade_t PIXEL_ACTIVE = 255;
 constexpr shade_t PIXEL_INACTIVE = 254;
@@ -31,7 +31,7 @@ namespace model_generator
 
 	double data_pixel_to_model_value(data_pixel_t const& data_pix)
 	{
-		return static_cast<double>(img::to_bits32(data_pix));
+		return static_cast<double>(data_pix.value);
 	}
 
 
@@ -67,16 +67,16 @@ namespace model_generator
 
 	double model_pixel_to_model_value(model_pixel_t const& model_pix)
 	{
-		const auto rgba = img::to_rgba(model_pix);
+		const auto rgba = model_pix;
 
 		// if alpha channel has been flagged as inactive,
 		// return value makes is_relevant() == false
-		if (rgba.a != PIXEL_ACTIVE)
+		if (rgba.alpha != PIXEL_ACTIVE)
 			return MODEL_VALUE_MIN - 1;
 
 		// only the blue channel is used to store a value
 		// the red and green channels are random values used to make the model image look more interesting
-		const auto ratio = rgba.b / BITS8_MAX;
+		const auto ratio = rgba.blue / BITS8_MAX;
 		return ratio * MODEL_VALUE_MAX;
 	}
 }

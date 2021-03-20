@@ -25,6 +25,9 @@
     <Filter Include="Source Files\data_adaptor">
       <UniqueIdentifier>{a2a81b55-18f4-48dc-aab5-05a40b203f7e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\utils\libimage">
+      <UniqueIdentifier>{6df5ee37-4f2d-4f91-8476-884ed0c072fe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ModelGenerator.hpp">
@@ -37,9 +40,6 @@
       <Filter>Header Files\utils</Filter>
     </ClInclude>
     <ClInclude Include="..\utils\dirhelper.hpp">
-      <Filter>Header Files\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\utils\libimage.hpp">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
     <ClInclude Include="..\utils\ml_class.hpp">
@@ -59,6 +59,9 @@
     </ClInclude>
     <ClInclude Include="..\utils\config_reader.hpp">
       <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DataAdaptor\src\adaptors\image_file_adaptor.hpp">
+      <Filter>Header Files\data_adaptor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -82,6 +85,9 @@
     </ClCompile>
     <ClCompile Include="..\utils\config_reader.cpp">
       <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\utils\libimage\libimage.cpp">
+      <Filter>Source Files\utils\libimage</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

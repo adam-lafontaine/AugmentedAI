@@ -5,12 +5,12 @@ Copyright (c) 2021 Adam Lafontaine
 
 */
 
-#include "../../utils/libimage.hpp"
-
 #include <string>
 #include <vector>
+#include <filesystem>
 
-namespace img = libimage;
+namespace fs = std::filesystem;
+
 
 /*
 
@@ -27,11 +27,14 @@ Binary files could be used instead but images allow users to see what their data
 */
 namespace data_adaptor
 {
-	using src_data_t = std::vector<double>;      // source data converted from a file
-	using data_list_t = std::vector<src_data_t>; // data from multiple files
-	using path_t = std::string;                  // file path.  Change to std::filesystem::path?
-	using file_list_t = std::vector<path_t>;     // list of files
-	using data_pixel_t = img::pixel_t;           // Once data value converted to a pixel (4 x 8bit)
+	using src_data_t = std::vector<double>;        // source data converted from a file
+	using data_list_t = std::vector<src_data_t>;   // data from multiple files
+	using path_t = fs::path;                       // file path.
+	using file_list_t = std::vector<path_t>;       // list of files
+	using data_pixel_t = uint32_t;                 // Once data value converted to a pixel (4 x 8bit)
+	using pixel_row_t = std::vector<data_pixel_t>; // A single row of data pixels
+
+	constexpr auto DATA_IMAGE_EXTENSION = ".png";
 
 	/*
 
@@ -78,6 +81,6 @@ namespace data_adaptor
 
 
 	// Convert one row of a "data image" back to source data
-	src_data_t data_image_row_to_data(img::view_t const& pixel_row);
+	src_data_t data_image_row_to_data(pixel_row_t const& pixel_row);
 	
 }

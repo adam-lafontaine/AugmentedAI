@@ -150,6 +150,7 @@
     <ClCompile Include="..\utils\cluster.cpp" />
     <ClCompile Include="..\utils\config_reader.cpp" />
     <ClCompile Include="..\utils\dirhelper.cpp" />
+    <ClCompile Include="..\utils\libimage\libimage.cpp" />
     <ClCompile Include="src\inspection_test_main.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -37,6 +37,9 @@
     <Filter Include="Source Files\data_inspector">
       <UniqueIdentifier>{45a3961b-695e-447a-8498-14e41671e324}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\utils\libimage">
+      <UniqueIdentifier>{2ea16958-cbbb-4578-ae99-6308467092f7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\inspection_test_main.cpp">
@@ -62,6 +65,9 @@
     </ClCompile>
     <ClCompile Include="..\utils\config_reader.cpp">
       <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\utils\libimage\libimage.cpp">
+      <Filter>Source Files\utils\libimage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
