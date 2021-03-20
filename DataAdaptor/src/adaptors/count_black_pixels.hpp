@@ -2,7 +2,6 @@
 
 #include "../data_adaptor.hpp"
 #include "../../../utils/libimage/libimage.hpp"
-#include "../../../utils/libimage/libimage_math_256.hpp"
 
 #include <cassert>
 

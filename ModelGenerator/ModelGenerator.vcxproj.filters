@@ -25,9 +25,6 @@
     <Filter Include="Source Files\data_adaptor">
       <UniqueIdentifier>{a2a81b55-18f4-48dc-aab5-05a40b203f7e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\utils\libimage">
-      <UniqueIdentifier>{42cc2077-0b87-4bba-a05f-0364f8fb97f8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\utils\libimage">
       <UniqueIdentifier>{6df5ee37-4f2d-4f91-8476-884ed0c072fe}</UniqueIdentifier>
     </Filter>
@@ -63,35 +60,8 @@
     <ClInclude Include="..\utils\config_reader.hpp">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\utils\libimage\libimage.hpp">
-      <Filter>Header Files\utils\libimage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\utils\libimage\image_view.hpp">
-      <Filter>Header Files\utils\libimage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\utils\libimage\libimage_fs.hpp">
-      <Filter>Header Files\utils\libimage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\utils\libimage\stb_all.hpp">
-      <Filter>Header Files\utils\libimage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\utils\libimage\stb_image.h">
-      <Filter>Header Files\utils\libimage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\utils\libimage\stb_image_resize.h">
-      <Filter>Header Files\utils\libimage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\utils\libimage\stb_image_write.h">
-      <Filter>Header Files\utils\libimage</Filter>
-    </ClInclude>
     <ClInclude Include="..\DataAdaptor\src\adaptors\image_file_adaptor.hpp">
       <Filter>Header Files\data_adaptor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\utils\libimage\libimage_math_256.hpp">
-      <Filter>Header Files\utils\libimage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\utils\libimage\libimage_algorithm.hpp">
-      <Filter>Header Files\utils\libimage</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

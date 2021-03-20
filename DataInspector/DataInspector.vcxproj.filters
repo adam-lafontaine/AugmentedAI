@@ -31,9 +31,6 @@
     <Filter Include="Source Files\model_generator">
       <UniqueIdentifier>{e8804858-1264-4289-85dd-e704ab523fdc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\utils\libimage">
-      <UniqueIdentifier>{5767869e-d338-4881-a5e3-72223a6c2fab}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\utils\libimage">
       <UniqueIdentifier>{aa0a1e1f-6fb1-4b30-a4d7-880517290207}</UniqueIdentifier>
     </Filter>
@@ -97,24 +94,6 @@
     </ClInclude>
     <ClInclude Include="..\utils\config_reader.hpp">
       <Filter>Header Files\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\utils\libimage\libimage.hpp">
-      <Filter>Header Files\utils\libimage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\utils\libimage\libimage_fs.hpp">
-      <Filter>Header Files\utils\libimage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\utils\libimage\stb_image.h">
-      <Filter>Header Files\utils\libimage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\utils\libimage\stb_image_resize.h">
-      <Filter>Header Files\utils\libimage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\utils\libimage\stb_image_write.h">
-      <Filter>Header Files\utils\libimage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\utils\libimage\libimage_math_256.hpp">
-      <Filter>Header Files\utils\libimage</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

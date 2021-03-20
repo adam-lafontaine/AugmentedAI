@@ -145,14 +145,7 @@
   <ItemGroup>
     <ClInclude Include="..\utils\config_reader.hpp" />
     <ClInclude Include="..\utils\dirhelper.hpp" />
-    <ClInclude Include="..\utils\libimage\image_view.hpp" />
     <ClInclude Include="..\utils\libimage\libimage.hpp" />
-    <ClInclude Include="..\utils\libimage\libimage_algorithm.hpp" />
-    <ClInclude Include="..\utils\libimage\libimage_fs.hpp" />
-    <ClInclude Include="..\utils\libimage\libimage_math_256.hpp" />
-    <ClInclude Include="..\utils\libimage\stb_all.hpp" />
-    <ClInclude Include="..\utils\libimage\stb_image.h" />
-    <ClInclude Include="..\utils\libimage\stb_image_write.h" />
     <ClInclude Include="..\utils\test_dir.hpp" />
     <ClInclude Include="src\adaptors\adaptor_skeleton.hpp" />
     <ClInclude Include="src\adaptors\count_black_pixels.hpp" />
@@ -164,7 +157,6 @@
     <ClCompile Include="..\utils\config_reader.cpp" />
     <ClCompile Include="..\utils\dirhelper.cpp" />
     <ClCompile Include="..\utils\libimage\libimage.cpp" />
-    <ClCompile Include="..\utils\libimage\libimage_math.cpp" />
     <ClCompile Include="src\data_adaptor.cpp" />
     <ClCompile Include="src\data_adaptor_test.cpp" />
   </ItemGroup>

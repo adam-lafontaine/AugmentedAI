@@ -1,7 +1,7 @@
 #include "../src/data_adaptor.hpp"
 #include "../../utils/dirhelper.hpp"
 #include "../../utils/test_dir.hpp"
-#include "../../utils/libimage/libimage_fs.hpp"
+#include "../../utils/libimage/libimage.hpp"
 
 #include <string>
 #include <iostream>
