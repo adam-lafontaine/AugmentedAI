@@ -86,7 +86,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -101,7 +101,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -116,7 +116,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -131,7 +131,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -143,12 +143,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\DataAdaptor\src\adaptors\image_file_adaptor.hpp" />
     <ClInclude Include="..\DataAdaptor\src\data_adaptor.hpp" />
     <ClInclude Include="..\utils\cluster.hpp" />
     <ClInclude Include="..\utils\cluster_config.hpp" />
     <ClInclude Include="..\utils\config_reader.hpp" />
     <ClInclude Include="..\utils\dirhelper.hpp" />
     <ClInclude Include="..\utils\libimage.hpp" />
+    <ClInclude Include="..\utils\libimage\image_view.hpp" />
+    <ClInclude Include="..\utils\libimage\libimage.hpp" />
+    <ClInclude Include="..\utils\libimage\libimage_algorithm.hpp" />
+    <ClInclude Include="..\utils\libimage\libimage_fs.hpp" />
+    <ClInclude Include="..\utils\libimage\libimage_math_256.hpp" />
+    <ClInclude Include="..\utils\libimage\stb_all.hpp" />
+    <ClInclude Include="..\utils\libimage\stb_image.h" />
+    <ClInclude Include="..\utils\libimage\stb_image_resize.h" />
+    <ClInclude Include="..\utils\libimage\stb_image_write.h" />
     <ClInclude Include="..\utils\ml_class.hpp" />
     <ClInclude Include="..\utils\test_dir.hpp" />
     <ClInclude Include="src\cluster_distance.hpp" />
@@ -160,6 +170,8 @@
     <ClCompile Include="..\utils\cluster.cpp" />
     <ClCompile Include="..\utils\config_reader.cpp" />
     <ClCompile Include="..\utils\dirhelper.cpp" />
+    <ClCompile Include="..\utils\libimage\libimage.cpp" />
+    <ClCompile Include="..\utils\libimage\libimage_math.cpp" />
     <ClCompile Include="src\ModelGenerator.cpp" />
     <ClCompile Include="src\model_generator_tests.cpp" />
     <ClCompile Include="src\pixel_conversion.cpp" />

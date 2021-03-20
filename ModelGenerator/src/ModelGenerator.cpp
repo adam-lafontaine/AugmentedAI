@@ -7,6 +7,8 @@ Copyright (c) 2021 Adam Lafontaine
 #include "ModelGenerator.hpp"
 #include "pixel_conversion.hpp"
 #include "cluster_distance.hpp"
+#include "../../utils/libimage/libimage_fs.hpp"
+#include "../../utils/libimage/libimage_algorithm.hpp"
 #include "../../utils/cluster_config.hpp"
 #include "../../utils/dirhelper.hpp"
 #include "../../DataAdaptor/src/data_adaptor.hpp"
@@ -18,12 +20,14 @@ Copyright (c) 2021 Adam Lafontaine
 #include <sstream>
 #include <cassert>
 #include <cmath>
+
+#define __STDC_WANT_LIB_EXT1__ 1
 #include <ctime>
 #include <cstdlib>
+#include <string>
 
 namespace dir = dirhelper;
 namespace img = libimage;
-namespace gil = boost::gil;
 namespace data = data_adaptor;
 
 namespace model_generator
@@ -56,7 +60,7 @@ namespace model_generator
 
 	//======= HELPERS ===================		
 
-	static std::string make_file_name();
+	static std::string make_model_file_name();
 
 
 	//======= CONVERSION =============
@@ -110,7 +114,7 @@ namespace model_generator
 		auto const index = mlclass::to_class_index(class_index);
 
 		// data is organized in directories by class
-		auto data_files = dir::get_files_of_type(src_dir, img::IMAGE_FILE_EXTENSION);
+		auto data_files = dir::get_files_of_type(src_dir, data::DATA_IMAGE_EXTENSION);
 
 		m_class_data[index].clear();
 		m_class_data[index].reserve(data_files.size());
@@ -137,10 +141,11 @@ namespace model_generator
 		{
 			for (auto const& data_file : m_class_data[class_index])
 			{
-				auto data_image = img::read_image_from_file(data_file);
+				img::image_t data_image;
+				img::read_image_from_file(data_file, data_image);
 				auto data_view = img::make_view(data_image);
 
-				assert(static_cast<size_t>(std::abs(data_view.width())) == data::data_image_width());
+				assert(static_cast<size_t>(data_view.width) == data::data_image_width());
 
 				append_data(cluster_data[class_index], data_view);
 
@@ -175,26 +180,27 @@ namespace model_generator
 
 		/* create the model and save it */
 
-		auto const save_path = std::string(save_dir) + '/' + make_file_name();
+		auto const save_path = fs::path(save_dir) / make_model_file_name();
 
-		auto const width = data::data_image_width();
-		auto const height = centroids.size();
+		auto const width = static_cast<u32>(data::data_image_width());
+		auto const height = static_cast<u32>(centroids.size());
 
-		img::image_t image(width, height);
+		img::image_t image;
+		img::make_image(image, width, height);
 		auto view = img::make_view(image);
 
-		for(size_t y = 0; y < height; ++y)
+		for(u32 y = 0; y < height; ++y)
 		{
 			auto const list = centroids[y];
 			auto ptr = view.row_begin(y);
-			for (size_t x = 0; x < width; ++x)
+			for (u32 x = 0; x < width; ++x)
 			{
 				auto is_counted = std::find(data_indeces.begin(), data_indeces.end(), x) != data_indeces.end();
 				ptr[x] = model_value_to_model_pixel(list[x], is_counted);
 			}
 		}
 
-		img::write_image_view(save_path, view);
+		img::write_view(view, save_path);
 
 		/*
 		
@@ -339,7 +345,7 @@ namespace model_generator
 	// update the counts in the histograms with data from a data image
 	static void update_histograms(column_hists_t& pos_hists, img::view_t const& data_view)
 	{
-		auto column = 0;
+		u32 column = 0;
 		auto const update_pred = [&](auto const& p)
 		{
 			data_pixel_t dp{ p };
@@ -347,11 +353,11 @@ namespace model_generator
 			++pos_hists[column][to_hist_value(dp)];
 		};
 
-		for (; column < data_view.width(); ++column)
+		for (; column < data_view.width; ++column)
 		{
-			auto const column_view = img::column_view(data_view, column);			
+			auto column_view = img::column_view(data_view, column);	
 
-			gil::for_each_pixel(column_view, update_pred);
+			img::seq::for_each_pixel(column_view, update_pred);
 		}
 	}
 
@@ -359,19 +365,22 @@ namespace model_generator
 	// add converted data from a data image
 	static void append_data(data_list_t& data, img::view_t const& data_view)
 	{
-		auto const width = data_view.width();
-		auto const height = data_view.height();
+		auto const width = data_view.width;
+		auto const height = data_view.height;
 
-		for (auto y = 0; y < height; ++y)
-		{
+		for (u32 y = 0; y < height; ++y)
+		{			
 			cluster::data_row_t data_row;
-			data_row.reserve(width);
+			/*data_row.reserve(width);
 
 			auto ptr = data_view.row_begin(y);
-			for (auto x = 0; x < width; ++x)
+			for (u32 x = 0; x < width; ++x)
 			{
 				data_row.push_back(data_pixel_to_model_value(ptr[x]));
-			}
+			}*/
+
+			auto row_view = img::row_view(data_view, y);
+			std::transform(row_view.begin(), row_view.end(), std::back_inserter(data_row), data_pixel_to_model_value);
 
 			data.push_back(std::move(data_row));
 		}
@@ -436,14 +445,17 @@ namespace model_generator
 	
 
 
-	static std::string make_file_name()
+	static std::string make_model_file_name()
 	{
-		std::time_t result = std::time(nullptr);
-
 		std::ostringstream oss;
-		oss << "model_" << std::put_time(std::localtime(&result), "%F_%T");
+		std::time_t t = std::time(nullptr);		
 
-		auto date_file = oss.str() + img::IMAGE_FILE_EXTENSION;
+		struct tm buf;
+		localtime_s(&buf, &t);
+
+		oss << "model_" << std::put_time(&buf, "%F_%T");
+
+		auto date_file = oss.str() + ".png";
 
 		std::replace(date_file.begin(), date_file.end(), ':', '-');
 
@@ -457,7 +469,7 @@ namespace model_generator
 	// converts a data pixel to a value between 0 and MAX_COLOR_VALUE
 	static hist_value_t to_hist_value(data_pixel_t const& pix)
 	{
-		auto const val = static_cast<double>(img::to_bits32(pix));
+		auto const val = static_cast<double>(pix.value);
 		auto const ratio = val / UINT32_MAX;
 
 		return static_cast<hist_value_t>(ratio * MAX_COLOR_VALUE);

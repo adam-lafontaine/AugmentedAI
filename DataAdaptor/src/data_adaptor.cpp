@@ -106,13 +106,6 @@ namespace data_adaptor
 		assert(pixel_row.size() == impl::DATA_IMAGE_WIDTH);
 
 		src_data_t data;
-		/*data.reserve(impl::DATA_IMAGE_WIDTH);
-
-		const auto ptr = pixel_row.row_begin(0);
-		for (u32 x = 0; x < pixel_row.width; ++x)
-		{
-			data.push_back(data_pixel_to_data_value(ptr[x].value));
-		}*/
 
 		std::transform(pixel_row.begin(), pixel_row.end(), std::back_inserter(data), data_pixel_to_data_value);
 

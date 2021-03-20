@@ -21,10 +21,6 @@ constexpr double DATA_MIN_VALUE = 0;
 constexpr double DATA_MAX_VALUE = 1;
 
 
-
-
-
-
 namespace impl
 {
 	// Define how to name save files

@@ -19,7 +19,7 @@ Copyright (c) 2021 Adam Lafontaine
 #include <vector>
 #include <string>
 
-namespace libimage // 2020-09-19
+namespace libimage_old // 2020-09-19
 {
 	namespace gil = boost::gil;
 

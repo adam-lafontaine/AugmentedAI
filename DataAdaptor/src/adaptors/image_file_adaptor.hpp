@@ -36,8 +36,6 @@ constexpr size_t MAX_DATA_IMAGE_SIZE = 500 * 500;
 constexpr auto BITS32_MAX = UINT32_MAX;
 
 
-
-
 //======= HELPERS =================
 
 

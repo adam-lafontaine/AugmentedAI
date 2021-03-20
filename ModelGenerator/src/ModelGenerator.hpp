@@ -7,9 +7,11 @@ Copyright (c) 2021 Adam Lafontaine
 
 #include "../../utils/ml_class.hpp"
 
-#include <string>
+#include <filesystem>
 #include <array>
 #include <vector>
+
+namespace fs = std::filesystem;
 
 /*
 
@@ -26,7 +28,7 @@ namespace model_generator
 	class ModelGenerator
 	{
 	public:
-		using file_path_t = std::string;
+		using file_path_t = fs::path;
 		using file_list_t = std::vector<file_path_t>;
 		using class_file_list_t = std::array<file_list_t, mlclass::ML_CLASS_COUNT>;
 
