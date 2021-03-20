@@ -9,6 +9,7 @@ Copyright (c) 2021 Adam Lafontaine
 
 #include <random>
 #include <vector>
+#include <array>
 #include <string>
 #include <filesystem>
 
@@ -25,32 +26,32 @@ using pixel_range_t = img::pixel_range_t;
 using range_list_t = std::vector<img::pixel_range_t>;
 using color = img::pixel_t;
 
-const auto BLACK = img::to_pixel(0);
+constexpr auto BLACK = img::to_pixel(0);
 
-const auto GREY = img::to_pixel(195);
+constexpr auto GREY = img::to_pixel(195);
 
-const auto ORANGE = img::to_pixel(255, 128, 0);
-const auto ORANGE_1 = img::to_pixel(200, 100, 0);
+constexpr auto ORANGE = img::to_pixel(255, 128, 0);
+constexpr auto ORANGE_1 = img::to_pixel(200, 100, 0);
 
-const auto PURPLE = img::to_pixel(163, 73, 164);
-const auto PURPLE_1 = img::to_pixel(150, 73, 180);
+constexpr auto PURPLE = img::to_pixel(163, 73, 164);
+constexpr auto PURPLE_1 = img::to_pixel(150, 73, 180);
 
-const auto YELLOW = img::to_pixel(170, 170, 0);
-const auto YELLOW_1 = img::to_pixel(150, 150, 0);
+constexpr auto YELLOW = img::to_pixel(170, 170, 0);
+constexpr auto YELLOW_1 = img::to_pixel(150, 150, 0);
 
-const auto RED = img::to_pixel(180, 0, 0);
-const auto RED_1 = img::to_pixel(90, 0, 0);
+constexpr auto RED = img::to_pixel(180, 0, 0);
+constexpr auto RED_1 = img::to_pixel(90, 0, 0);
 
-const auto BLUE = img::to_pixel(0, 64, 128);
-const auto BLUE_1 = img::to_pixel(0, 30, 170);
+constexpr auto BLUE = img::to_pixel(0, 64, 128);
+constexpr auto BLUE_1 = img::to_pixel(0, 30, 170);
 
-const auto GREEN = img::to_pixel(0, 128, 0);
-const auto GREEN_1 = img::to_pixel(10, 220, 10);
+constexpr auto GREEN = img::to_pixel(0, 128, 0);
+constexpr auto GREEN_1 = img::to_pixel(10, 220, 10);
 
 const auto BLACK32 = BLACK.value;
 
-const std::vector<color> LETTER_COLORS = { ORANGE, PURPLE, YELLOW, ORANGE_1, PURPLE_1, YELLOW_1 };
-const std::vector<color> SURFACE_COLRS = { RED, BLUE, GREEN, RED_1, BLUE_1, GREEN_1 };
+constexpr std::array<color, 6> LETTER_COLORS = { ORANGE, PURPLE, YELLOW, ORANGE_1, PURPLE_1, YELLOW_1 };
+constexpr std::array<color, 6> SURFACE_COLRS = { RED, BLUE, GREEN, RED_1, BLUE_1, GREEN_1 };
 
 
 
