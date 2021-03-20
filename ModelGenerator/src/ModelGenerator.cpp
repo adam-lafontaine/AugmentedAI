@@ -20,8 +20,6 @@ Copyright (c) 2021 Adam Lafontaine
 #include <sstream>
 #include <cassert>
 #include <cmath>
-
-#define __STDC_WANT_LIB_EXT1__ 1
 #include <ctime>
 #include <cstdlib>
 #include <string>
@@ -455,7 +453,7 @@ namespace model_generator
 
 		oss << "model_" << std::put_time(&buf, "%F_%T");
 
-		auto date_file = oss.str() + ".png";
+		auto date_file = oss.str() + MODEL_FILE_EXTENSION;
 
 		std::replace(date_file.begin(), date_file.end(), ':', '-');
 

@@ -8,7 +8,7 @@ Copyright (c) 2021 Adam Lafontaine
 #include "../../DataAdaptor/src/data_adaptor.hpp"
 #include "../../ModelGenerator/src/pixel_conversion.hpp"
 #include "../../ModelGenerator/src/cluster_distance.hpp"
-#include "../../utils/libimage.hpp"
+#include "../../utils/libimage/libimage.hpp"
 #include "../../utils/dirhelper.hpp"
 #include "../../utils/cluster_config.hpp"
 
@@ -45,11 +45,12 @@ static index_list_t find_positions(value_list_t const& saved_centroid)
 // read the model from file and convert to centroids
 static centroid_list_t read_model(const char* model_file)
 {
-	auto image = img::read_image_from_file(model_file);
+	img::image_t image;
+	img::read_image_from_file(model_file, image);
 	auto view = img::make_view(image);
 
-	auto const width = view.width();
-	auto const height = view.height();
+	auto const width = view.width;
+	auto const height = view.height;
 
 	centroid_list_t centroids;
 
@@ -57,16 +58,15 @@ static centroid_list_t read_model(const char* model_file)
 	if(width != data::data_image_width())
 		return centroids;
 
-
 	centroids.reserve(height);
 
-	for (auto y = 0; y < height; ++y)
+	for (u32 y = 0; y < height; ++y)
 	{
 		value_list_t centroid;
 		centroid.reserve(width);
 
 		auto ptr = view.row_begin(y);
-		for (auto x = 0; x < width; ++x)
+		for (u32 x = 0; x < width; ++x)
 		{
 			centroid.push_back(model::model_pixel_to_model_value(ptr[x]));
 		}
@@ -82,7 +82,12 @@ static centroid_list_t read_model(const char* model_file)
 // uses data pixel as intermediary
 static double data_value_to_model_value(double data_val)
 {
-	return model::data_pixel_to_model_value(data::data_value_to_data_pixel(data_val));
+	auto pixel_value = data::data_value_to_data_pixel(data_val);
+
+	model::data_pixel_t pixel;
+	pixel.value = pixel_value;
+
+	return model::data_pixel_to_model_value(pixel);
 }
 
 
@@ -116,7 +121,7 @@ namespace data_inspector
 		*/
 
 		// use the first model found in the directory
-		auto const model_file = dir::get_first_file_of_type(model_dir, img::IMAGE_FILE_EXTENSION);
+		auto const model_file = dir::get_first_file_of_type(model_dir, model::MODEL_FILE_EXTENSION);
 		if (model_file.empty())
 			return MLClass::Error;
 

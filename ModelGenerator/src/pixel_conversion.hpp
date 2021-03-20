@@ -24,6 +24,8 @@ namespace model_generator
 	using data_pixel_t = img::pixel_t;
 	using model_pixel_t = img::pixel_t;
 
+	constexpr auto MODEL_FILE_EXTENSION = ".png";
+
 
 	// is this a value that contributes to the clusters
 	bool is_relevant(double val);

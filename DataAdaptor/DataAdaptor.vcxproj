@@ -145,7 +145,6 @@
   <ItemGroup>
     <ClInclude Include="..\utils\config_reader.hpp" />
     <ClInclude Include="..\utils\dirhelper.hpp" />
-    <ClInclude Include="..\utils\libimage.hpp" />
     <ClInclude Include="..\utils\libimage\image_view.hpp" />
     <ClInclude Include="..\utils\libimage\libimage.hpp" />
     <ClInclude Include="..\utils\libimage\libimage_algorithm.hpp" />

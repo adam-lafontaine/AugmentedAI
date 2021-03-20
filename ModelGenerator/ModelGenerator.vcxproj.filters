@@ -45,9 +45,6 @@
     <ClInclude Include="..\utils\dirhelper.hpp">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\utils\libimage.hpp">
-      <Filter>Header Files\utils</Filter>
-    </ClInclude>
     <ClInclude Include="..\utils\ml_class.hpp">
       <Filter>Header Files\utils</Filter>
     </ClInclude>

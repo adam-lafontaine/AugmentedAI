@@ -30,7 +30,6 @@ namespace data_inspector
 	Reading and converting model cluster data on each data read may be slow.
 	Consider implementing with a class to store the model in memory.
 	Current implementation allows for classifying with multiple models using their directories.
-	This is C++.  Do what you like.
 
 	*/
 
