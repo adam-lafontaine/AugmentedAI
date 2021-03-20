@@ -149,7 +149,6 @@
     <ClCompile Include="..\utils\config_reader.cpp" />
     <ClCompile Include="..\utils\dirhelper.cpp" />
     <ClCompile Include="..\utils\libimage\libimage.cpp" />
-    <ClCompile Include="..\utils\libimage\libimage_math.cpp" />
     <ClCompile Include="src\data_inspector.cpp" />
     <ClCompile Include="src\data_inspector_tests.cpp" />
   </ItemGroup>
