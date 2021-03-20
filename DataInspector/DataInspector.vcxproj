@@ -161,7 +161,6 @@
     <ClInclude Include="..\utils\cluster_config.hpp" />
     <ClInclude Include="..\utils\config_reader.hpp" />
     <ClInclude Include="..\utils\dirhelper.hpp" />
-    <ClInclude Include="..\utils\libimage.hpp" />
     <ClInclude Include="..\utils\libimage\libimage.hpp" />
     <ClInclude Include="..\utils\libimage\libimage_fs.hpp" />
     <ClInclude Include="..\utils\libimage\libimage_math_256.hpp" />

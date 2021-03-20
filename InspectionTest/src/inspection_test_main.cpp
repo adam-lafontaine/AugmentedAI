@@ -17,7 +17,7 @@ namespace mg = model_generator;
 namespace di = data_inspector;
 
 using index_list_t = std::vector<size_t>;
-using file_list_t = dir::str::file_list_t;
+using file_list_t = dir::file_list_t;
 
 std::string src_fail_root;
 std::string src_pass_root;
@@ -74,11 +74,11 @@ int main()
 
 	// get the raw data files
 	std::cout << "getting FAIL files... ";
-	auto src_fail = dir::str::get_files_of_type(src_fail_root, ".png");
+	auto src_fail = dir::get_files_of_type(src_fail_root, ".png");
 	std::cout << src_fail.size() << " files found.\n\n";
 
 	std::cout << "getting PASS files... ";
-	auto src_pass = dir::str::get_files_of_type(src_pass_root, ".png");
+	auto src_pass = dir::get_files_of_type(src_pass_root, ".png");
 	std::cout << src_pass.size() << " files found.\n\n";
 
 	// separate files for teaching and testing
@@ -158,7 +158,7 @@ file_div_t divide_files_for_testing(file_list_t&& files)
 	const auto begin = teach_indeces.begin();
 	const auto end = teach_indeces.end();
 
-	for (int i = size - 1; i >= 0; --i)
+	for (int i = (int)size - 1; i >= 0; --i)
 	{
 		if (std::find(begin, end, i) != end)
 			result.teach.push_back(std::move(files[i]));
@@ -240,7 +240,7 @@ void test_files(file_list_t const& files, std::string const& model_dir, const ch
 	print_result_table_title();
 	for (const auto& file : files)
 	{
-		const auto res = di::inspect(file.c_str(), model_dir.c_str());
+		const auto res = di::inspect(file.string().c_str(), model_dir.c_str());
 		pass_count += res == MLClass::Pass;
 		fail_count += res == MLClass::Fail;
 		unkn_count += res == MLClass::Unknown;
