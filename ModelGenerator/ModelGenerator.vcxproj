@@ -161,7 +161,6 @@
     <ClCompile Include="..\utils\config_reader.cpp" />
     <ClCompile Include="..\utils\dirhelper.cpp" />
     <ClCompile Include="..\utils\libimage\libimage.cpp" />
-    <ClCompile Include="..\utils\libimage\libimage_math.cpp" />
     <ClCompile Include="src\ModelGenerator.cpp" />
     <ClCompile Include="src\model_generator_tests.cpp" />
     <ClCompile Include="src\pixel_conversion.cpp" />

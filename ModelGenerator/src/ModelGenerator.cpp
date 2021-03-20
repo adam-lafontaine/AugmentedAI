@@ -7,8 +7,6 @@ Copyright (c) 2021 Adam Lafontaine
 #include "ModelGenerator.hpp"
 #include "pixel_conversion.hpp"
 #include "cluster_distance.hpp"
-#include "../../utils/libimage/libimage_fs.hpp"
-#include "../../utils/libimage/libimage_algorithm.hpp"
 #include "../../utils/cluster_config.hpp"
 #include "../../utils/dirhelper.hpp"
 #include "../../DataAdaptor/src/data_adaptor.hpp"

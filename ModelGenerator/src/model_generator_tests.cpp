@@ -8,7 +8,6 @@ Copyright (c) 2021 Adam Lafontaine
 #include "../src/pixel_conversion.hpp"
 #include "../../utils/dirhelper.hpp"
 #include "../../utils/test_dir.hpp"
-#include "../../utils/libimage/libimage_fs.hpp"
 #include <string>
 #include <iostream>
 #include <algorithm>

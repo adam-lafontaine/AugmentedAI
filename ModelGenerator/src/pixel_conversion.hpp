@@ -5,7 +5,7 @@ Copyright (c) 2021 Adam Lafontaine
 
 */
 
-#include "../../utils/libimage/image_view.hpp"
+#include "../../utils/libimage/libimage.hpp"
 
 namespace img = libimage;
 
