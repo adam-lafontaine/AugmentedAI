@@ -18,15 +18,17 @@ std="-std=c++17"
 utils="../../utils"
 DataAdaptor="../../DataAdaptor/src"
 
+# utils
 dirhelper="$utils/dirhelper.cpp"
 config_reader="$utils/config_reader.cpp"
 libimage="$utils/libimage/libimage.cpp"
+utils_cpp="$dirhelper $config_reader $libimage"
 
 data_adaptor="$DataAdaptor/data_adaptor.cpp"
 
 main_cpp="$DataAdaptor/data_adaptor_test.cpp"
 
-cpp_files="$main_cpp $dirhelper $data_adaptor $config_reader $libimage"
+cpp_files="$main_cpp $data_adaptor $utils_cpp"
 
 exe="DataAdaptor"
 
@@ -34,3 +36,5 @@ exe="DataAdaptor"
 timestamp > $log_file
 g++ -o $exe $flags $cpp_files $std $incl_dirs $links &>> $log_file
 timestamp >> $log_file
+
+#TODO: test on Raspberry Pi

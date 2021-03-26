@@ -5,9 +5,10 @@ timestamp() {
   date +"%T"
 }
 
-incl_dirs="-I/usr/local/boost_1_73_0"
+incl_dirs="" #"-I/usr/local/boost_1_73_0"
 lib_dirs="" #"-L/..."
-links="-lstdc++fs -lpng"
+#links="-lstdc++fs -lpng"
+links="-lstdc++fs"
 
 log_file="compile.log"
 
@@ -19,18 +20,22 @@ DataAdaptor="../../DataAdaptor/src"
 ModelGenerator="../../ModelGenerator/src"
 DataInspector="../../DataInspector/src"
 
+# utils
 dirhelper="$utils/dirhelper.cpp"
 cluster="$utils/cluster.cpp"
 config_reader="$utils/config_reader.cpp"
+libimage="$utils/libimage/libimage.cpp"
+utils_cpp="$dirhelper $cluster $config_reader $libimage"
 
+# app
 data_adaptor="$DataAdaptor/data_adaptor.cpp"
 pixel_conv="$ModelGenerator/pixel_conversion.cpp"
-
 data_insp="$DataInspector/data_inspector.cpp"
+app_cpp="$data_adaptor $pixel_conv $data_insp"
 
 main_cpp="$DataInspector/data_inspector_tests.cpp"
 
-cpp_files="$main_cpp $dirhelper $cluster $data_adaptor $pixel_conv $data_insp $config_reader"
+cpp_files="$main_cpp $app_cpp $utils_cpp"
 
 exe="DataInspector"
 
@@ -38,3 +43,5 @@ exe="DataInspector"
 timestamp > $log_file
 g++ -o $exe $flags $cpp_files $std $incl_dirs $links &>> $log_file
 timestamp >> $log_file
+
+#TODO: test on Raspberry Pi
