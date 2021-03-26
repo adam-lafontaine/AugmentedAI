@@ -29,7 +29,11 @@ namespace data_adaptor
 	static void save_data_range(data_itr_t const& first, data_itr_t const& last, path_t const& dst_file_path)
 	{
 		const auto width = impl::DATA_IMAGE_WIDTH;
-		const auto height = std::distance(first, last);
+		const auto dist = std::distance(first, last);
+
+		assert(dist > 0);
+
+		const auto height = static_cast<size_t>(dist);
 
 		assert(height <= MAX_DATA_IMAGE_SIZE / width);
 
