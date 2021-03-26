@@ -5,9 +5,10 @@ timestamp() {
   date +"%T"
 }
 
-incl_dirs="-I/usr/local/boost_1_73_0"
+incl_dirs="" #"-I/usr/local/boost_1_73_0"
 lib_dirs="" #"-L/..."
-links="-lstdc++fs -lpng"
+#links="-lstdc++fs -lpng"
+links="-lstdc++fs"
 
 log_file="compile.log"
 
@@ -19,12 +20,13 @@ DataAdaptor="../../DataAdaptor/src"
 
 dirhelper="$utils/dirhelper.cpp"
 config_reader="$utils/config_reader.cpp"
+libimage="$utils/libimage/libimage.cpp"
 
 data_adaptor="$DataAdaptor/data_adaptor.cpp"
 
 main_cpp="$DataAdaptor/data_adaptor_test.cpp"
 
-cpp_files="$main_cpp $dirhelper $data_adaptor $config_reader"
+cpp_files="$main_cpp $dirhelper $data_adaptor $config_reader $libimage"
 
 exe="DataAdaptor"
 
