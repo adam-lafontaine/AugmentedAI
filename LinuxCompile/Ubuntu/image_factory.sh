@@ -13,7 +13,7 @@ std="-std=c++17"
 utils="../../utils"
 ImageFactory="../../ImageFactory/src"
 
-#utils
+# utils
 config_reader="$utils/config_reader.cpp"
 dirhelper="$utils/dirhelper.cpp"
 libimage="$utils/libimage/libimage.cpp"

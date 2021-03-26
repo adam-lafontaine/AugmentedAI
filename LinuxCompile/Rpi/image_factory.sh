@@ -35,3 +35,6 @@ exe="ImageFactory"
 timestamp > $log_file
 g++ -o $exe $flags $cpp_files $std $incl_dirs $links &>> $log_file
 timestamp >> $log_file
+
+
+#TODO: test on Raspberry Pi
