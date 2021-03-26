@@ -7,7 +7,5 @@ DATA_PASS_ROOT = D:/test_images/data_pass
 
 MODEL_ROOT = D:/test_images/model
 
-ALPHA_PATH = D:/test_images/alphabet/alphabet.png
-BORDER_PATH = D:/test_images/alphabet/border.png
-
-
+ALPHA_PATH = D:/repos/AugmentedAI/ImageFactory/img/alphabet.png
+BORDER_PATH = D:/repos/AugmentedAI/ImageFactory/img/border.png

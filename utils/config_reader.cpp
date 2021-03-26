@@ -128,20 +128,5 @@ namespace config_reader
         file_in.close();
 
         return config_map;
-
-        // all keys are in the map
-        //if (config_map.size() == required_keys.size())
-        //    return config_map;
-
-        //// one or more keys are missing
-        //config_t error_map;
-
-        //for (auto const& key : required_keys)
-        //{
-        //    if (config_map.find(key) == config_map.end())
-        //        error_map.insert_or_assign(std::string("error_") + key, "missing key");
-        //}
-
-        //return error_map;
     }
 }
