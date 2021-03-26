@@ -15,7 +15,11 @@ Copyright (c) 2021 Adam Lafontaine
 
 #ifdef __linux
 
-#define sprintf_s sprintf
+#define platform_sprintf sprintf
+
+#else
+
+#define platform_sprintf sprintf_s
 
 #endif
 
@@ -309,7 +313,7 @@ void build_images(const char* alpha_path, const char* border_path, const char* p
 		{
 			for (auto const& lc : LETTER_COLORS)
 			{
-				sprintf_s(idx_str, "%0*d", (int)idx_len, idx++); // zero pad index number
+				platform_sprintf(idx_str, "%0*d", (int)idx_len, idx++); // zero pad index number
 				const auto file_name = std::string(idx_str) + "_" + block_letter + ".png";
 				const auto pass_path = fs::path(pass_dir) / file_name;
 				const auto fail_path = fs::path(fail_dir) / file_name;

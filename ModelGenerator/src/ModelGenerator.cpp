@@ -361,19 +361,11 @@ namespace model_generator
 	// add converted data from a data image
 	static void append_data(data_list_t& data, img::view_t const& data_view)
 	{
-		auto const width = data_view.width;
 		auto const height = data_view.height;
 
 		for (u32 y = 0; y < height; ++y)
 		{			
 			cluster::data_row_t data_row;
-			/*data_row.reserve(width);
-
-			auto ptr = data_view.row_begin(y);
-			for (u32 x = 0; x < width; ++x)
-			{
-				data_row.push_back(data_pixel_to_model_value(ptr[x]));
-			}*/
 
 			auto row_view = img::row_view(data_view, y);
 			std::transform(row_view.begin(), row_view.end(), std::back_inserter(data_row), data_pixel_to_model_value);
@@ -438,16 +430,31 @@ namespace model_generator
 
 	//======= HELPERS =====================
 
-	
+#ifdef __linux
+
+#define platform_localtime localtime_r
+
+#else
+
+#define platform_localtime localtime_s
+
+#endif
 
 
 	static std::string make_model_file_name()
 	{
 		std::ostringstream oss;
-		std::time_t t = std::time(nullptr);		
-
+		std::time_t t = std::time(nullptr);
 		struct tm buf;
+
+		// TODO: C++20 chrono
+#ifdef __linux
+
+		localtime_r(&t, &buf);
+#else
+
 		localtime_s(&buf, &t);
+#endif
 
 		oss << "model_" << std::put_time(&buf, "%F_%T");
 

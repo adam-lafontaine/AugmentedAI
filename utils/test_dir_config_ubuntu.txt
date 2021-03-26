@@ -1,0 +1,11 @@
+PROJECT_ROOT = /home/adam/projects/AugmentedAI/DataAdaptor/test
+SRC_FAIL_ROOT = /home/adam/projects/test_images/src_fail
+SRC_PASS_ROOT = /home/adam/projects/test_images/src_pass
+
+DATA_FAIL_ROOT = /home/adam/projects/test_images/data_fail
+DATA_PASS_ROOT = /home/adam/projects/test_images/data_pass
+
+MODEL_ROOT = /home/adam/projects/test_images/model
+
+ALPHA_PATH = /home/adam/projects/AugmentedAI/ImageFactory/img/alphabet.png
+BORDER_PATH = /home/adam/projects/AugmentedAI/ImageFactory/img/border.png

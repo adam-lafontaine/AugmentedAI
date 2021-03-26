@@ -1780,9 +1780,7 @@ static stbi__uint16 stbi__compute_y_16(int r, int g, int b)
 #else
 static stbi__uint16 *stbi__convert_format16(stbi__uint16 *data, int img_n, int req_comp, unsigned int x, unsigned int y)
 {
-    //int i,j;
-    int i;
-    size_t j;
+    int i,j;
    stbi__uint16 *good;
 
    if (req_comp == img_n) return data;
@@ -4168,7 +4166,7 @@ static int stbi__zhuffman_decode_slowpath(stbi__zbuf *a, stbi__zhuffman *z)
    if (s >= 16) return -1; // invalid code!
    // code size is s, so:
    b = (k >> (16-s)) - z->firstcode[s] + z->firstsymbol[s];
-   if (b >= sizeof (z->size)) return -1; // some data was corrupt somewhere!
+   if ((size_t)b >= sizeof (z->size)) return -1; // some data was corrupt somewhere!
    if (z->size[b] != s) return -1;  // was originally an assert, but report failure instead.
    a->code_buffer >>= s;
    a->num_bits -= s;
