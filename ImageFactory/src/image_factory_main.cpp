@@ -19,7 +19,10 @@ int main()
 
 	TestDirConfig config;
 	if (!config.has_all_keys())
+	{
 		return EXIT_FAILURE;
+	}
+		
 
 	const auto alpha_path = config.get(TestDir::ALPHA_PATH);
 	const auto border_path = config.get(TestDir::BORDER_PATH);
