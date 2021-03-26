@@ -5,8 +5,8 @@ timestamp() {
   date +"%T"
 }
 
-incl_dirs="" #"-I/usr/local/boost_1_73_0"
-lib_dirs="" #"-L/..."
+includes="" #"-I/usr/local/boost_1_73_0"
+libs="" #"-L/..."
 #links="-lstdc++fs -lpng"
 links="-lstdc++fs"
 
@@ -41,7 +41,7 @@ exe="DataInspector"
 
 # complile and write to file
 timestamp > $log_file
-g++ -o $exe $flags $cpp_files $std $incl_dirs $links &>> $log_file
+g++-10 -o $exe $flags $cpp_files $std $includes $libs $links &>> $log_file
 timestamp >> $log_file
 
 #TODO: test on Raspberry Pi

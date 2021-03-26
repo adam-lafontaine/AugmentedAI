@@ -5,6 +5,10 @@ timestamp() {
   date +"%T"
 }
 
+includes="" #"-I/"
+libs="" #"-L/..."
+links="" #"-lstdc++fs"
+
 log_file="compile.log"
 
 flags="-Wall -O3"
@@ -28,6 +32,5 @@ exe="ImageFactory"
 
 # complile and write to file
 timestamp > $log_file
-#g++-10 -o $exe $flags $cpp_files $std `pkg-config --cflags --libs vcpkg_all` &>> $log_file
-g++-10 -o $exe $flags $cpp_files $std &>> $log_file
+g++-10 -o $exe $flags $cpp_files $std $includes $libs $links &>> $log_file
 timestamp >> $log_file
