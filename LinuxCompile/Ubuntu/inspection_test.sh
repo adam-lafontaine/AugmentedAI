@@ -41,6 +41,7 @@ cpp_files="$main_cpp $app_cpp $utils_cpp"
 exe="InspectionTest"
 
 # complile and write to file
-timestamp > $log_file
+echo $exe > $log_file 
+timestamp >> $log_file
 g++-10 -o $exe $flags $cpp_files $std $includes $libs $links &>> $log_file
 timestamp >> $log_file
