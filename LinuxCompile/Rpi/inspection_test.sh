@@ -5,9 +5,10 @@ timestamp() {
   date +"%T"
 }
 
-incl_dirs="-I/usr/local/boost_1_73_0"
+incl_dirs="" #"-I/usr/local/boost_1_73_0"
 lib_dirs="" #"-L/..."
-links="-lstdc++fs -lpng"
+#links="-lstdc++fs -lpng"
+links="-lstdc++fs"
 
 log_file="compile.log"
 

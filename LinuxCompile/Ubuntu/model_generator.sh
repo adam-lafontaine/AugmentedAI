@@ -35,6 +35,5 @@ exe="ModelGenerator"
 
 # complile and write to file
 timestamp > $log_file
-#g++-10 -o $exe $flags $cpp_files $std `pkg-config --cflags --libs vcpkg_all` &>> $log_file
 g++-10 -o $exe $flags $cpp_files $std &>> $log_file
 timestamp >> $log_file
