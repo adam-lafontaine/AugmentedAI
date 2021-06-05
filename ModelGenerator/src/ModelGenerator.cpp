@@ -351,9 +351,9 @@ namespace model_generator
 
 		for (; column < data_view.width; ++column)
 		{
-			auto column_view = img::column_view(data_view, column);	
+			auto column_view = img::column_view(data_view, column);
 
-			img::seq::for_each_pixel(column_view, update_pred);
+			std::for_each(column_view.begin(), column_view.end(), update_pred);
 		}
 	}
 

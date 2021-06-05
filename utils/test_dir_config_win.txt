@@ -1,11 +1,11 @@
-PROJECT_ROOT = D:/repos/AugmentedAI/DataAdaptor/test
-SRC_FAIL_ROOT = D:/test_images/src_fail
-SRC_PASS_ROOT = D:/test_images/src_pass
+PROJECT_ROOT = C:/D_Data/repos/AugmentedAI/DataAdaptor/test
+SRC_FAIL_ROOT = C:/D_Data/test_images/src_fail
+SRC_PASS_ROOT = C:/D_Data/test_images/src_pass
 
-DATA_FAIL_ROOT = D:/test_images/data_fail
-DATA_PASS_ROOT = D:/test_images/data_pass
+DATA_FAIL_ROOT = C:/D_Data/test_images/data_fail
+DATA_PASS_ROOT = C:/D_Data/test_images/data_pass
 
-MODEL_ROOT = D:/test_images/model
+MODEL_ROOT = C:/D_Data/test_images/model
 
-ALPHA_PATH = D:/repos/AugmentedAI/ImageFactory/img/alphabet.png
-BORDER_PATH = D:/repos/AugmentedAI/ImageFactory/img/border.png
+ALPHA_PATH = C:/D_Data/repos/AugmentedAI/ImageFactory/img/alphabet.png
+BORDER_PATH = C:/D_Data/repos/AugmentedAI/ImageFactory/img/border.png

@@ -31,7 +31,7 @@ enum class TestDir : size_t
 //constexpr auto TEST_DIR_CONFIG_PATH = "/home/adam/projects/AugmentedAI/utils/test_dir_config_ubuntu.txt";
 constexpr auto TEST_DIR_CONFIG_PATH = "/home/pi/projects/AugmentedAI/utils/test_dir_config_rpi.txt";
 #else
-constexpr auto TEST_DIR_CONFIG_PATH = "D:/repos/AugmentedAI/utils/test_dir_config_win.txt";
+constexpr auto TEST_DIR_CONFIG_PATH = "C:/D_Data/repos/AugmentedAI/utils/test_dir_config_win.txt";
 #endif
 
 
