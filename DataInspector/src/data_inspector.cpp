@@ -81,7 +81,7 @@ static double data_value_to_model_value(double data_val)
 {
 	auto pixel_value = data::data_value_to_data_pixel(data_val);
 
-	model::data_pixel_t pixel;
+	model::data_pixel_t pixel{};
 	pixel.value = pixel_value;
 
 	return model::data_pixel_to_model_value(pixel);

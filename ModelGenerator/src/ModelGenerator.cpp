@@ -110,13 +110,7 @@ namespace model_generator
 		auto const index = mlclass::to_class_index(class_index);
 
 		// data is organized in directories by class
-		auto data_files = dir::get_files_of_type(src_dir, data::DATA_IMAGE_EXTENSION);
-
-		m_class_data[index].clear();
-		m_class_data[index].reserve(data_files.size());
-
-		for (auto const& file_path : data_files)
-			m_class_data[index].push_back(file_path.string());
+		m_class_data[index] = dir::get_files_of_type(src_dir, data::DATA_IMAGE_EXTENSION);
 	}
 
 
@@ -324,8 +318,6 @@ namespace model_generator
 	
 	static index_list_t find_relevant_positions(class_column_hists_t const& class_pos_hists)
 	{
-		//return set_indeces_manually(class_pos_hists);
-
 		auto const indeces = try_find_indeces(class_pos_hists);
 
 		if(indeces.empty())
@@ -398,8 +390,10 @@ namespace model_generator
 
 		for (auto& list : pos)
 		{
-			for (size_t i = 0; i < list.size(); ++i)
-				list[i] = norm(list[i]);
+			for (auto& count : list)
+			{
+				count = norm(count);
+			}
 		}
 	}
 
@@ -412,13 +406,7 @@ namespace model_generator
 
 		auto const set_column_zeros = [&](auto c)
 		{
-			position_hists[c].reserve(width);
-			for (size_t i = 0; i < width; ++i)
-			{
-				position_hists[c].push_back({ 0 }); // set all values to zero
-			}
-
-			//position_hists[c] = column_hists_t(width, {0}); // TODO: try
+			position_hists[c] = column_hists_t(width, {0});
 		};
 
 		mlclass::for_each_class(set_column_zeros);
