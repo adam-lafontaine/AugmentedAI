@@ -249,7 +249,7 @@ static void add_defects(img::view_t const& view)
 	// get number of defects
 	std::random_device r;	
 	std::default_random_engine eng(r());
-	std::uniform_int_distribution<unsigned> uni_lines(min_lines, max_lines);
+	std::uniform_int_distribution<u32> uni_lines(min_lines, max_lines);
 	auto num_lines = uni_lines(eng);
 
 	std::uniform_int_distribution<u32> y_dist(100, view.height - 100);

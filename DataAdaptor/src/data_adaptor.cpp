@@ -43,7 +43,7 @@ namespace data_adaptor
 
 		for (u32 y = 0; y < view.height; ++y)
 		{
-			auto data_row = *(first + y);
+			auto data_row = first[y];
 
 			auto ptr = view.row_begin(y);
 			for (u32 x = 0; x < view.width; ++x)
