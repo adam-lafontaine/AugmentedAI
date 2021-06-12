@@ -37,6 +37,19 @@ namespace impl
 
 	//======= TODO: IMPLEMENT =================
 
+
+	// How a file is read and converted to numeric data
+	inline src_data_t file_to_data(const char* src_file)
+	{
+		src_data_t data{ 0 };
+
+		assert(data.size() == DATA_IMAGE_WIDTH);
+
+		return data;
+	}
+
+
+	// How each value of data is to be represented as a pixel
 	inline data_pixel_t data_value_to_data_pixel(double val)
 	{
 		assert(val >= DATA_MIN_VALUE);
@@ -46,18 +59,12 @@ namespace impl
 	}
 
 
+	// How each data pixel is to be converted back to numeric data
 	inline double data_pixel_to_data_value(data_pixel_t const& pix)
 	{
 		return 0;
 	}
 
 
-	inline src_data_t file_to_data(const char* src_file)
-	{
-		src_data_t data{ 0 };
-
-		assert(data.size() == DATA_IMAGE_WIDTH);
-
-		return data;
-	}
+	
 }

@@ -84,7 +84,7 @@ namespace impl
 
 		const auto ratio = (val - DATA_MIN_VALUE) / (DATA_MAX_VALUE - DATA_MIN_VALUE);
 
-		img::pixel_t color;
+		img::pixel_t color{};
 		color.value = static_cast<u32>(ratio * BITS32_MAX);
 
 		return color.value;

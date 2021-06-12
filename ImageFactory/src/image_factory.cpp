@@ -235,9 +235,9 @@ static void draw_line(img::view_t const& view, pixel_range_t const& range)
 // add randomly generated defects as horizontal lines
 static void add_defects(img::view_t const& view)
 {
-	unsigned min_lines = 3;
-	unsigned max_lines = 10;
-	unsigned line_thickness = 10;
+	u32 min_lines = 3;
+	u32 max_lines = 10;
+	u32 line_thickness = 10;
 
 	typedef struct
 	{
@@ -247,16 +247,16 @@ static void add_defects(img::view_t const& view)
 	}  x_range;
 
 	// get number of defects
-	std::random_device r;	
+	std::random_device r = {};
 	std::default_random_engine eng(r());
-	std::uniform_int_distribution<unsigned> uni_lines(min_lines, max_lines);
+	std::uniform_int_distribution<u32> uni_lines(min_lines, max_lines);
 	auto num_lines = uni_lines(eng);
 
 	std::uniform_int_distribution<u32> y_dist(100, view.height - 100);
 	std::uniform_int_distribution<u32> x_dist(100, view.width - 200);
 	std::uniform_int_distribution<u32> len_dist(10, 100);	
 
-	for (size_t i = 0; i < num_lines; ++i)
+	for (u32 i = 0; i < num_lines; ++i)
 	{
 		pixel_range_t r;
 		r.y_begin = y_dist(eng);
@@ -298,12 +298,12 @@ void build_images(const char* alpha_path, const char* border_path, const char* p
 
 	const auto num_images = letters.size() * SURFACE_COLRS.size() * LETTER_COLORS.size();
 	const auto idx_len = std::to_string(num_images).length();
-	unsigned idx = 1;
-	char idx_str[100];
+	u32 idx = 1;
+	char idx_str[10];
 	size_t pass_idx = 0;
 	size_t fail_idx = 1;
 
-	uint8_t letter_index = 0; // for naming files after their letter
+	u8 letter_index = 0; // for naming files after their letter
 
 	for (auto const& letter_v : letters)
 	{

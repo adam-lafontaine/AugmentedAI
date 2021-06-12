@@ -63,13 +63,10 @@ static centroid_list_t read_model(const char* model_file)
 	for (u32 y = 0; y < height; ++y)
 	{
 		value_list_t centroid;
-		centroid.reserve(width);
 
-		auto ptr = view.row_begin(y);
-		for (u32 x = 0; x < width; ++x)
-		{
-			centroid.push_back(model::model_pixel_to_model_value(ptr[x]));
-		}
+		auto w_begin = view.row_begin(y);
+		auto w_end = w_begin + width;
+		std::transform(w_begin, w_end, std::back_inserter(centroid), model::model_pixel_to_model_value);
 
 		centroids.push_back(centroid);
 	}
@@ -82,16 +79,11 @@ static centroid_list_t read_model(const char* model_file)
 // uses data pixel as intermediary
 static double data_value_to_model_value(double data_val)
 {
-	auto pixel_value = data::data_value_to_data_pixel(data_val);
-
-	model::data_pixel_t pixel;
-	pixel.value = pixel_value;
+	model::data_pixel_t pixel{};
+	pixel.value = data::data_value_to_data_pixel(data_val);
 
 	return model::data_pixel_to_model_value(pixel);
 }
-
-
-
 
 
 namespace data_inspector
@@ -116,7 +108,8 @@ namespace data_inspector
 		/*
 		
 		The following must done every time data is provided
-		A class can be created with centroids, cluster, centroid_class_map build in the constructor
+		A class can be created with centroids, cluster, centroid_class_map in memory and may be faster without the file read on each inspection.
+		This implementation allows for changing the model during runtime.
 
 		*/
 

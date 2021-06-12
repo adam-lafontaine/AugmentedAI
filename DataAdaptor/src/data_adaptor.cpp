@@ -33,17 +33,17 @@ namespace data_adaptor
 
 		assert(dist > 0);
 
-		const auto height = static_cast<size_t>(dist);
+		const auto height = static_cast<u32>(dist);
 
-		assert(height <= MAX_DATA_IMAGE_SIZE / width);
+		assert(static_cast<size_t>(height) <= MAX_DATA_IMAGE_SIZE / width);
 
 		img::image_t image;
-		img::make_image(image, width, static_cast<u32>(height));
+		img::make_image(image, width, height);
 		auto view = img::make_view(image);
 
 		for (u32 y = 0; y < view.height; ++y)
 		{
-			auto data_row = *(first + y);
+			auto& data_row = first[y];
 
 			auto ptr = view.row_begin(y);
 			for (u32 x = 0; x < view.width; ++x)
@@ -87,12 +87,14 @@ namespace data_adaptor
 			return static_cast<size_t>(std::abs(distance)) < max_height ? end : first + max_height;
 		};
 
+		auto const dst_root = fs::path(dst_dir);
+
 		for (auto last = get_last();
 			first != end;
 			first = last, last = get_last())
 		{
 			const auto name = impl::make_numbered_file_name(idx++, idx_len);
-			const auto dst_file_path = fs::path(dst_dir) / name;
+			const auto dst_file_path = dst_root / name;
 
 			save_data_range(first, last, dst_file_path);
 		}
