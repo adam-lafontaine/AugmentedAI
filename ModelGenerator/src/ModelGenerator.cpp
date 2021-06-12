@@ -418,17 +418,6 @@ namespace model_generator
 
 	//======= HELPERS =====================
 
-#ifdef __linux
-
-#define platform_localtime localtime_r
-
-#else
-
-#define platform_localtime localtime_s
-
-#endif
-
-
 	static std::string make_model_file_name()
 	{
 		std::ostringstream oss;
