@@ -80,9 +80,9 @@ const auto dst_file_ext = ".png";
 bool src_root_exists_test();
 bool src_files_exist_test();
 bool dst_root_exists_test();
-bool file_to_data_not_empty_test();
-bool file_to_data_size_test();
-bool file_to_data_value_range_test();
+bool file_to_features_not_empty_test();
+bool file_to_features_size_test();
+bool file_to_features_value_range_test();
 bool file_list_to_data_size_test();
 bool file_list_to_data_values_test();
 bool save_feature_images_create_file_test();
@@ -110,9 +110,9 @@ int main()
 	run_test("src_root_exists_test()                   ", src_root_exists_test);
 	run_test("src_files_exist_test()                   ", src_files_exist_test);
 	run_test("dst_root_exists_test()                   ", dst_root_exists_test);
-	run_test("file_to_data()                  not empty", file_to_data_not_empty_test);
-	run_test("file_to_data()                       size", file_to_data_size_test);
-	run_test("file_to_data()                value range", file_to_data_value_range_test);
+	run_test("file_to_features()              not empty", file_to_features_not_empty_test);
+	run_test("file_to_features()                   size", file_to_features_size_test);
+	run_test("file_to_features()            value range", file_to_features_value_range_test);
 	run_test("file_list_to_data()                  size", file_list_to_data_size_test);
 	run_test("file_list_to_data()       matching values", file_list_to_data_values_test);
 	run_test("save_feature_images()     file(s) created", save_feature_images_create_file_test);
@@ -155,30 +155,30 @@ bool dst_root_exists_test()
 
 
 // reading a file creates data
-bool file_to_data_not_empty_test()
+bool file_to_features_not_empty_test()
 {
 	const auto file = src_files[2];
-	const auto data = data::file_to_data(file);
+	const auto data = data::file_to_features(file);
 
 	return !data.empty();
 }
 
 
 // reading a file creates the expected amount of data
-bool file_to_data_size_test()
+bool file_to_features_size_test()
 {	
 	const auto file = src_files[2];
-	const auto data = data::file_to_data(file);
+	const auto data = data::file_to_features(file);
 
 	return data.size() == data::feature_image_width();
 }
 
 
 // all data generated is within the expected range
-bool file_to_data_value_range_test()
+bool file_to_features_value_range_test()
 {
 	const auto file = src_files[2];
-	const auto data = data::file_to_data(file);
+	const auto data = data::file_to_features(file);
 
 	const auto pred = [&](auto val) { return val >= data::feature_min_value() && val <= data::feature_max_value(); };
 
@@ -206,7 +206,7 @@ bool file_list_to_data_values_test()
 	const size_t test_index = 2;
 
 	const auto file = src_files[test_index];
-	const auto single = data::file_to_data(file);
+	const auto single = data::file_to_features(file);
 
 	const auto d = data[test_index];
 

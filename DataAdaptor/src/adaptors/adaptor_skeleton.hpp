@@ -12,7 +12,7 @@
 
 
 using feature_pixel_t = data_adaptor::feature_pixel_t;
-using src_data_t = data_adaptor::src_data_t;
+using features_t = data_adaptor::features_t;
 
 
 constexpr size_t MAX_FEATURE_IMAGE_SIZE = 10000;
@@ -39,9 +39,9 @@ namespace impl
 
 
 	// How a file is read and converted to numeric data
-	inline src_data_t file_to_data(const char* src_file)
+	inline features_t file_to_features(const char* src_file)
 	{
-		src_data_t data{ 0 };
+		features_t data{ 0 };
 
 		assert(data.size() == FEATURE_IMAGE_WIDTH);
 

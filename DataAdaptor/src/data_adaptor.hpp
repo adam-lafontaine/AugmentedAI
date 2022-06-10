@@ -26,8 +26,8 @@ Binary files could be used instead but images allow users to see what their data
 */
 namespace data_adaptor
 {
-	using src_data_t = std::vector<r64>;        // feature vector from the file
-	using data_list_t = std::vector<src_data_t>;   // multiple feature vectors
+	using features_t = std::vector<r64>;        // feature vector from the file
+	using data_list_t = std::vector<features_t>;   // multiple feature vectors
 	using path_t = fs::path;                       // file path.
 	using file_list_t = std::vector<path_t>;       // list of files
 	using feature_pixel_t = u32;                 // One feature value converted to a pixel (4 x 8bit)
@@ -47,8 +47,8 @@ namespace data_adaptor
 	// Define how an individual file is interpreted as data to be processed.
 	// The file type and how it is processed depends on the implementation.
 	// For the application, decide how a file produces a vector of r64s	
-	src_data_t file_to_data(const char* src_file);
-	src_data_t file_to_data(path_t const& src_file);
+	features_t file_to_features(const char* src_file);
+	features_t file_to_features(path_t const& src_file);
 
 
 	// Define how values are converted to pixels and vice versa
@@ -80,6 +80,6 @@ namespace data_adaptor
 
 
 	// Convert one row of a "data image" back to source data
-	src_data_t feature_image_row_to_data(pixel_row_t const& pixel_row);
+	features_t feature_image_row_to_data(pixel_row_t const& pixel_row);
 	
 }

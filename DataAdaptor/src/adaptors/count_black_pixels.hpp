@@ -15,7 +15,7 @@ namespace img = libimage;
 
 
 using feature_pixel_t = data_adaptor::feature_pixel_t;
-using src_data_t = data_adaptor::src_data_t;
+using features_t = data_adaptor::features_t;
 
 
 constexpr size_t MAX_FEATURE_IMAGE_SIZE = 10000;
@@ -91,11 +91,11 @@ namespace impl
 	}
 
 
-	inline src_data_t file_to_data(const char* src_file)
+	inline features_t file_to_features(const char* src_file)
 	{
 		img::gray::image_t image;
 		img::read_image_from_file(src_file, image);
-		const src_data_t data{ count_shades(img::make_view(image)) };
+		const features_t data{ count_shades(img::make_view(image)) };
 
 		assert(data.size() == FEATURE_IMAGE_WIDTH);
 

@@ -15,7 +15,7 @@ namespace img = libimage;
 
 
 using feature_pixel_t = data_adaptor::feature_pixel_t;
-using src_data_t = data_adaptor::src_data_t;
+using features_t = data_adaptor::features_t;
 
 constexpr size_t HORIZONTAL_SECTIONS = 16;
 constexpr size_t VERTICAL_SECTIONS = 16;
@@ -64,7 +64,7 @@ namespace impl
 	}
 
 
-	inline src_data_t file_to_data(const char* src_file)
+	inline features_t file_to_features(const char* src_file)
 	{
 		img::image_t image;
 		img::read_image_from_file(src_file, image);
@@ -74,7 +74,7 @@ namespace impl
 		resized.height = VERTICAL_SECTIONS;
 		auto view = img::make_resized_view(image, resized);
 
-		src_data_t data;
+		features_t data;
 
 		std::transform(view.begin(), view.end(), std::back_inserter(data), feature_pixel_to_value);
 

@@ -54,7 +54,7 @@ namespace data_adaptor
 	{
 		data_list_t data;
 
-		const auto pred = [&](path_t const& file_path) { return file_to_data(file_path); };
+		const auto pred = [&](path_t const& file_path) { return file_to_features(file_path); };
 
 		std::transform(files.begin(), files.end(), std::back_inserter(data), pred);
 
@@ -101,11 +101,11 @@ namespace data_adaptor
 	}
 
 
-	src_data_t feature_image_row_to_data(pixel_row_t const& pixel_row)
+	features_t feature_image_row_to_data(pixel_row_t const& pixel_row)
 	{
 		assert(pixel_row.size() == impl::FEATURE_IMAGE_WIDTH);
 
-		src_data_t data;
+		features_t data;
 
 		std::transform(pixel_row.begin(), pixel_row.end(), std::back_inserter(data), feature_pixel_to_value);
 
@@ -127,15 +127,15 @@ namespace data_adaptor
 	}
 
 
-	src_data_t file_to_data(const char* src_file)
+	features_t file_to_features(const char* src_file)
 	{
-		return impl::file_to_data(src_file);
+		return impl::file_to_features(src_file);
 	}
 
 
-	src_data_t file_to_data(path_t const& src_file)
+	features_t file_to_features(path_t const& src_file)
 	{
-		return file_to_data(src_file.string().c_str());
+		return file_to_features(src_file.string().c_str());
 	}
 
 

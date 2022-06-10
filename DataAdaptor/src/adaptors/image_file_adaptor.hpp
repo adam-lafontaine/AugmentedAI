@@ -22,7 +22,7 @@ namespace img = libimage;
 
 
 using feature_pixel_t = data_adaptor::feature_pixel_t;
-using src_data_t = data_adaptor::src_data_t;
+using features_t = data_adaptor::features_t;
 using path_t = data_adaptor::path_t;
 
 
@@ -40,11 +40,11 @@ constexpr auto BITS32_MAX = UINT32_MAX;
 
 // counts the amount of each shade found in the image
 // returns a histogram of relative amounts from 0 - 1
-static src_data_t count_shades(img::gray::view_t const& view)
+static features_t count_shades(img::gray::view_t const& view)
 {
 	const auto hist = img::calc_stats(view).hist;
 
-	src_data_t data(hist.size(), 0);
+	features_t data(hist.size(), 0);
 
 	const auto total = static_cast<r64>(view.width) * view.height;
 
@@ -97,7 +97,7 @@ namespace impl
 	}
 
 
-	inline src_data_t file_to_data(const char* src_file)
+	inline features_t file_to_features(const char* src_file)
 	{
 		img::gray::image_t image;
 		

@@ -151,7 +151,7 @@ namespace data_inspector
 
 	MLClass inspect(const char* data_file, const char* model_dir)
 	{
-		auto const data = data::file_to_data(data_file);
+		auto const data = data::file_to_features(data_file);
 
 		return inspect(data, model_dir);
 	}
