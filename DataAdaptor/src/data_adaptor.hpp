@@ -26,11 +26,11 @@ Binary files could be used instead but images allow users to see what their data
 */
 namespace data_adaptor
 {
-	using features_t = std::vector<r64>;        // feature vector from the file
-	using data_list_t = std::vector<features_t>;   // multiple feature vectors
-	using path_t = fs::path;                       // file path.
-	using file_list_t = std::vector<path_t>;       // list of files
-	using feature_pixel_t = u32;                 // One feature value converted to a pixel (4 x 8bit)
+	using features_t = std::vector<r64>;              // feature vector from the file
+	using features_list_t = std::vector<features_t>;  // multiple feature vectors
+	using path_t = fs::path;                          // file path.
+	using file_list_t = std::vector<path_t>;          // list of files
+	using feature_pixel_t = u32;                      // One feature value converted to a pixel (4 x 8bit)
 	using pixel_row_t = std::vector<feature_pixel_t>; // A single row of data pixels
 
 	constexpr auto FEATURE_IMAGE_EXTENSION = ".png";
@@ -71,12 +71,12 @@ namespace data_adaptor
 
 
 	// Convert files to data to be processed
-	data_list_t file_list_to_data(file_list_t const& files);
+	features_list_t file_list_to_features(file_list_t const& files);
 
 
 	// Save source data as a "data image"
-	void save_feature_images(data_list_t const& data, const char* dst_dir);
-	void save_feature_images(data_list_t const& data, path_t const& dst_dir);
+	void save_feature_images(features_list_t const& data, const char* dst_dir);
+	void save_feature_images(features_list_t const& data, path_t const& dst_dir);
 
 
 	// Convert one row of a "data image" back to source data

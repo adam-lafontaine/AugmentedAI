@@ -66,11 +66,11 @@ void make_feature_images()
 	}
 
 	auto src_files = dir::get_files_of_type(src_fail_root, ".png");
-	auto data = data::file_list_to_data(src_files);
+	auto data = data::file_list_to_features(src_files);
 	data::save_feature_images(data, data_fail_root);
 
 	src_files = dir::get_files_of_type(src_pass_root, ".png");
-	data = data::file_list_to_data(src_files);
+	data = data::file_list_to_features(src_files);
 	data::save_feature_images(data, data_pass_root);
 }
 
@@ -83,8 +83,8 @@ bool dst_root_exists_test();
 bool file_to_features_not_empty_test();
 bool file_to_features_size_test();
 bool file_to_features_value_range_test();
-bool file_list_to_data_size_test();
-bool file_list_to_data_values_test();
+bool file_list_to_features_size_test();
+bool file_list_to_features_values_test();
 bool save_feature_images_create_file_test();
 bool save_feature_images_height_test();
 bool pixel_conversion_test();
@@ -113,8 +113,8 @@ int main()
 	run_test("file_to_features()              not empty", file_to_features_not_empty_test);
 	run_test("file_to_features()                   size", file_to_features_size_test);
 	run_test("file_to_features()            value range", file_to_features_value_range_test);
-	run_test("file_list_to_data()                  size", file_list_to_data_size_test);
-	run_test("file_list_to_data()       matching values", file_list_to_data_values_test);
+	run_test("file_list_to_features()              size", file_list_to_features_size_test);
+	run_test("file_list_to_features()   matching values", file_list_to_features_values_test);
 	run_test("save_feature_images()     file(s) created", save_feature_images_create_file_test);
 	run_test("save_feature_images()      file(s) height", save_feature_images_height_test);
 	run_test("pixel_conversion_test()      close enough", pixel_conversion_test);
@@ -187,10 +187,10 @@ bool file_to_features_value_range_test()
 
 
 // reading multiple files generates the expected amount of data
-bool file_list_to_data_size_test()
+bool file_list_to_features_size_test()
 {
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
-	const auto data = data::file_list_to_data(file_list);
+	const auto data = data::file_list_to_features(file_list);
 
 	return data.size() == file_list.size();
 }
@@ -198,10 +198,10 @@ bool file_list_to_data_size_test()
 
 // generating data from multiple files give the same values
 // as if generating data from each file individually
-bool file_list_to_data_values_test()
+bool file_list_to_features_values_test()
 {
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
-	const auto data = data::file_list_to_data(file_list);
+	const auto data = data::file_list_to_features(file_list);
 
 	const size_t test_index = 2;
 
@@ -220,7 +220,7 @@ bool save_feature_images_create_file_test()
 	delete_files(dst_root);
 
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
-	const auto data = data::file_list_to_data(file_list);
+	const auto data = data::file_list_to_features(file_list);
 
 	data::save_feature_images(data, dst_root.c_str());
 
@@ -236,7 +236,7 @@ bool save_feature_images_create_file_test()
 bool save_feature_images_height_test()
 {
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
-	const auto data = data::file_list_to_data(file_list);
+	const auto data = data::file_list_to_features(file_list);
 
 	delete_files(dst_root);
 
@@ -268,7 +268,7 @@ bool pixel_conversion_test()
 	const double tolerance = 0.0001;
 
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
-	const auto data = data::file_list_to_data(file_list);
+	const auto data = data::file_list_to_features(file_list);
 
 	const auto compare = [&](double val) 
 	{
@@ -291,7 +291,7 @@ bool feature_image_row_to_data_size_test()
 	const size_t test_index = 0;
 
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
-	const auto data = data::file_list_to_data(file_list);
+	const auto data = data::file_list_to_features(file_list);
 
 	delete_files(dst_root);
 
@@ -323,7 +323,7 @@ bool feature_image_row_to_data_values_test()
 	const double tolerance = 0.0001;
 
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
-	const auto data = data::file_list_to_data(file_list);
+	const auto data = data::file_list_to_features(file_list);
 
 	delete_files(dst_root);
 

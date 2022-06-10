@@ -18,7 +18,7 @@ Allows for changing implementation without having to modify the source file list
 
 namespace data_adaptor
 {
-	using data_itr_t = data_list_t::const_iterator;
+	using data_itr_t = features_list_t::const_iterator;
 
 	static void save_data_range(data_itr_t const& first, data_itr_t const& last, path_t const& dst_file_path)
 	{
@@ -50,9 +50,9 @@ namespace data_adaptor
 	}
 
 
-	data_list_t file_list_to_data(file_list_t const& files)
+	features_list_t file_list_to_features(file_list_t const& files)
 	{
-		data_list_t data;
+		features_list_t data;
 
 		const auto pred = [&](path_t const& file_path) { return file_to_features(file_path); };
 
@@ -62,7 +62,7 @@ namespace data_adaptor
 	}
 
 
-	void save_feature_images(data_list_t const& data, const char* dst_dir)
+	void save_feature_images(features_list_t const& data, const char* dst_dir)
 	{
 		const auto max_height = MAX_FEATURE_IMAGE_SIZE / impl::FEATURE_IMAGE_WIDTH;
 
@@ -95,7 +95,7 @@ namespace data_adaptor
 	}
 
 
-	void save_feature_images(data_list_t const& data, path_t const& dst_dir)
+	void save_feature_images(features_list_t const& data, path_t const& dst_dir)
 	{
 		save_feature_images(data, dst_dir.string().c_str());
 	}
