@@ -4,12 +4,14 @@
 #include <functional>
 #include <cstdint>
 
+using r64 = double;
+
 namespace cluster
 {
 	//======= TYPE DEFINITIONS ====================
 
-	using value_t = double; // value type of centroids
-	using data_t = double;
+	using value_t = r64; // value type of centroids
+	using data_t = r64;
 
 	using data_row_t = std::vector<value_t>;
 	using data_row_list_t = std::vector<data_row_t>;
@@ -19,7 +21,7 @@ namespace cluster
 
 	using index_list_t = std::vector<size_t>;
 
-	using dist_func_t = std::function<double(data_row_t const& data, value_row_t const& centroid)>;
+	using dist_func_t = std::function<r64(data_row_t const& data, value_row_t const& centroid)>;
 
 
 	typedef struct ClusterResult
@@ -34,7 +36,7 @@ namespace cluster
 	typedef struct DistanceResult 
 	{
 		size_t index;    // index of centroid in the list
-		double distance; // calculated distance of data from the centroid
+		r64 distance; // calculated distance of data from the centroid
 
 	} distance_result_t;
 

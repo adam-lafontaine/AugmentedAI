@@ -28,19 +28,19 @@ namespace cluster
 
 
 	template<typename LHS_t, typename RHS_t>
-	constexpr double distance_squared(LHS_t lhs, RHS_t rhs)
+	constexpr r64 distance_squared(LHS_t lhs, RHS_t rhs)
 	{
 		constexpr auto square = [](auto val) { return val * val; };
 
-		return square(static_cast<double>(lhs) - static_cast<double>(rhs));
+		return square(static_cast<r64>(lhs) - static_cast<r64>(rhs));
 	}
 
 
-	// calculates the average spared difference
+	// calculates the average squared difference
 	template<typename T>
-	double list_distance(std::vector<T> const& lhs, std::vector<T> const& rhs)
+	r64 list_distance(std::vector<T> const& lhs, std::vector<T> const& rhs)
 	{
-		double sum = 0;
+		r64 sum = 0;
 		//auto size = std::min(lhs.size(), rhs.size());
 		const auto size = lhs.size();
 

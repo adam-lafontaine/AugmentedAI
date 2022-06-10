@@ -2,6 +2,8 @@
 
 #include "../../utils/libimage/libimage.hpp"
 
+using r64 = double;
+
 namespace img = libimage;
 
 /*

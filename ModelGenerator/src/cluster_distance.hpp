@@ -21,7 +21,7 @@ namespace model_generator
 		// average absolute difference
 		return [&](auto const& data, auto const& centroid)
 		{
-			double total = 0;
+			r64 total = 0;
 
 			for (auto i : relevant_indeces)
 			{
@@ -37,7 +37,7 @@ namespace model_generator
 		// Root mean square difference
 		return [&](auto const& data, auto const& centroid)
 		{
-			double total = 0;
+			r64 total = 0;
 
 			for (auto i : relevant_indeces)
 			{

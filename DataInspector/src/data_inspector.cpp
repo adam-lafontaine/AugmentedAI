@@ -9,6 +9,7 @@
 #include <cassert>
 
 
+
 namespace data = data_adaptor;
 namespace model = model_generator;
 namespace img = libimage;
@@ -16,7 +17,7 @@ namespace dir = dirhelper;
 
 
 using index_list_t = std::vector<size_t>;
-using value_list_t = std::vector<double>;
+using value_list_t = std::vector<r64>;
 using centroid_list_t = std::vector<value_list_t>;
 using cluster_t = cluster::Cluster;
 
@@ -71,7 +72,7 @@ static centroid_list_t read_model(const char* model_file)
 
 // convert a value from a data image to model/centroid value
 // uses data pixel as intermediary
-static double data_value_to_model_value(double data_val)
+static r64 data_value_to_model_value(r64 data_val)
 {
 	model::data_pixel_t pixel{};
 	pixel.value = data::data_value_to_data_pixel(data_val);
@@ -82,7 +83,7 @@ static double data_value_to_model_value(double data_val)
 
 namespace data_inspector
 {
-	using model_row_t = std::vector<double>;
+	using model_row_t = std::vector<r64>;
 
 	static model_row_t to_model_value_row(src_data_t const& data_row)
 	{

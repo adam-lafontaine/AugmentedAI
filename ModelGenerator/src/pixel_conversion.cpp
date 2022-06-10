@@ -5,7 +5,6 @@
 
 
 constexpr auto BITS32_MAX = UINT32_MAX;
-constexpr double BITS8_MAX = 255;
 
 constexpr auto MODEL_VALUE_MIN = 0.0;
 constexpr auto MODEL_VALUE_MAX = BITS32_MAX;
@@ -17,19 +16,19 @@ constexpr shade_t PIXEL_INACTIVE = 254;
 
 namespace model_generator
 {
-	bool is_relevant(double model_val)
+	bool is_relevant(r64 model_val)
 	{
 		return model_val >= MODEL_VALUE_MIN && model_val <= MODEL_VALUE_MAX;
 	}
 
 
-	double data_pixel_to_model_value(data_pixel_t const& data_pix)
+	r64 data_pixel_to_model_value(data_pixel_t const& data_pix)
 	{
-		return static_cast<double>(data_pix.value);
+		return static_cast<r64>(data_pix.value);
 	}
 
 
-	model_pixel_t model_value_to_model_pixel(double model_val, bool is_active)
+	model_pixel_t model_value_to_model_pixel(r64 model_val, bool is_active)
 	{
 		assert(is_relevant(model_val)); // only valid values can be converted to a pixel
 
@@ -59,7 +58,7 @@ namespace model_generator
 	}
 
 
-	double model_pixel_to_model_value(model_pixel_t const& model_pix)
+	r64 model_pixel_to_model_value(model_pixel_t const& model_pix)
 	{
 		const auto rgba = model_pix;
 
@@ -70,7 +69,7 @@ namespace model_generator
 
 		// only the blue channel is used to store a value
 		// the red and green channels are random values used to make the model image look more interesting
-		const auto ratio = rgba.blue / BITS8_MAX;
+		const auto ratio = rgba.blue / 255.0;
 		return ratio * MODEL_VALUE_MAX;
 	}
 }

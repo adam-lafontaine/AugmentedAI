@@ -67,7 +67,7 @@ namespace cluster
 		index_list_t x_clusters;
 		x_clusters.reserve(x_list.size());
 
-		double total_distance = 0;
+		r64 total_distance = 0;
 
 		for (auto const& x_data : x_list)
 		{
