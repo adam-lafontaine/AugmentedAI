@@ -42,7 +42,7 @@ namespace data_adaptor
 			auto ptr = view.row_begin(y);
 			for (u32 x = 0; x < view.width; ++x)
 			{
-				ptr[x].value = data_value_to_data_pixel(data_row[x]);
+				ptr[x].value = value_to_feature_pixel(data_row[x]);
 			}
 		}
 
@@ -107,7 +107,7 @@ namespace data_adaptor
 
 		src_data_t data;
 
-		std::transform(pixel_row.begin(), pixel_row.end(), std::back_inserter(data), data_pixel_to_data_value);
+		std::transform(pixel_row.begin(), pixel_row.end(), std::back_inserter(data), feature_pixel_to_value);
 
 		return data;
 	}
@@ -115,15 +115,15 @@ namespace data_adaptor
 
 	//======= CUSTOM IMPLEMENTATIONS =================
 
-	data_pixel_t data_value_to_data_pixel(r64 val)
+	feature_pixel_t value_to_feature_pixel(r64 val)
 	{
-		return impl::data_value_to_data_pixel(val);
+		return impl::value_to_feature_pixel(val);
 	}
 
 
-	r64 data_pixel_to_data_value(data_pixel_t const& pix)
+	r64 feature_pixel_to_value(feature_pixel_t const& pix)
 	{
-		return impl::data_pixel_to_data_value(pix);
+		return impl::feature_pixel_to_value(pix);
 	}
 
 

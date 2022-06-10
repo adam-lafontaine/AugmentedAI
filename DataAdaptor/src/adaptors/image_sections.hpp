@@ -14,7 +14,7 @@
 namespace img = libimage;
 
 
-using data_pixel_t = data_adaptor::data_pixel_t;
+using feature_pixel_t = data_adaptor::feature_pixel_t;
 using src_data_t = data_adaptor::src_data_t;
 
 constexpr size_t HORIZONTAL_SECTIONS = 16;
@@ -44,7 +44,7 @@ namespace impl
 
 	//======= TODO: IMPLEMENT =================
 
-	inline data_pixel_t data_value_to_data_pixel(r64 val)
+	inline feature_pixel_t value_to_feature_pixel(r64 val)
 	{
 		assert(val >= DATA_MIN_VALUE);
 		assert(val <= DATA_MAX_VALUE);
@@ -58,7 +58,7 @@ namespace impl
 	}
 
 
-	inline r64 data_pixel_to_data_value(data_pixel_t const& pix)
+	inline r64 feature_pixel_to_value(feature_pixel_t const& pix)
 	{		
 		return static_cast<r64>(pix) / BITS32_MAX;
 	}
@@ -76,7 +76,7 @@ namespace impl
 
 		src_data_t data;
 
-		std::transform(view.begin(), view.end(), std::back_inserter(data), data_pixel_to_data_value);
+		std::transform(view.begin(), view.end(), std::back_inserter(data), feature_pixel_to_value);
 
 		assert(data.size() == DATA_IMAGE_WIDTH);
 

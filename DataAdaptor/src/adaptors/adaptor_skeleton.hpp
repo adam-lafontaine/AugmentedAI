@@ -11,7 +11,7 @@
 #endif
 
 
-using data_pixel_t = data_adaptor::data_pixel_t;
+using feature_pixel_t = data_adaptor::feature_pixel_t;
 using src_data_t = data_adaptor::src_data_t;
 
 
@@ -50,7 +50,7 @@ namespace impl
 
 
 	// How each value of data is to be represented as a pixel
-	inline data_pixel_t data_value_to_data_pixel(r64 val)
+	inline feature_pixel_t value_to_feature_pixel(r64 val)
 	{
 		assert(val >= DATA_MIN_VALUE);
 		assert(val <= DATA_MAX_VALUE);
@@ -60,7 +60,7 @@ namespace impl
 
 
 	// How each data pixel is to be converted back to numeric data
-	inline r64 data_pixel_to_data_value(data_pixel_t const& pix)
+	inline r64 feature_pixel_to_value(feature_pixel_t const& pix)
 	{
 		return 0;
 	}

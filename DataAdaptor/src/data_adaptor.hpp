@@ -30,8 +30,8 @@ namespace data_adaptor
 	using data_list_t = std::vector<src_data_t>;   // multiple feature vectors
 	using path_t = fs::path;                       // file path.
 	using file_list_t = std::vector<path_t>;       // list of files
-	using data_pixel_t = u32;                 // One feature value converted to a pixel (4 x 8bit)
-	using pixel_row_t = std::vector<data_pixel_t>; // A single row of data pixels
+	using feature_pixel_t = u32;                 // One feature value converted to a pixel (4 x 8bit)
+	using pixel_row_t = std::vector<feature_pixel_t>; // A single row of data pixels
 
 	constexpr auto DATA_IMAGE_EXTENSION = ".png";
 
@@ -52,8 +52,8 @@ namespace data_adaptor
 
 
 	// Define how values are converted to pixels and vice versa
-	data_pixel_t data_value_to_data_pixel(r64 val);   // TODO: tests
-	r64 data_pixel_to_data_value(data_pixel_t const& pix);
+	feature_pixel_t value_to_feature_pixel(r64 val);   // TODO: tests
+	r64 feature_pixel_to_value(feature_pixel_t const& pix);
 
 
 	// Make data properties public

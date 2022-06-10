@@ -272,8 +272,8 @@ bool pixel_conversion_test()
 
 	const auto compare = [&](double val) 
 	{
-		const auto pix = data::data_value_to_data_pixel(val);
-		const auto val2 = data::data_pixel_to_data_value(pix);
+		const auto pix = data::value_to_feature_pixel(val);
+		const auto val2 = data::feature_pixel_to_value(pix);
 		return std::abs(val - val2) < tolerance;
 	};
 
