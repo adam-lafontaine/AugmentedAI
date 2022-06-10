@@ -19,6 +19,8 @@ namespace cluster
 	using value_row_t = std::vector<value_t>;
 	using value_row_list_t = std::vector<value_row_t>;
 
+	using centroid_list_t = std::vector<value_row_t>;
+
 	using index_list_t = std::vector<size_t>;
 
 	using dist_func_t = std::function<r64(data_row_t const& data, value_row_t const& centroid)>;
@@ -27,7 +29,7 @@ namespace cluster
 	typedef struct ClusterResult
 	{
 		index_list_t x_clusters;      // the cluster index of each data point
-		value_row_list_t centroids;   // centroids found
+		centroid_list_t centroids;   // centroids found
 		value_t average_distance = 0; // 
 
 	} cluster_result_t;
@@ -49,7 +51,7 @@ namespace cluster
 
 		dist_func_t m_dist_func;
 
-		distance_result_t closest(data_row_t const& data, value_row_list_t const& value_list) const;
+		distance_result_t closest(data_row_t const& data, centroid_list_t const& value_list) const;
 
 		cluster_result_t cluster_once(data_row_list_t const& x_list, size_t num_clusters) const;
 
@@ -60,10 +62,10 @@ namespace cluster
 		void set_distance(dist_func_t const& f) { m_dist_func = f; }
 
 		// determines clusters given the data and the number of clusters
-		value_row_list_t cluster_data(data_row_list_t const& x_list, size_t num_clusters) const;
+		centroid_list_t cluster_data(data_row_list_t const& x_list, size_t num_clusters) const;
 
 		// The index of the closest centroid in the list
-		size_t find_centroid(data_row_t const& data, value_row_list_t const& centroids) const;
+		size_t find_centroid(data_row_t const& data, centroid_list_t const& centroids) const;
 	};
 
 }

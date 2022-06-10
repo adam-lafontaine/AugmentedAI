@@ -17,15 +17,14 @@
 #include <string>
 
 namespace dir = dirhelper;
-namespace img = libimage;
 namespace data = data_adaptor;
 
 namespace model_generator
 {
-	using hist_value_t = unsigned; // represent a pixel as a single value for a histogram
+	using hist_value_t = u32; // represent a pixel as a single value for a histogram
 	constexpr hist_value_t MAX_COLOR_VALUE = 255;
 
-	using color_qty_t = unsigned;
+	using color_qty_t = u32;
 	constexpr color_qty_t MAX_RELATIVE_QTY = 255;
 
 	// provides a count for every shade that is found
@@ -215,8 +214,8 @@ namespace model_generator
 	
 	typedef struct
 	{
-		double min;
-		double max;
+		r64 min;
+		r64 max;
 	} minmax_t;
 
 
@@ -244,7 +243,7 @@ namespace model_generator
 
 		auto const calc_sigma = [](color_hist_t const& hist, size_t mean)
 		{
-			double total = 0;
+			r64 total = 0;
 			size_t qty_total = 0;
 			for (size_t shade = 0; shade < hist.size(); ++shade)
 			{
@@ -364,7 +363,7 @@ namespace model_generator
 	// sets all values in the histograms to a value between 0 and MAX_RELATIVE_QTY
 	static void normalize_histograms(column_hists_t& pos)
 	{
-		std::vector<unsigned> hists;
+		std::vector<u32> hists;
 		hists.reserve(pos.size());
 
 		auto const max_val = [](auto const& list)
@@ -375,11 +374,11 @@ namespace model_generator
 
 		std::transform(pos.begin(), pos.end(), std::back_inserter(hists), max_val);
 
-		const double max = max_val(hists);
+		const r64 max = max_val(hists);
 
-		auto const norm = [&](unsigned count)
+		auto const norm = [&](u32 count)
 		{
-			return static_cast<unsigned>(count / max * MAX_RELATIVE_QTY);
+			return static_cast<u32>(count / max * MAX_RELATIVE_QTY);
 		};
 
 		for (auto& list : pos)
@@ -443,7 +442,7 @@ namespace model_generator
 	// converts a data pixel to a value between 0 and MAX_COLOR_VALUE
 	static hist_value_t to_hist_value(data_pixel_t const& pix)
 	{
-		auto const val = static_cast<double>(pix.value);
+		auto const val = static_cast<r64>(pix.value);
 		auto const ratio = val / UINT32_MAX;
 
 		return static_cast<hist_value_t>(ratio * MAX_COLOR_VALUE);

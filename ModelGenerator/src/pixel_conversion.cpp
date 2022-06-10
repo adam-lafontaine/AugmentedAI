@@ -16,19 +16,19 @@ constexpr shade_t PIXEL_INACTIVE = 254;
 
 namespace model_generator
 {
-	bool is_relevant(r64 model_val)
+	bool is_relevant(model_value_t model_val)
 	{
 		return model_val >= MODEL_VALUE_MIN && model_val <= MODEL_VALUE_MAX;
 	}
 
 
-	r64 data_pixel_to_model_value(data_pixel_t const& data_pix)
+	model_value_t data_pixel_to_model_value(data_pixel_t const& data_pix)
 	{
 		return static_cast<r64>(data_pix.value);
 	}
 
 
-	model_pixel_t model_value_to_model_pixel(r64 model_val, bool is_active)
+	model_pixel_t model_value_to_model_pixel(model_value_t model_val, bool is_active)
 	{
 		assert(is_relevant(model_val)); // only valid values can be converted to a pixel
 
@@ -58,7 +58,7 @@ namespace model_generator
 	}
 
 
-	r64 model_pixel_to_model_value(model_pixel_t const& model_pix)
+	model_value_t model_pixel_to_model_value(model_pixel_t const& model_pix)
 	{
 		const auto rgba = model_pix;
 

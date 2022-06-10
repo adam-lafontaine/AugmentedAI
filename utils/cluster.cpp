@@ -18,7 +18,7 @@ namespace cluster
 
 	} cluster_count_t;
 
-	using closest_t = std::function<distance_result_t(data_row_t const& data, value_row_list_t const& value_list)>;
+	using closest_t = std::function<distance_result_t(data_row_t const& data, centroid_list_t const& value_list)>;
 
 	using cluster_once_t = std::function<cluster_result_t(data_row_list_t const& x_list, size_t num_clusters)>;
 
@@ -47,7 +47,7 @@ namespace cluster
 
 
 	// selects random data to be used as centroids
-	static value_row_list_t random_values(data_row_list_t const& x_list, size_t num_clusters)
+	static centroid_list_t random_values(data_row_list_t const& x_list, size_t num_clusters)
 	{
 		// C++ 17 std::sample
 
@@ -62,7 +62,7 @@ namespace cluster
 		
 
 	// assigns a cluster index to each data point
-	static cluster_result_t assign_clusters(data_row_list_t const& x_list, value_row_list_t& centroids, closest_t const& closest)
+	static cluster_result_t assign_clusters(data_row_list_t const& x_list, centroid_list_t& centroids, closest_t const& closest)
 	{
 		index_list_t x_clusters;
 		x_clusters.reserve(x_list.size());
@@ -83,7 +83,7 @@ namespace cluster
 
 
 	// finds new centroids based on the averages of data clustered together
-	static value_row_list_t calc_centroids(data_row_list_t const& x_list, index_list_t const& x_clusters, size_t num_clusters)
+	static centroid_list_t calc_centroids(data_row_list_t const& x_list, index_list_t const& x_clusters, size_t num_clusters)
 	{
 		const auto data_size = x_list[0].size();
 		auto values = make_value_row_list(num_clusters, data_size);		
@@ -215,7 +215,7 @@ namespace cluster
 
 	//======= CLASS METHODS ==============================
 
-	distance_result_t Cluster::closest(data_row_t const& data, value_row_list_t const& value_list) const
+	distance_result_t Cluster::closest(data_row_t const& data, centroid_list_t const& value_list) const
 	{
 		distance_result_t res = { 0, m_dist_func(data, value_list[0]) };
 
@@ -234,7 +234,7 @@ namespace cluster
 
 
 
-	size_t Cluster::find_centroid(data_row_t const& data, value_row_list_t const& centroids) const
+	size_t Cluster::find_centroid(data_row_t const& data, centroid_list_t const& centroids) const
 	{
 		auto result = closest(data, centroids);
 
@@ -244,7 +244,7 @@ namespace cluster
 
 	cluster_result_t Cluster::cluster_once(data_row_list_t const& x_list, size_t num_clusters) const
 	{
-		const auto closest_f = [&](data_row_t const& data, value_row_list_t const& value_list) // TODO: why?
+		const auto closest_f = [&](data_row_t const& data, centroid_list_t const& value_list) // TODO: why?
 		{
 			return closest(data, value_list);
 		};
@@ -273,7 +273,7 @@ namespace cluster
 	}
 
 
-	value_row_list_t Cluster::cluster_data(data_row_list_t const& x_list, size_t num_clusters) const
+	centroid_list_t Cluster::cluster_data(data_row_list_t const& x_list, size_t num_clusters) const
 	{
 		// wrap member function in a lambda to pass it to algorithm
 		const auto cluster_once_f = [&](data_row_list_t const& x_list, size_t num_clusters) // TODO: why?
