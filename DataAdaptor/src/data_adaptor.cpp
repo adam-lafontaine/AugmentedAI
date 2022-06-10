@@ -22,14 +22,14 @@ namespace data_adaptor
 
 	static void save_data_range(data_itr_t const& first, data_itr_t const& last, path_t const& dst_file_path)
 	{
-		const auto width = impl::DATA_IMAGE_WIDTH;
+		const auto width = impl::FEATURE_IMAGE_WIDTH;
 		const auto dist = std::distance(first, last);
 
 		assert(dist > 0);
 
 		const auto height = static_cast<u32>(dist);
 
-		assert(static_cast<size_t>(height) <= MAX_DATA_IMAGE_SIZE / width);
+		assert(static_cast<size_t>(height) <= MAX_FEATURE_IMAGE_SIZE / width);
 
 		img::image_t image;
 		img::make_image(image, width, height);
@@ -62,9 +62,9 @@ namespace data_adaptor
 	}
 
 
-	void save_data_images(data_list_t const& data, const char* dst_dir)
+	void save_feature_images(data_list_t const& data, const char* dst_dir)
 	{
-		const auto max_height = MAX_DATA_IMAGE_SIZE / impl::DATA_IMAGE_WIDTH;
+		const auto max_height = MAX_FEATURE_IMAGE_SIZE / impl::FEATURE_IMAGE_WIDTH;
 
 		unsigned idx = 1;
 
@@ -95,15 +95,15 @@ namespace data_adaptor
 	}
 
 
-	void save_data_images(data_list_t const& data, path_t const& dst_dir)
+	void save_feature_images(data_list_t const& data, path_t const& dst_dir)
 	{
-		save_data_images(data, dst_dir.string().c_str());
+		save_feature_images(data, dst_dir.string().c_str());
 	}
 
 
-	src_data_t data_image_row_to_data(pixel_row_t const& pixel_row)
+	src_data_t feature_image_row_to_data(pixel_row_t const& pixel_row)
 	{
-		assert(pixel_row.size() == impl::DATA_IMAGE_WIDTH);
+		assert(pixel_row.size() == impl::FEATURE_IMAGE_WIDTH);
 
 		src_data_t data;
 
@@ -139,20 +139,20 @@ namespace data_adaptor
 	}
 
 
-	size_t data_image_width()
+	size_t feature_image_width()
 	{
-		return impl::DATA_IMAGE_WIDTH;
+		return impl::FEATURE_IMAGE_WIDTH;
 	}
 
 
-	r64 data_min_value()
+	r64 feature_min_value()
 	{
-		return impl::DATA_MIN_VALUE;
+		return impl::FEATURE_MIN_VALUE;
 	}
 
 
-	r64 data_max_value()
+	r64 feature_max_value()
 	{
-		return impl::DATA_MAX_VALUE;
+		return impl::FEATURE_MAX_VALUE;
 	}
 }

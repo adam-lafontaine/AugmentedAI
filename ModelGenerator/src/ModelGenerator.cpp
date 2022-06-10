@@ -104,7 +104,7 @@ namespace model_generator
 		auto const index = mlclass::to_class_index(class_index);
 
 		// data is organized in directories by class
-		m_class_data[index] = dir::get_files_of_type(src_dir, data::DATA_IMAGE_EXTENSION);
+		m_class_data[index] = dir::get_files_of_type(src_dir, data::FEATURE_IMAGE_EXTENSION);
 	}
 
 
@@ -125,11 +125,11 @@ namespace model_generator
 		{
 			for (auto const& data_file : m_class_data[class_index])
 			{
-				img::image_t data_image;
-				img::read_image_from_file(data_file, data_image);
-				auto data_view = img::make_view(data_image);
+				img::image_t feature_image;
+				img::read_image_from_file(data_file, feature_image);
+				auto data_view = img::make_view(feature_image);
 
-				assert(static_cast<size_t>(data_view.width) == data::data_image_width());
+				assert(static_cast<size_t>(data_view.width) == data::feature_image_width());
 
 				append_data(cluster_data[class_index], data_view);
 
@@ -166,7 +166,7 @@ namespace model_generator
 
 		auto const save_path = fs::path(save_dir) / make_model_file_name();
 
-		auto const width = static_cast<u32>(data::data_image_width());
+		auto const width = static_cast<u32>(data::feature_image_width());
 		auto const height = static_cast<u32>(centroids.size());
 
 		img::image_t image;
@@ -396,7 +396,7 @@ namespace model_generator
 	{
 		class_column_hists_t position_hists;
 
-		auto const width = data::data_image_width();
+		auto const width = data::feature_image_width();
 
 		auto const set_column_zeros = [&](auto c)
 		{

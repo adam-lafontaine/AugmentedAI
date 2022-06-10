@@ -29,7 +29,7 @@ using path_t = data_adaptor::path_t;
 //======= DATA PROPERTIES =================
 
 constexpr size_t NUM_GRAY_SHADES = 256;
-constexpr size_t MAX_DATA_IMAGE_SIZE = 500 * 500;
+constexpr size_t MAX_FEATURE_IMAGE_SIZE = 500 * 500;
 
 
 constexpr auto BITS32_MAX = UINT32_MAX;
@@ -59,9 +59,9 @@ static src_data_t count_shades(img::gray::view_t const& view)
 
 namespace impl
 {
-	constexpr size_t DATA_IMAGE_WIDTH = NUM_GRAY_SHADES;
-	constexpr r64 DATA_MIN_VALUE = 0;
-	constexpr r64 DATA_MAX_VALUE = 1;
+	constexpr size_t FEATURE_IMAGE_WIDTH = NUM_GRAY_SHADES;
+	constexpr r64 FEATURE_MIN_VALUE = 0;
+	constexpr r64 FEATURE_MAX_VALUE = 1;
 
 
 
@@ -73,16 +73,16 @@ namespace impl
 		char idx_str[10];
 		sprintf_s(idx_str, "%0*d", (int)index_length, index); // zero pad index number
 
-		return std::string(idx_str) + data_adaptor::DATA_IMAGE_EXTENSION;
+		return std::string(idx_str) + data_adaptor::FEATURE_IMAGE_EXTENSION;
 	}
 
 
 	inline feature_pixel_t value_to_feature_pixel(r64 val)
 	{
-		assert(val >= DATA_MIN_VALUE);
-		assert(val <= DATA_MAX_VALUE);
+		assert(val >= FEATURE_MIN_VALUE);
+		assert(val <= FEATURE_MAX_VALUE);
 
-		const auto ratio = (val - DATA_MIN_VALUE) / (DATA_MAX_VALUE - DATA_MIN_VALUE);
+		const auto ratio = (val - FEATURE_MIN_VALUE) / (FEATURE_MAX_VALUE - FEATURE_MIN_VALUE);
 
 		img::pixel_t color{};
 		color.value = static_cast<u32>(ratio * BITS32_MAX);
@@ -104,7 +104,7 @@ namespace impl
 		img::read_image_from_file(src_file, image);
 		const auto data = count_shades(img::make_view(image));
 
-		assert(data.size() == DATA_IMAGE_WIDTH);
+		assert(data.size() == FEATURE_IMAGE_WIDTH);
 
 		return data;
 	}

@@ -49,8 +49,8 @@ static centroid_list_t read_model(const char* model_file)
 
 	centroid_list_t centroids;
 
-	assert(width == data::data_image_width());
-	if(width != data::data_image_width())
+	assert(width == data::feature_image_width());
+	if(width != data::feature_image_width())
 		return centroids;
 
 	centroids.reserve(height);
@@ -75,7 +75,7 @@ static centroid_list_t read_model(const char* model_file)
 static r64 data_value_to_model_value(r64 data_val)
 {
 	model::data_pixel_t pixel{};
-	pixel.value = data::data_value_to_data_pixel(data_val);
+	pixel.value = data::value_to_feature_pixel(data_val);
 
 	return model::data_pixel_to_model_value(pixel);
 }

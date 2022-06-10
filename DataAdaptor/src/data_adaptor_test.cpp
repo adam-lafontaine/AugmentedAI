@@ -53,7 +53,7 @@ bool get_directories()
 }
 
 
-void make_data_images()
+void make_feature_images()
 {
 	for (auto const& entry : fs::directory_iterator(data_fail_root))
 	{
@@ -67,11 +67,11 @@ void make_data_images()
 
 	auto src_files = dir::get_files_of_type(src_fail_root, ".png");
 	auto data = data::file_list_to_data(src_files);
-	data::save_data_images(data, data_fail_root);
+	data::save_feature_images(data, data_fail_root);
 
 	src_files = dir::get_files_of_type(src_pass_root, ".png");
 	data = data::file_list_to_data(src_files);
-	data::save_data_images(data, data_pass_root);
+	data::save_feature_images(data, data_pass_root);
 }
 
 
@@ -85,11 +85,11 @@ bool file_to_data_size_test();
 bool file_to_data_value_range_test();
 bool file_list_to_data_size_test();
 bool file_list_to_data_values_test();
-bool save_data_images_create_file_test();
-bool save_data_images_height_test();
+bool save_feature_images_create_file_test();
+bool save_feature_images_height_test();
 bool pixel_conversion_test();
-bool data_image_row_to_data_size_test();
-bool data_image_row_to_data_values_test();
+bool feature_image_row_to_data_size_test();
+bool feature_image_row_to_data_values_test();
 
 void delete_files(std::string dir);
 
@@ -107,19 +107,19 @@ int main()
 		return EXIT_FAILURE;
 	}
 
-	run_test("src_root_exists_test()                ", src_root_exists_test);
-	run_test("src_files_exist_test()                ", src_files_exist_test);
-	run_test("dst_root_exists_test()                ", dst_root_exists_test);
-	run_test("file_to_data()               not empty", file_to_data_not_empty_test);
-	run_test("file_to_data()                    size", file_to_data_size_test);
-	run_test("file_to_data()             value range", file_to_data_value_range_test);
-	run_test("file_list_to_data()               size", file_list_to_data_size_test);
-	run_test("file_list_to_data()    matching values", file_list_to_data_values_test);
-	run_test("save_data_images()     file(s) created", save_data_images_create_file_test);
-	run_test("save_data_images()      file(s) height", save_data_images_height_test);
-	run_test("pixel_conversion_test()   close enough", pixel_conversion_test);
-	run_test("data_image_row_to_data()          size", data_image_row_to_data_size_test);
-	run_test("data_image_row_to_data()  close enough", data_image_row_to_data_values_test);
+	run_test("src_root_exists_test()                   ", src_root_exists_test);
+	run_test("src_files_exist_test()                   ", src_files_exist_test);
+	run_test("dst_root_exists_test()                   ", dst_root_exists_test);
+	run_test("file_to_data()                  not empty", file_to_data_not_empty_test);
+	run_test("file_to_data()                       size", file_to_data_size_test);
+	run_test("file_to_data()                value range", file_to_data_value_range_test);
+	run_test("file_list_to_data()                  size", file_list_to_data_size_test);
+	run_test("file_list_to_data()       matching values", file_list_to_data_values_test);
+	run_test("save_feature_images()     file(s) created", save_feature_images_create_file_test);
+	run_test("save_feature_images()      file(s) height", save_feature_images_height_test);
+	run_test("pixel_conversion_test()      close enough", pixel_conversion_test);
+	run_test("feature_image_row_to_data()          size", feature_image_row_to_data_size_test);
+	run_test("feature_image_row_to_data()  close enough", feature_image_row_to_data_values_test);
 
 	std::cout << "\nTests complete.  Enter 'y' to generate data images\n";
 		
@@ -128,7 +128,7 @@ int main()
 
 	std::cout << "Generating data images... ";
 
-	make_data_images();
+	make_feature_images();
 
 	std::cout << "done.\n";
 }
@@ -170,7 +170,7 @@ bool file_to_data_size_test()
 	const auto file = src_files[2];
 	const auto data = data::file_to_data(file);
 
-	return data.size() == data::data_image_width();
+	return data.size() == data::feature_image_width();
 }
 
 
@@ -180,7 +180,7 @@ bool file_to_data_value_range_test()
 	const auto file = src_files[2];
 	const auto data = data::file_to_data(file);
 
-	const auto pred = [&](auto val) { return val >= data::data_min_value() && val <= data::data_max_value(); };
+	const auto pred = [&](auto val) { return val >= data::feature_min_value() && val <= data::feature_max_value(); };
 
 	return std::all_of(data.begin(), data.end(), pred);
 }
@@ -214,15 +214,15 @@ bool file_list_to_data_values_test()
 }
 
 
-// generating data_images actually creates files
-bool save_data_images_create_file_test()
+// generating feature_images actually creates files
+bool save_feature_images_create_file_test()
 {
 	delete_files(dst_root);
 
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
 	const auto data = data::file_list_to_data(file_list);
 
-	data::save_data_images(data, dst_root.c_str());
+	data::save_feature_images(data, dst_root.c_str());
 
 	const auto data_files = dir::get_files_of_type(dst_root, dst_file_ext);
 
@@ -233,16 +233,16 @@ bool save_data_images_create_file_test()
 // the amount of data in the generated data image file(s)
 // matches the amount of data saved
 // each row of pixels in the data represents a row of pixels
-bool save_data_images_height_test()
+bool save_feature_images_height_test()
 {
 	const auto file_list = data::file_list_t(src_files.begin(), src_files.end());
 	const auto data = data::file_list_to_data(file_list);
 
 	delete_files(dst_root);
 
-	data::save_data_images(data, dst_root.c_str());
+	data::save_feature_images(data, dst_root.c_str());
 
-	const auto data_images = dir::get_files_of_type(dst_root, dst_file_ext);
+	const auto feature_images = dir::get_files_of_type(dst_root, dst_file_ext);
 
 	const auto pred = [](size_t total, dir::path_t const& file)
 	{
@@ -253,7 +253,7 @@ bool save_data_images_height_test()
 
 	size_t init = 0;
 
-	const auto total_height = std::accumulate(data_images.begin(), data_images.end(), init, pred);
+	const auto total_height = std::accumulate(feature_images.begin(), feature_images.end(), init, pred);
 
 	return total_height == file_list.size();
 }
@@ -286,7 +286,7 @@ bool pixel_conversion_test()
 
 
 // a row of pixels in a data image has the same quantity as the data provided
-bool data_image_row_to_data_size_test()
+bool feature_image_row_to_data_size_test()
 {
 	const size_t test_index = 0;
 
@@ -295,26 +295,26 @@ bool data_image_row_to_data_size_test()
 
 	delete_files(dst_root);
 
-	data::save_data_images(data, dst_root);
-	const auto data_images = dir::get_files_of_type(dst_root, dst_file_ext);
+	data::save_feature_images(data, dst_root);
+	const auto feature_images = dir::get_files_of_type(dst_root, dst_file_ext);
 
-	img::image_t data_image;
-	img::read_image_from_file(data_images[0], data_image);
-	const auto view = img::make_view(data_image);
+	img::image_t feature_image;
+	img::read_image_from_file(feature_images[0], feature_image);
+	const auto view = img::make_view(feature_image);
 	auto converted_view = img::row_view(view, test_index);
 
 	data::pixel_row_t converted;
 	std::transform(converted_view.begin(), converted_view.end(), 
 		std::back_inserter(converted), [](img::pixel_t const& p) { return p.value; });
 
-	const auto new_data = data::data_image_row_to_data(converted);
+	const auto new_data = data::feature_image_row_to_data(converted);
 
 	return new_data.size() == data[test_index].size();
 }
 
 
 // reading data from a data images gives the same values as the data provided
-bool data_image_row_to_data_values_test()
+bool feature_image_row_to_data_values_test()
 {
 	const size_t test_index = 0;
 
@@ -327,19 +327,19 @@ bool data_image_row_to_data_values_test()
 
 	delete_files(dst_root);
 
-	data::save_data_images(data, dst_root.c_str());
-	const auto data_images = dir::get_files_of_type(dst_root, dst_file_ext);
+	data::save_feature_images(data, dst_root.c_str());
+	const auto feature_images = dir::get_files_of_type(dst_root, dst_file_ext);
 
-	img::image_t data_image;
-	img::read_image_from_file(data_images[0], data_image);
-	const auto view = img::make_view(data_image);
+	img::image_t feature_image;
+	img::read_image_from_file(feature_images[0], feature_image);
+	const auto view = img::make_view(feature_image);
 	auto converted_view = img::row_view(view, test_index);
 
 	data::pixel_row_t converted;
 	std::transform(converted_view.begin(), converted_view.end(),
 		std::back_inserter(converted), [](img::pixel_t const& p) { return p.value; });
 
-	const auto new_data = data::data_image_row_to_data(converted);	
+	const auto new_data = data::feature_image_row_to_data(converted);	
 
 	const auto d = data[test_index];
 

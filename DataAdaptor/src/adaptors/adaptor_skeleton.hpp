@@ -15,10 +15,10 @@ using feature_pixel_t = data_adaptor::feature_pixel_t;
 using src_data_t = data_adaptor::src_data_t;
 
 
-constexpr size_t MAX_DATA_IMAGE_SIZE = 10000;
-constexpr size_t DATA_IMAGE_WIDTH = 1;
-constexpr r64 DATA_MIN_VALUE = 0;
-constexpr r64 DATA_MAX_VALUE = 1;
+constexpr size_t MAX_FEATURE_IMAGE_SIZE = 10000;
+constexpr size_t FEATURE_IMAGE_WIDTH = 1;
+constexpr r64 FEATURE_MIN_VALUE = 0;
+constexpr r64 FEATURE_MAX_VALUE = 1;
 
 
 namespace impl
@@ -31,7 +31,7 @@ namespace impl
 		char idx_str[10];
 		sprintf_s(idx_str, "%0*d", (int)index_length, index); // zero pad index number
 
-		return std::string(idx_str) + data_adaptor::DATA_IMAGE_EXTENSION;
+		return std::string(idx_str) + data_adaptor::FEATURE_IMAGE_EXTENSION;
 	}
 
 
@@ -43,7 +43,7 @@ namespace impl
 	{
 		src_data_t data{ 0 };
 
-		assert(data.size() == DATA_IMAGE_WIDTH);
+		assert(data.size() == FEATURE_IMAGE_WIDTH);
 
 		return data;
 	}
@@ -52,8 +52,8 @@ namespace impl
 	// How each value of data is to be represented as a pixel
 	inline feature_pixel_t value_to_feature_pixel(r64 val)
 	{
-		assert(val >= DATA_MIN_VALUE);
-		assert(val <= DATA_MAX_VALUE);
+		assert(val >= FEATURE_MIN_VALUE);
+		assert(val <= FEATURE_MAX_VALUE);
 
 		return 0;
 	}

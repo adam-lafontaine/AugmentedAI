@@ -13,7 +13,7 @@ using u32 = uint32_t;
 
 /*
 
-Preprocess file data and save "data images" to be processed by the algorithm at a later time.
+Preprocess file data and save "feature images" to be processed by the algorithm at a later time.
 Implementations of some of these functions will be specific for each application.
 Each row of pixels in a data image corresponds to a feature vector of one file
 
@@ -33,7 +33,7 @@ namespace data_adaptor
 	using feature_pixel_t = u32;                 // One feature value converted to a pixel (4 x 8bit)
 	using pixel_row_t = std::vector<feature_pixel_t>; // A single row of data pixels
 
-	constexpr auto DATA_IMAGE_EXTENSION = ".png";
+	constexpr auto FEATURE_IMAGE_EXTENSION = ".png";
 
 	/*
 
@@ -57,10 +57,10 @@ namespace data_adaptor
 
 
 	// Make data properties public
-	// Constants DATA_IMAGE_WIDTH, DATA_MIN_VALUE, and DATA_MAX_VALUE must be defined in the impl namespace
-	size_t data_image_width();
-	r64 data_min_value();
-	r64 data_max_value();
+	// Constants FEATURE_IMAGE_WIDTH, FEATURE_MIN_VALUE, and FEATURE_MAX_VALUE must be defined in the impl namespace
+	size_t feature_image_width();
+	r64 feature_min_value();
+	r64 feature_max_value();
 
 
 	/*
@@ -75,11 +75,11 @@ namespace data_adaptor
 
 
 	// Save source data as a "data image"
-	void save_data_images(data_list_t const& data, const char* dst_dir);
-	void save_data_images(data_list_t const& data, path_t const& dst_dir);
+	void save_feature_images(data_list_t const& data, const char* dst_dir);
+	void save_feature_images(data_list_t const& data, path_t const& dst_dir);
 
 
 	// Convert one row of a "data image" back to source data
-	src_data_t data_image_row_to_data(pixel_row_t const& pixel_row);
+	src_data_t feature_image_row_to_data(pixel_row_t const& pixel_row);
 	
 }
