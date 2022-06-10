@@ -17,14 +17,14 @@ using src_data_t = data_adaptor::src_data_t;
 
 constexpr size_t MAX_DATA_IMAGE_SIZE = 10000;
 constexpr size_t DATA_IMAGE_WIDTH = 1;
-constexpr double DATA_MIN_VALUE = 0;
-constexpr double DATA_MAX_VALUE = 1;
+constexpr r64 DATA_MIN_VALUE = 0;
+constexpr r64 DATA_MAX_VALUE = 1;
 
 
 namespace impl
 {
 	// Define how to name save files
-	inline std::string make_numbered_file_name(unsigned index, size_t index_length)
+	inline std::string make_numbered_file_name(u32 index, size_t index_length)
 	{
 		index_length = index_length < 2 ? 2 : index_length;
 
@@ -50,7 +50,7 @@ namespace impl
 
 
 	// How each value of data is to be represented as a pixel
-	inline data_pixel_t data_value_to_data_pixel(double val)
+	inline data_pixel_t data_value_to_data_pixel(r64 val)
 	{
 		assert(val >= DATA_MIN_VALUE);
 		assert(val <= DATA_MAX_VALUE);
@@ -60,7 +60,7 @@ namespace impl
 
 
 	// How each data pixel is to be converted back to numeric data
-	inline double data_pixel_to_data_value(data_pixel_t const& pix)
+	inline r64 data_pixel_to_data_value(data_pixel_t const& pix)
 	{
 		return 0;
 	}

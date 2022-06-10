@@ -3,8 +3,12 @@
 #include <string>
 #include <vector>
 #include <filesystem>
+#include <cstdint>
 
 namespace fs = std::filesystem;
+
+using r64 = double;
+using u32 = uint32_t;
 
 
 /*
@@ -22,11 +26,11 @@ Binary files could be used instead but images allow users to see what their data
 */
 namespace data_adaptor
 {
-	using src_data_t = std::vector<double>;        // feature vector from the file
+	using src_data_t = std::vector<r64>;        // feature vector from the file
 	using data_list_t = std::vector<src_data_t>;   // multiple feature vectors
 	using path_t = fs::path;                       // file path.
 	using file_list_t = std::vector<path_t>;       // list of files
-	using data_pixel_t = uint32_t;                 // One feature value converted to a pixel (4 x 8bit)
+	using data_pixel_t = u32;                 // One feature value converted to a pixel (4 x 8bit)
 	using pixel_row_t = std::vector<data_pixel_t>; // A single row of data pixels
 
 	constexpr auto DATA_IMAGE_EXTENSION = ".png";
@@ -42,21 +46,21 @@ namespace data_adaptor
 	
 	// Define how an individual file is interpreted as data to be processed.
 	// The file type and how it is processed depends on the implementation.
-	// For the application, decide how a file produces a vector of doubles	
+	// For the application, decide how a file produces a vector of r64s	
 	src_data_t file_to_data(const char* src_file);
 	src_data_t file_to_data(path_t const& src_file);
 
 
 	// Define how values are converted to pixels and vice versa
-	data_pixel_t data_value_to_data_pixel(double val);   // TODO: tests
-	double data_pixel_to_data_value(data_pixel_t const& pix);
+	data_pixel_t data_value_to_data_pixel(r64 val);   // TODO: tests
+	r64 data_pixel_to_data_value(data_pixel_t const& pix);
 
 
 	// Make data properties public
 	// Constants DATA_IMAGE_WIDTH, DATA_MIN_VALUE, and DATA_MAX_VALUE must be defined in the impl namespace
 	size_t data_image_width();
-	double data_min_value();
-	double data_max_value();
+	r64 data_min_value();
+	r64 data_max_value();
 
 
 	/*

@@ -46,11 +46,11 @@ static src_data_t count_shades(img::gray::view_t const& view)
 
 	src_data_t data(hist.size(), 0);
 
-	const auto total = static_cast<double>(view.width) * view.height;
+	const auto total = static_cast<r64>(view.width) * view.height;
 
 	for (size_t i = 0; i < hist.size(); ++i)
 	{
-		data[i] = static_cast<double>(hist[i]) / total;
+		data[i] = static_cast<r64>(hist[i]) / total;
 	}
 
 	return data;
@@ -60,13 +60,13 @@ static src_data_t count_shades(img::gray::view_t const& view)
 namespace impl
 {
 	constexpr size_t DATA_IMAGE_WIDTH = NUM_GRAY_SHADES;
-	constexpr double DATA_MIN_VALUE = 0;
-	constexpr double DATA_MAX_VALUE = 1;
+	constexpr r64 DATA_MIN_VALUE = 0;
+	constexpr r64 DATA_MAX_VALUE = 1;
 
 
 
 	// Define how to name save files
-	inline std::string make_numbered_file_name(unsigned index, size_t index_length)
+	inline std::string make_numbered_file_name(u32 index, size_t index_length)
 	{
 		index_length = index_length < 2 ? 2 : index_length;
 
@@ -77,7 +77,7 @@ namespace impl
 	}
 
 
-	inline data_pixel_t data_value_to_data_pixel(double val)
+	inline data_pixel_t data_value_to_data_pixel(r64 val)
 	{
 		assert(val >= DATA_MIN_VALUE);
 		assert(val <= DATA_MAX_VALUE);
@@ -91,9 +91,9 @@ namespace impl
 	}
 
 
-	inline double data_pixel_to_data_value(data_pixel_t const& pix)
+	inline r64 data_pixel_to_data_value(data_pixel_t const& pix)
 	{
-		return static_cast<double>(pix) / BITS32_MAX;
+		return static_cast<r64>(pix) / BITS32_MAX;
 	}
 
 

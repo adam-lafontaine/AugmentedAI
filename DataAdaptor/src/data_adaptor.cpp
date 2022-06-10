@@ -115,13 +115,13 @@ namespace data_adaptor
 
 	//======= CUSTOM IMPLEMENTATIONS =================
 
-	data_pixel_t data_value_to_data_pixel(double val)
+	data_pixel_t data_value_to_data_pixel(r64 val)
 	{
 		return impl::data_value_to_data_pixel(val);
 	}
 
 
-	double data_pixel_to_data_value(data_pixel_t const& pix)
+	r64 data_pixel_to_data_value(data_pixel_t const& pix)
 	{
 		return impl::data_pixel_to_data_value(pix);
 	}
@@ -145,13 +145,13 @@ namespace data_adaptor
 	}
 
 
-	double data_min_value()
+	r64 data_min_value()
 	{
 		return impl::DATA_MIN_VALUE;
 	}
 
 
-	double data_max_value()
+	r64 data_max_value()
 	{
 		return impl::DATA_MAX_VALUE;
 	}
