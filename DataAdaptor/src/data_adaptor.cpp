@@ -1,9 +1,3 @@
-/*
-
-Copyright (c) 2021 Adam Lafontaine
-
-*/
-
 #include "data_adaptor.hpp"
 #include "../../utils/libimage/libimage.hpp"
 

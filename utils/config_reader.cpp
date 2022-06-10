@@ -1,9 +1,3 @@
-/*
-
-Copyright (c) 2021 Adam Lafontaine
-
-*/
-
 #include "config_reader.hpp"
 
 #include <fstream>

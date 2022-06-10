@@ -1,9 +1,3 @@
-/*
-
-Copyright (c) 2021 Adam Lafontaine
-
-*/
-
 #include "cluster_config.hpp"
 
 #include <cstdlib>

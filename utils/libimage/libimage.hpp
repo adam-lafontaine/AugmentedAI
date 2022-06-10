@@ -1,9 +1,4 @@
 #pragma once
-/*
-
-Copyright (c) 2021 Adam Lafontaine
-
-*/
 
 //#define LIBIMAGE_NO_COLOR
 //#define LIBIMAGE_NO_GRAYSCALE

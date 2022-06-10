@@ -1,17 +1,12 @@
 #pragma once
-/*
-
-Copyright (c) 2021 Adam Lafontaine
-
-*/
 
 #include "../../utils/cluster.hpp"
 
 /*
 
-Used to build a function for calculating distance between a data row and a centroid for clustering purposes.
-To save time, another part of the program finds which indeces of the data actually contributes to the
-  the result and only those indeces are considered.
+Used to build a function for calculating distance between a feature vector and a centroid for clustering purposes.
+To save time, another part of the program finds which indeces of the data actually contribute to the
+ the result and only those indeces are considered.
 Any function can be used here as appropriate for the application.
 
 */

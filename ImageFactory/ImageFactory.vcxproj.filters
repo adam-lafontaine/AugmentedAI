@@ -30,9 +30,6 @@
     <ClInclude Include="src\image_factory.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\utils\libimage.hpp">
-      <Filter>Header Files\utils</Filter>
-    </ClInclude>
     <ClInclude Include="..\utils\test_dir.hpp">
       <Filter>Header Files\utils</Filter>
     </ClInclude>

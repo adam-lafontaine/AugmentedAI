@@ -1,9 +1,3 @@
-/*
-
-Copyright (c) 2021 Adam Lafontaine
-
-*/
-
 #include "ModelGenerator.hpp"
 #include "pixel_conversion.hpp"
 #include "cluster_distance.hpp"

@@ -1,10 +1,4 @@
 #pragma once
-/*
-
-Copyright (c) 2021 Adam Lafontaine
-
-*/
-
 
 #include <vector>
 #include <functional>

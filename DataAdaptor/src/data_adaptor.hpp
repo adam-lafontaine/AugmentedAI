@@ -1,9 +1,4 @@
 #pragma once
-/*
-
-Copyright (c) 2021 Adam Lafontaine
-
-*/
 
 #include <string>
 #include <vector>
@@ -16,7 +11,7 @@ namespace fs = std::filesystem;
 
 Preprocess file data and save "data images" to be processed by the algorithm at a later time.
 Implementations of some of these functions will be specific for each application.
-Each row of pixels in a data image coresponds to a row of data (i.e. one file)
+Each row of pixels in a data image corresponds to a feature vector of one file
 
 This particular project uses png files as the source data and a K-means clustering derivative to classify the data.
 Any file type and algorithm can used.
@@ -27,11 +22,11 @@ Binary files could be used instead but images allow users to see what their data
 */
 namespace data_adaptor
 {
-	using src_data_t = std::vector<double>;        // source data converted from a file
-	using data_list_t = std::vector<src_data_t>;   // data from multiple files
+	using src_data_t = std::vector<double>;        // feature vector from the file
+	using data_list_t = std::vector<src_data_t>;   // multiple feature vectors
 	using path_t = fs::path;                       // file path.
 	using file_list_t = std::vector<path_t>;       // list of files
-	using data_pixel_t = uint32_t;                 // Once data value converted to a pixel (4 x 8bit)
+	using data_pixel_t = uint32_t;                 // One feature value converted to a pixel (4 x 8bit)
 	using pixel_row_t = std::vector<data_pixel_t>; // A single row of data pixels
 
 	constexpr auto DATA_IMAGE_EXTENSION = ".png";

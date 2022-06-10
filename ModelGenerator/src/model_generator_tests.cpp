@@ -1,9 +1,3 @@
-/*
-
-Copyright (c) 2021 Adam Lafontaine
-
-*/
-
 #include "../src/ModelGenerator.hpp"
 #include "../src/pixel_conversion.hpp"
 #include "../../utils/dirhelper.hpp"
