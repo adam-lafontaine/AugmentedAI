@@ -239,18 +239,14 @@ bool save_model_active_test()
 
 	img::image_t model;
 	img::read_image_from_file(model_file, model);
-	const auto view = img::make_view(model);
 
-	unsigned active_count = 0;
-	const auto row = img::row_view(view, 0);
-	auto ptr = row.row_begin(0);
-	for (u32 x = 0; x < row.width; ++x)
+	auto row = img::row_view(model, 0);
+
+	return std::any_of(row.begin(), row.end(), [](auto p) 
 	{
-		const auto value = gen::model_pixel_to_model_value(ptr[x]);
-		active_count += gen::is_relevant(value);
-	}
-
-	return active_count > 0;
+		const auto value = gen::model_pixel_to_model_value(p);
+		return gen::is_relevant(value);
+	});
 }
 
 

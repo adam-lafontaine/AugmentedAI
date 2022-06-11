@@ -43,10 +43,9 @@ static centroid_list_t read_model(const char* model_file)
 {
 	img::image_t image;
 	img::read_image_from_file(model_file, image);
-	auto view = img::make_view(image);
 
-	auto const width = view.width;
-	auto const height = view.height;
+	auto const width = image.width;
+	auto const height = image.height;
 
 	centroid_list_t centroids;
 
@@ -60,7 +59,7 @@ static centroid_list_t read_model(const char* model_file)
 	{
 		value_list_t centroid;
 
-		auto w_begin = view.row_begin(y);
+		auto w_begin = image.row_begin(y);
 		auto w_end = w_begin + width;
 		std::transform(w_begin, w_end, std::back_inserter(centroid), model::model_pixel_to_model_value);
 

@@ -175,12 +175,11 @@ namespace model_generator
 
 		img::image_t image;
 		img::make_image(image, width, height);
-		auto view = img::make_view(image);
 
 		for(u32 y = 0; y < height; ++y)
 		{
 			auto const list = centroids[y];
-			auto ptr = view.row_begin(y);
+			auto ptr = image.row_begin(y);
 			for (u32 x = 0; x < width; ++x)
 			{
 				auto is_counted = std::find(data_indeces.begin(), data_indeces.end(), x) != data_indeces.end();
@@ -188,7 +187,7 @@ namespace model_generator
 			}
 		}
 
-		img::write_view(view, save_path);
+		img::write_image(image, save_path);
 
 		/*
 		

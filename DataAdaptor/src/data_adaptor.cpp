@@ -33,20 +33,19 @@ namespace data_adaptor
 
 		img::image_t image;
 		img::make_image(image, width, height);
-		auto view = img::make_view(image);
 
-		for (u32 y = 0; y < view.height; ++y)
+		for (u32 y = 0; y < image.height; ++y)
 		{
 			auto& data_row = first[y];
 
-			auto ptr = view.row_begin(y);
-			for (u32 x = 0; x < view.width; ++x)
+			auto ptr = image.row_begin(y);
+			for (u32 x = 0; x < image.width; ++x)
 			{
 				ptr[x].value = value_to_feature_pixel(data_row[x]);
 			}
 		}
 
-		img::write_view(view, dst_file_path);
+		img::write_image(image, dst_file_path);
 	}
 
 
