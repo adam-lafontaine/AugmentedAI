@@ -19,31 +19,36 @@
 namespace dir = dirhelper;
 namespace data = data_adaptor;
 
+constexpr auto N_CLASSES = mlclass::ML_CLASS_COUNT;
+constexpr auto N_CLUSTERS = cluster::CLUSTER_COUNT;
+
+using hist_value_t = u32; // represent a pixel as a single value for a histogram
+constexpr hist_value_t MAX_COLOR_VALUE = 255;
+
+using color_qty_t = u32;
+constexpr color_qty_t MAX_RELATIVE_QTY = 255;
+
+// provides a count for every shade that is found
+using color_hist_t = std::array<color_qty_t, MAX_COLOR_VALUE>;
+
+// provides shade counts for every column in the data image
+using column_hists_t = std::vector<color_hist_t>;
+
+// shade counts by column for each class
+using class_column_hists_t = std::array<column_hists_t, N_CLASSES>;
+
+using cluster_t = cluster::Cluster;
+using centroid_list_t = cluster::value_row_list_t;
+
+using data_list_t = std::vector<cluster::data_row_t>;
+using class_cluster_data_t = std::array<data_list_t, N_CLASSES>;
+
+using index_list_t = std::vector<size_t>;
+
+
+
 namespace model_generator
 {
-	using hist_value_t = u32; // represent a pixel as a single value for a histogram
-	constexpr hist_value_t MAX_COLOR_VALUE = 255;
-
-	using color_qty_t = u32;
-	constexpr color_qty_t MAX_RELATIVE_QTY = 255;
-
-	// provides a count for every shade that is found
-	using color_hist_t = std::array<color_qty_t, MAX_COLOR_VALUE>;
-
-	// provides shade counts for every column in the data image
-	using column_hists_t = std::vector<color_hist_t>;
-
-	// shade counts by column for each class
-	using class_column_hists_t = std::array<column_hists_t, mlclass::ML_CLASS_COUNT>;
-
-	using cluster_t = cluster::Cluster;
-	using centroid_list_t = cluster::value_row_list_t;
-
-	using data_list_t = std::vector<cluster::data_row_t>;
-	using class_cluster_data_t = std::array<data_list_t, mlclass::ML_CLASS_COUNT>;
-
-	using index_list_t = std::vector<size_t>;
-
 	using file_path_t = ModelGenerator::file_path_t;
 
 
@@ -148,7 +153,7 @@ namespace model_generator
 		cluster_t cluster;
 		centroid_list_t centroids;
 
-		auto const class_clusters = mlclass::make_class_clusters(cluster::CLUSTER_COUNT);
+		auto const class_clusters = mlclass::make_class_clusters(N_CLUSTERS);
 
 		cluster.set_distance(build_cluster_distance(data_indeces));
 

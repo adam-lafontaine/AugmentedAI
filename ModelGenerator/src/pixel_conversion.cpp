@@ -1,7 +1,6 @@
 #include "pixel_conversion.hpp"
 
 #include <cassert>
-#include <random>
 
 
 constexpr auto BITS32_MAX = UINT32_MAX;
@@ -16,35 +15,30 @@ constexpr shade_t PIXEL_INACTIVE = 254;
 
 namespace model_generator
 {
-	bool is_relevant(model_value_t model_val)
+	bool is_relevant(r64 model_val)
 	{
 		return model_val >= MODEL_VALUE_MIN && model_val <= MODEL_VALUE_MAX;
 	}
 
 
-	model_value_t data_pixel_to_model_value(data_pixel_t const& data_pix)
+	r64 data_pixel_to_model_value(data_pixel_t const& data_pix)
 	{
 		return static_cast<r64>(data_pix.value);
 	}
 
 
-	model_pixel_t model_value_to_model_pixel(model_value_t model_val, bool is_active)
+	model_pixel_t model_value_to_model_pixel(r64 model_val, bool is_active)
 	{
 		assert(is_relevant(model_val)); // only valid values can be converted to a pixel
 
 		shade_t min = 0;
 		shade_t max = 255;
-
-		std::random_device rd;
-		std::mt19937 gen(rd());
-		std::uniform_int_distribution<> dist(min, max);
-
 		
 		// red channel doesn't matter
-		const shade_t r = dist(gen);
+		const shade_t r = 105;
 
 		// green channel doesn't matter
-		const shade_t g = dist(gen);
+		const shade_t g = 205;
 
 		// only the blue channel is used to store data
 		// 32 bit number converted to 8 bit, loss of precision
@@ -58,7 +52,7 @@ namespace model_generator
 	}
 
 
-	model_value_t model_pixel_to_model_value(model_pixel_t const& model_pix)
+	r64 model_pixel_to_model_value(model_pixel_t const& model_pix)
 	{
 		const auto rgba = model_pix;
 
