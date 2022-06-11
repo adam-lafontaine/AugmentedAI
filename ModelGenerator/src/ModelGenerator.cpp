@@ -256,7 +256,7 @@ namespace model_generator
 			cluster::data_row_t data_row;
 
 			auto row_view = img::row_view(data_view, y);
-			std::transform(row_view.begin(), row_view.end(), std::back_inserter(data_row), data_pixel_to_model_value);
+			std::transform(row_view.begin(), row_view.end(), std::back_inserter(data_row), feature_pixel_to_model_value);
 
 			data.push_back(std::move(data_row));
 		}

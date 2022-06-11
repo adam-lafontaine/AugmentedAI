@@ -26,7 +26,7 @@ namespace model_generator
 
 
 	// how a pixel from a data image is converted to a value for the model
-	r64 data_pixel_to_model_value(data_pixel_t const& data_pix);
+	r64 feature_pixel_to_model_value(data_pixel_t const& data_pix);
 
 
 	// how a pixel from a model image is converted to a value for the model

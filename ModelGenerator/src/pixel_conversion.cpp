@@ -21,7 +21,7 @@ namespace model_generator
 	}
 
 
-	r64 data_pixel_to_model_value(data_pixel_t const& data_pix)
+	r64 feature_pixel_to_model_value(data_pixel_t const& data_pix)
 	{
 		return static_cast<r64>(data_pix.value);
 	}

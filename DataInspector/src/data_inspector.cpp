@@ -77,7 +77,7 @@ static model_value_t data_value_to_model_value(r64 data_val)
 	model::data_pixel_t pixel{};
 	pixel.value = data::value_to_feature_pixel(data_val);
 
-	return model::data_pixel_to_model_value(pixel);
+	return model::feature_pixel_to_model_value(pixel);
 }
 
 
