@@ -10,13 +10,10 @@ namespace cluster
 {
 	//======= TYPE DEFINITIONS ====================
 
-	using value_t = r64; // value type of centroids
-	using data_t = r64;
-
-	using data_row_t = std::vector<value_t>;
+	using data_row_t = std::vector<r64>;
 	using data_row_list_t = std::vector<data_row_t>;
 
-	using value_row_t = std::vector<value_t>;
+	using value_row_t = std::vector<r64>;
 	using value_row_list_t = std::vector<value_row_t>;
 
 	using centroid_list_t = std::vector<value_row_t>;
@@ -30,7 +27,7 @@ namespace cluster
 	{
 		index_list_t x_clusters;      // the cluster index of each data point
 		centroid_list_t centroids;   // centroids found
-		value_t average_distance = 0; // 
+		r64 average_distance = 0.0; // 
 
 	} cluster_result_t;
 

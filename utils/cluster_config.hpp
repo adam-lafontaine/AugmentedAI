@@ -21,9 +21,9 @@ namespace cluster
 
 	// define how data type returns a value
 	// for creating clusters from data
-	constexpr value_t data_to_value(data_t const& data)
+	constexpr r64 data_to_value(r64 const& data)
 	{
-		return static_cast<value_t>(data);
+		return data;
 	}
 
 
@@ -58,7 +58,7 @@ namespace cluster
 	inline
 	value_row_t make_value_row(size_t capacity)
 	{
-		std::vector<value_t> row(capacity);		
+		value_row_t row(capacity);
 
 		return row;
 	}

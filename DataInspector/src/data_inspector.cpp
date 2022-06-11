@@ -19,8 +19,7 @@ namespace dir = dirhelper;
 using index_list_t = std::vector<size_t>;
 using cluster_t = cluster::Cluster;
 using centroid_list_t = cluster::centroid_list_t;
-using model_value_t = cluster::value_t;
-using value_list_t = std::vector<model_value_t>;
+using value_list_t = std::vector<r64>;
 
 
 // finds indeces from saved centroid data
@@ -72,7 +71,7 @@ static centroid_list_t read_model(const char* model_file)
 
 // convert a value from a data image to model/centroid value
 // uses data pixel as intermediary
-static model_value_t data_value_to_model_value(r64 data_val)
+static r64 data_value_to_model_value(r64 data_val)
 {
 	model::data_pixel_t pixel{};
 	pixel.value = data::value_to_feature_pixel(data_val);
@@ -83,7 +82,7 @@ static model_value_t data_value_to_model_value(r64 data_val)
 
 namespace data_inspector
 {
-	using model_row_t = std::vector<model_value_t>;
+	using model_row_t = std::vector<r64>;
 
 	static model_row_t to_model_value_row(src_data_t const& data_row)
 	{

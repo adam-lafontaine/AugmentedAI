@@ -414,12 +414,12 @@ namespace model_generator
 
 		for(u32 y = 0; y < height; ++y)
 		{
-			auto const list = centroids[y];
+			auto const centroid = centroids[y];
 			auto ptr = image.row_begin(y);
 			for (u32 x = 0; x < width; ++x)
 			{
 				auto is_counted = std::find(data_indeces.begin(), data_indeces.end(), x) != data_indeces.end();
-				ptr[x] = model_value_to_model_pixel(list[x], is_counted);
+				ptr[x] = model_value_to_model_pixel(centroid[x], is_counted);
 			}
 		}
 
