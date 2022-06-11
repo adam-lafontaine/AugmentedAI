@@ -8,7 +8,7 @@ constexpr auto BITS32_MAX = UINT32_MAX;
 constexpr u32 CHANNEL_3_MAX = 255 * 255 * 255;
 
 constexpr auto MODEL_VALUE_MIN = 0.0;
-constexpr auto MODEL_VALUE_MAX = (r64)BITS32_MAX;
+constexpr auto MODEL_VALUE_MAX = (r64)CHANNEL_3_MAX;
 
 constexpr u8 PIXEL_ACTIVE = 255;
 constexpr u8 PIXEL_INACTIVE = 254;
@@ -23,7 +23,9 @@ namespace model_generator
 
 	r64 feature_pixel_to_model_value(data_pixel_t const& data_pix)
 	{
-		return (r64)(data_pix.value);
+		auto ratio = (r64)(data_pix.value) / BITS32_MAX;
+
+		return MODEL_VALUE_MIN + ratio * (MODEL_VALUE_MAX - MODEL_VALUE_MIN);
 	}
 
 
@@ -31,39 +33,42 @@ namespace model_generator
 	{
 		assert(is_relevant(model_val)); // only valid values can be converted to a pixel
 
-		u8 min = 0;
-		u8 max = 255;
-		
-		// red channel doesn't matter
-		const u8 r = 105;
+		auto const ratio = (model_val - MODEL_VALUE_MIN) / (MODEL_VALUE_MAX - MODEL_VALUE_MIN);
 
-		// green channel doesn't matter
-		const u8 g = 205;
+		auto rgb_value = (u32)(ratio * CHANNEL_3_MAX);
 
-		// only the blue channel is used to store data
-		// 32 bit number converted to 8 bit, loss of precision
-		auto const ratio = model_val / MODEL_VALUE_MAX;
-		auto const b = (u8)(ratio * max);
+		auto r = rgb_value & 0b0000'0000'0000'0000'0000'0000'1111'1111;
+		auto g = (rgb_value & 0b0000'0000'0000'0000'1111'1111'0000'0000) >> 8;
+		auto b = (rgb_value & 0b0000'0000'1111'1111'0000'0000'0000'0000) >> 16;
 
-		// use alpha channel to flag if pixel is used in the model
-		const u8 a = is_active ? PIXEL_ACTIVE : PIXEL_INACTIVE;
+		model_pixel_t p{};
+		p.red = r;
+		p.green = g;
+		p.blue = b;
 
-		return img::to_pixel(r, g, b, a);
+		p.alpha = is_active ? PIXEL_ACTIVE : PIXEL_INACTIVE;
+
+		return p;
 	}
 
 
 	r64 model_pixel_to_model_value(model_pixel_t const& model_pix)
 	{
-		auto const rgba = model_pix;
-
 		// if alpha channel has been flagged as inactive,
 		// return value makes is_relevant() == false
-		if (rgba.alpha != PIXEL_ACTIVE)
+		if (model_pix.alpha != PIXEL_ACTIVE)
+		{
 			return MODEL_VALUE_MIN - 1;
+		}
 
-		// only the blue channel is used to store a value
-		// the red and green channels are random values used to make the model image look more interesting
-		auto const ratio = rgba.blue / 255.0;
-		return ratio * MODEL_VALUE_MAX;
+		auto r = (u32)model_pix.red;
+		auto g = (u32)model_pix.green;
+		auto b = (u32)model_pix.blue;
+
+		auto rgb_value = b << 16 | g << 8 | r;
+
+		auto ratio = (r64)rgb_value / CHANNEL_3_MAX;
+
+		return MODEL_VALUE_MIN + ratio * (MODEL_VALUE_MAX - MODEL_VALUE_MIN);
 	}
 }

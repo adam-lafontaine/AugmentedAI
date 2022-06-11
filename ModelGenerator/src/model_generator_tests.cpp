@@ -255,25 +255,29 @@ bool pixel_conversion_test()
 {
 	// make sure a model file exists
 	if (!save_model_one_file_test())
+	{
 		return false;
+	}
 
 	const auto model_file = dir::get_files_of_type(model_root, img_ext)[0];
 
 	img::image_t model;
 	img::read_image_from_file(model_file, model);
-	const auto view = img::make_view(model);
 
-	const auto row = img::row_view(view, 0);
-	auto ptr = row.row_begin(0);
-	for (u32 x = 0; x < row.width; ++x)
+	auto ptr = model.row_begin(0);
+	for (u32 x = 0; x < model.width; ++x)
 	{
 		const auto value = gen::model_pixel_to_model_value(ptr[x]);
 		if (!gen::is_relevant(value))
+		{
 			continue;
+		}
 
 		const auto pixel = gen::model_value_to_model_pixel(value);
 		if (gen::model_pixel_to_model_value(pixel) != value)
+		{
 			return false;
+		}
 	}
 
 	return true;
