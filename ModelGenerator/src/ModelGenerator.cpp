@@ -22,14 +22,12 @@ namespace data = data_adaptor;
 constexpr auto N_CLASSES = mlclass::ML_CLASS_COUNT;
 constexpr auto N_CLUSTERS = cluster::CLUSTER_COUNT;
 
-using hist_value_t = u32; // represent a pixel as a single value for a histogram
-constexpr hist_value_t MAX_COLOR_VALUE = 255;
+constexpr u32 MAX_COLOR_VALUE = 255;
 
-using color_qty_t = u32;
-constexpr color_qty_t MAX_RELATIVE_QTY = 255;
+constexpr u32 MAX_RELATIVE_QTY = 255;
 
 // provides a count for every shade that is found
-using color_hist_t = std::array<color_qty_t, MAX_COLOR_VALUE>;
+using color_hist_t = std::array<u32, MAX_COLOR_VALUE>;
 
 // provides shade counts for every column in the data image
 using column_hists_t = std::vector<color_hist_t>;
@@ -54,179 +52,58 @@ namespace model_generator
 
 	//======= HELPERS ===================		
 
-	static std::string make_model_file_name();
+	static std::string make_model_file_name()
+	{
+		std::ostringstream oss;
+		std::time_t t = std::time(nullptr);
+		struct tm buf;
+
+		// TODO: C++20 chrono
+#ifdef __linux
+
+		localtime_r(&t, &buf);
+#else
+
+		localtime_s(&buf, &t);
+#endif
+
+		oss << "model_" << std::put_time(&buf, "%F_%T");
+
+		auto date_file = oss.str() + MODEL_FILE_EXTENSION;
+
+		std::replace(date_file.begin(), date_file.end(), ':', '-');
+
+		return date_file;
+	}
 
 
 	//======= CONVERSION =============
 
-	// converts a data pixel to a value between 0 and MAX_COLOR_VALUE
-	static hist_value_t to_hist_value(data_pixel_t const& pix);
-
-
-	//======= CLUSTERING =======================
-
-	// finds the indeces of the data that contribute to determining the class
-	static index_list_t find_relevant_positions(class_column_hists_t const& class_pos_hists);
-
-
-	//======= HISTOGRAM ============================
-
-	static void update_histograms(column_hists_t& pos_hists, img::view_t const& view);
-
-	static void append_data(data_list_t& data, img::view_t const& data_view);
-
-
-	// sets all values in the histograms to a value between 0 and MAX_RELATIVE_QTY
-	static void normalize_histograms(column_hists_t& pos);
-
-	static class_column_hists_t make_empty_histograms();
 	
-
-
-	//======= CLASS METHODS ==================
-
-	// for cleaning up after reading data
-	void ModelGenerator::purge_class_data()
+	static u32 to_hist_value(data_pixel_t const& pix)
 	{
-		mlclass::for_each_class([&](auto c) { m_class_data[c].clear(); });
+		// converts a data pixel to a value between 0 and MAX_COLOR_VALUE
+
+		auto const ratio = (r64)(pix.value) / UINT32_MAX;
+
+		return (u32)(ratio * MAX_COLOR_VALUE);
 	}
-
-
-	// check if data exists for every class
-	bool ModelGenerator::has_class_data()
-	{
-		auto const pred = [&](auto const& list) { return !list.empty(); };
-
-		return std::all_of(m_class_data.begin(), m_class_data.end(), pred);
-	}
-
-
-	// reads directory of raw data for a given class
-	void ModelGenerator::add_class_data(const char* src_dir, MLClass class_index)
-	{
-		// convert the class enum to an array index
-		auto const index = mlclass::to_class_index(class_index);
-
-		// data is organized in directories by class
-		m_class_data[index] = dir::get_files_of_type(src_dir, data::FEATURE_IMAGE_EXTENSION);
-	}
-
-
-	// saves properties based on all of the data read
-	void ModelGenerator::save_model(const char* save_dir)
-	{
-		if (!has_class_data())
-			return;
-
-
-		/* get all of the data */
-
-		class_cluster_data_t cluster_data;
-
-		auto hists = make_empty_histograms();
-
-		auto const get_data = [&](auto class_index)
-		{
-			for (auto const& data_file : m_class_data[class_index])
-			{
-				img::image_t feature_image;
-				img::read_image_from_file(data_file, feature_image);
-				auto data_view = img::make_view(feature_image);
-
-				assert(static_cast<size_t>(data_view.width) == data::feature_image_width());
-
-				append_data(cluster_data[class_index], data_view);
-
-				update_histograms(hists[class_index], data_view);
-			}
-
-			normalize_histograms(hists[class_index]);
-		};
-
-		mlclass::for_each_class(get_data);
-
-
-		/* cluster the data */
-
-		auto const data_indeces = find_relevant_positions(hists); // This needs to be right
-
-		cluster_t cluster;
-		centroid_list_t centroids;
-
-		auto const class_clusters = mlclass::make_class_clusters(N_CLUSTERS);
-
-		cluster.set_distance(build_cluster_distance(data_indeces));
-
-		auto const cluster_class_data = [&](auto c)
-		{
-			auto const cents = cluster.cluster_data(cluster_data[c], class_clusters[c]);
-			centroids.insert(centroids.end(), cents.begin(), cents.end());
-		};
-
-		mlclass::for_each_class(cluster_class_data);
-
-
-		/* create the model and save it */
-
-		auto const save_path = fs::path(save_dir) / make_model_file_name();
-
-		auto const width = static_cast<u32>(data::feature_image_width());
-		auto const height = static_cast<u32>(centroids.size());
-
-		img::image_t image;
-		img::make_image(image, width, height);
-
-		for(u32 y = 0; y < height; ++y)
-		{
-			auto const list = centroids[y];
-			auto ptr = image.row_begin(y);
-			for (u32 x = 0; x < width; ++x)
-			{
-				auto is_counted = std::find(data_indeces.begin(), data_indeces.end(), x) != data_indeces.end();
-				ptr[x] = model_value_to_model_pixel(list[x], is_counted);
-			}
-		}
-
-		img::write_image(image, save_path);
-
-		/*
-		
-		This is a long function and it could be broken up into smaller ones.
-		However, this logic is only used here so there is no sense in creating more class members
-		
-		*/
-	}
-
 
 
 	//======= CLUSTERING =======================	
 
-	
-	static index_list_t set_indeces_manually(class_column_hists_t const& class_pos_hists)
-	{
-		// here you can cheat by choosing indeces after inspecting the data images
 
-		//index_list_t list{ 0 }; // uses only the first index of the data image values
-
-		// just return all of the indeces
-		index_list_t list(class_pos_hists[0].size());
-		std::iota(list.begin(), list.end(), 0);
-
-		return list;
-	}
-
-	
 	typedef struct
 	{
 		r64 min;
 		r64 max;
 	} minmax_t;
 
-
-
-	// returns the mean +/- one std dev
+	
 	static minmax_t get_stat_range(color_hist_t const& hist)
 	{
+		// returns the mean +/- one std dev
+
 		auto const calc_mean = [](color_hist_t const& hist)
 		{
 			size_t qty_total = 0;
@@ -259,7 +136,7 @@ namespace model_generator
 
 				qty_total += qty;
 				auto const diff = val - mean;
-				
+
 				total += qty * diff * diff;
 			}
 
@@ -271,11 +148,12 @@ namespace model_generator
 
 		return{ m - s, m + s }; // mean +/- one std dev
 	}
-	
 
-	// determine if any of the ranges overlap each other
+		
 	static bool has_overlap(std::array<minmax_t, mlclass::ML_CLASS_COUNT> const& ranges)
 	{
+		// determine if any of the ranges overlap each other
+
 		assert(ranges.size() >= 2);
 
 		auto const r_min = std::min_element(ranges.begin(), ranges.end(), [](auto const& a, auto const& b) { return a.min < b.min; });
@@ -284,11 +162,12 @@ namespace model_generator
 		return r_min->max >= r_max->min;
 	}
 
-
-	// An attempt at programatically finding data image indeces that contribute to classification
-	// finds the indeces of the data that contribute to determining the class
+	
 	static index_list_t try_find_indeces(class_column_hists_t const& class_pos_hists)
 	{
+		// An attempt at programatically finding data image indeces that contribute to classification
+		// finds the indeces of the data that contribute to determining the class
+
 		const size_t num_pos = class_pos_hists[0].size();
 
 		std::array<minmax_t, mlclass::ML_CLASS_COUNT> class_ranges;
@@ -306,19 +185,37 @@ namespace model_generator
 			if (has_overlap(class_ranges))
 				continue;
 
-			list.push_back(pos);			
+			list.push_back(pos);
 		}
 
 		return list;
 	}
 
-	
+
+	static index_list_t set_indeces_manually(class_column_hists_t const& class_pos_hists)
+	{
+		// here you can cheat by choosing indeces after inspecting the data images
+
+		//index_list_t list{ 0 }; // uses only the first index of the data image values
+
+		// just return all of the indeces
+		index_list_t list(class_pos_hists[0].size());
+		std::iota(list.begin(), list.end(), 0);
+
+		return list;
+	}
+
+		
 	static index_list_t find_relevant_positions(class_column_hists_t const& class_pos_hists)
 	{
+		// finds the indeces of the data that contribute to determining the class
+
 		auto const indeces = try_find_indeces(class_pos_hists);
 
-		if(indeces.empty())
-			return set_indeces_manually(class_pos_hists);		
+		if (indeces.empty())
+		{
+			return set_indeces_manually(class_pos_hists);
+		}			
 
 		return indeces;
 	}
@@ -326,10 +223,11 @@ namespace model_generator
 
 	//======= HISTOGRAM ============================
 
-
-	// update the counts in the histograms with data from a data image
+	
 	static void update_histograms(column_hists_t& pos_hists, img::view_t const& data_view)
 	{
+		// update the counts in the histograms with data from a data image
+
 		u32 column = 0;
 		auto const update_pred = [&](auto const& p)
 		{
@@ -346,14 +244,15 @@ namespace model_generator
 		}
 	}
 
-
-	// add converted data from a data image
+	
 	static void append_data(data_list_t& data, img::view_t const& data_view)
 	{
+		// add converted data from a data image
+
 		auto const height = data_view.height;
 
 		for (u32 y = 0; y < height; ++y)
-		{			
+		{
 			cluster::data_row_t data_row;
 
 			auto row_view = img::row_view(data_view, y);
@@ -363,10 +262,11 @@ namespace model_generator
 		}
 	}
 
-
-	// sets all values in the histograms to a value between 0 and MAX_RELATIVE_QTY
-	static void normalize_histograms(column_hists_t& pos)
+	
+	static void normalize_histograms(column_hists_t& pos, u32 max_value)
 	{
+		// sets all values in the histograms to a value between 0 and max_value
+
 		std::vector<u32> hists;
 		hists.reserve(pos.size());
 
@@ -378,11 +278,11 @@ namespace model_generator
 
 		std::transform(pos.begin(), pos.end(), std::back_inserter(hists), max_val);
 
-		const r64 max = max_val(hists);
+		const auto max = (r64)max_val(hists);
 
 		auto const norm = [&](u32 count)
 		{
-			return static_cast<u32>(count / max * MAX_RELATIVE_QTY);
+			return (u32)(max_value * count / max);
 		};
 
 		for (auto& list : pos)
@@ -403,52 +303,135 @@ namespace model_generator
 
 		auto const set_column_zeros = [&](auto c)
 		{
-			position_hists[c] = column_hists_t(width, {0});
+			position_hists[c] = column_hists_t(width, { 0 });
 		};
 
 		mlclass::for_each_class(set_column_zeros);
 
 		return position_hists;
 	}
+	
 
 
+	//======= CLASS METHODS ==================
 
-	//======= HELPERS =====================
-
-	static std::string make_model_file_name()
+	
+	void ModelGenerator::purge_class_data()
 	{
-		std::ostringstream oss;
-		std::time_t t = std::time(nullptr);
-		struct tm buf;
+		// for cleaning up after reading data
 
-		// TODO: C++20 chrono
-#ifdef __linux
-
-		localtime_r(&t, &buf);
-#else
-
-		localtime_s(&buf, &t);
-#endif
-
-		oss << "model_" << std::put_time(&buf, "%F_%T");
-
-		auto date_file = oss.str() + MODEL_FILE_EXTENSION;
-
-		std::replace(date_file.begin(), date_file.end(), ':', '-');
-
-		return date_file;
+		mlclass::for_each_class([&](auto c) { m_class_data[c].clear(); });
 	}
 
-
-	//======= CONVERSION =============
-
-
-	// converts a data pixel to a value between 0 and MAX_COLOR_VALUE
-	static hist_value_t to_hist_value(data_pixel_t const& pix)
+	
+	bool ModelGenerator::has_class_data()
 	{
-		auto const val = static_cast<r64>(pix.value);
-		auto const ratio = val / UINT32_MAX;
+		// check if data exists for every class
 
-		return static_cast<hist_value_t>(ratio * MAX_COLOR_VALUE);
+		auto const pred = [&](auto const& list) { return !list.empty(); };
+
+		return std::all_of(m_class_data.begin(), m_class_data.end(), pred);
 	}
+
+	
+	void ModelGenerator::add_class_data(const char* src_dir, MLClass class_index)
+	{
+		// reads directory of raw data for a given class
+		
+		// convert the class enum to an array index
+		auto const index = mlclass::to_class_index(class_index);
+
+		// data is organized in directories by class
+		m_class_data[index] = dir::get_files_of_type(src_dir, data::FEATURE_IMAGE_EXTENSION);
+	}
+
+	
+	void ModelGenerator::save_model(const char* save_dir)
+	{
+		// saves properties based on all of the data read
+
+		if (!has_class_data())
+		{
+			return;
+		}
+
+		/* get all of the data */
+
+		class_cluster_data_t cluster_data;
+
+		auto hists = make_empty_histograms();
+
+		auto const get_data = [&](auto class_index)
+		{
+			for (auto const& data_file : m_class_data[class_index])
+			{
+				img::image_t feature_image;
+				img::read_image_from_file(data_file, feature_image);
+				auto data_view = img::make_view(feature_image);
+
+				assert(static_cast<size_t>(data_view.width) == data::feature_image_width());
+
+				append_data(cluster_data[class_index], data_view);
+
+				update_histograms(hists[class_index], data_view);
+			}
+
+			normalize_histograms(hists[class_index], MAX_RELATIVE_QTY);
+		};
+
+		mlclass::for_each_class(get_data);
+
+
+		/* cluster the data */
+
+		auto const data_indeces = find_relevant_positions(hists); // This needs to be right
+
+		cluster_t cluster;
+		centroid_list_t centroids;
+
+		auto const class_clusters = mlclass::make_class_clusters(N_CLUSTERS);
+
+		cluster.set_distance(build_cluster_distance(data_indeces));
+
+		auto const cluster_class_data = [&](auto c)
+		{
+			auto const cents = cluster.cluster_data(cluster_data[c], class_clusters[c]);
+			centroids.insert(centroids.end(), cents.begin(), cents.end());
+		};
+
+		mlclass::for_each_class(cluster_class_data);
+
+
+		/* create the model and save it */
+
+		auto const save_path = fs::path(save_dir) / make_model_file_name();
+
+		auto const width = (u32)(data::feature_image_width());
+		auto const height = (u32)(centroids.size());
+
+		img::image_t image;
+		img::make_image(image, width, height);
+
+		for(u32 y = 0; y < height; ++y)
+		{
+			auto const list = centroids[y];
+			auto ptr = image.row_begin(y);
+			for (u32 x = 0; x < width; ++x)
+			{
+				auto is_counted = std::find(data_indeces.begin(), data_indeces.end(), x) != data_indeces.end();
+				ptr[x] = model_value_to_model_pixel(list[x], is_counted);
+			}
+		}
+
+		img::write_image(image, save_path);
+
+		/*
+		
+		This is a long function and it could be broken up into smaller ones.
+		However, this logic is only used here so there is no sense in creating more class members
+		
+		*/
+	}
+
+		
 }
