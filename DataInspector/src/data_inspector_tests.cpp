@@ -118,11 +118,6 @@ bool expected_class(std::string const& dir, MLClass ml_class)
 	{
 		auto c = ins::inspect(file.c_str(), model_root.c_str());
 
-		if (c != ml_class)
-		{
-			int x = 0;
-		}
-
 		return c == ml_class; 
 	};
 

@@ -29,7 +29,7 @@ constexpr u32 MAX_RELATIVE_QTY = 255;
 // provides a count for every shade that is found
 using color_hist_t = std::array<u32, MAX_COLOR_VALUE>;
 
-// provides shade counts for every column in the data image
+// provides shade counts for every column in the feature image
 using column_hists_t = std::vector<color_hist_t>;
 
 // shade counts by column for each class
@@ -97,32 +97,33 @@ namespace model_generator
 	{
 		r64 min;
 		r64 max;
-	} minmax_t;
+		r64 mean;
+	} stats_t;
 
 	
-	static minmax_t get_stat_range(color_hist_t const& hist)
+	static stats_t get_stats(color_hist_t const& hist)
 	{
-		// returns the mean +/- one std dev
-
 		auto const calc_mean = [](color_hist_t const& hist)
 		{
 			size_t qty_total = 0;
-			size_t val_total = 0;
+			r64 val_total = 0.0;
 
 			for (size_t shade = 0; shade < hist.size(); ++shade)
 			{
 				auto qty = hist[shade];
 				if (!qty)
+				{
 					continue;
+				}
 
 				qty_total += qty;
 				val_total += qty * shade;
 			}
 
-			return qty_total == 0 ? 0 : val_total / qty_total;
+			return qty_total == 0 ? 0.0 : val_total / qty_total;
 		};
 
-		auto const calc_sigma = [](color_hist_t const& hist, size_t mean)
+		auto const calc_sigma = [](color_hist_t const& hist, r64 mean)
 		{
 			r64 total = 0;
 			size_t qty_total = 0;
@@ -132,7 +133,9 @@ namespace model_generator
 				auto qty = hist[shade];
 
 				if (!qty)
+				{
 					continue;
+				}
 
 				qty_total += qty;
 				auto const diff = val - mean;
@@ -146,20 +149,37 @@ namespace model_generator
 		auto const m = calc_mean(hist);
 		auto const s = calc_sigma(hist, m);
 
-		return{ m - s, m + s }; // mean +/- one std dev
+		return{ m - s, m + s, m };
 	}
 
-		
-	static bool has_overlap(std::array<minmax_t, mlclass::ML_CLASS_COUNT> const& ranges)
+
+	static bool is_same(std::array<stats_t, mlclass::ML_CLASS_COUNT> const& stats_list)
 	{
-		// determine if any of the ranges overlap each other
+		auto upper = stats_list[0].max;
+		auto lower = stats_list[0].min;
 
-		assert(ranges.size() >= 2);
+		for (auto const& stats : stats_list)
+		{
+			if (stats.max < upper)
+			{
+				upper = stats.max;
+			}
+			
+			if (stats.min > lower)
+			{
+				lower = stats.min;
+			}
+		}
 
-		auto const r_min = std::min_element(ranges.begin(), ranges.end(), [](auto const& a, auto const& b) { return a.min < b.min; });
-		auto const r_max = std::max_element(ranges.begin(), ranges.end(), [](auto const& a, auto const& b) { return a.max < b.max; });
+		for (auto const& stats : stats_list)
+		{
+			if (stats.mean < lower || stats.mean > upper)
+			{
+				return false;
+			}
+		}
 
-		return r_min->max >= r_max->min;
+		return true;
 	}
 
 	
@@ -169,21 +189,23 @@ namespace model_generator
 		// finds the indeces of the data that contribute to determining the class
 
 		const size_t num_pos = class_pos_hists[0].size();
+		size_t pos = 0;
 
-		std::array<minmax_t, mlclass::ML_CLASS_COUNT> class_ranges;
+		std::array<stats_t, mlclass::ML_CLASS_COUNT> class_stats;
+
+		auto const set_class_range = [&](auto c) { class_stats[c] = get_stats(class_pos_hists[c][pos]); };
 
 		index_list_t list;
 
-		for (size_t pos = 0; pos < num_pos; ++pos)
+		for (pos = 0; pos < num_pos; ++pos)
 		{
-			class_ranges = { 0 };
-
-			auto const set_class_range = [&](auto class_index) { class_ranges[class_index] = get_stat_range(class_pos_hists[class_index][pos]); };
-
+			class_stats = { 0 };
 			mlclass::for_each_class(set_class_range);
 
-			if (has_overlap(class_ranges))
+			if (is_same(class_stats))
+			{
 				continue;
+			}
 
 			list.push_back(pos);
 		}
