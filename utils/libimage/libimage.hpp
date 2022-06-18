@@ -1,9 +1,4 @@
 #pragma once
-/*
-
-Copyright (c) 2021 Adam Lafontaine
-
-*/
 
 //#define LIBIMAGE_NO_COLOR
 //#define LIBIMAGE_NO_GRAYSCALE
@@ -29,6 +24,7 @@ using u8 = uint8_t;
 using u32 = uint32_t;
 using u64 = uint64_t;
 using r32 = float;
+using r64 = double;
 
 namespace libimage
 {
@@ -86,6 +82,25 @@ namespace libimage
 
 		pixel_t* data = 0;
 
+		pixel_t* row_begin(u32 y) const
+		{
+			assert(y < height);
+
+			auto offset = y * width;
+
+			auto ptr = data + (u64)(offset);
+			assert(ptr);
+
+			return ptr;
+		}
+
+		pixel_t* xy_at(u32 x, u32 y) const
+		{
+			assert(y < height);
+			assert(x < width);
+			return row_begin(y) + x;
+		}
+
 		void clear()
 		{
 			if (data)
@@ -130,7 +145,7 @@ namespace libimage
 
 			auto offset = (y_begin + y) * image_width + x_begin;
 
-			auto ptr = image_data + static_cast<u64>(offset);
+			auto ptr = image_data + (u64)(offset);
 			assert(ptr);
 
 			return ptr;
@@ -169,7 +184,7 @@ namespace libimage
 				assert(loc_y < y_end);
 
 				auto offset = loc_y * image_width + loc_x;
-				auto ptr = image_data + static_cast<u64>(offset);
+				auto ptr = image_data + (u64)(offset);
 				assert(ptr);
 
 				return ptr;
@@ -296,6 +311,25 @@ namespace libimage
 
 			pixel_t* data = 0;
 
+			pixel_t* row_begin(u32 y) const
+			{
+				assert(y < height);
+
+				auto offset = y * width;
+
+				auto ptr = data + (u64)(offset);
+				assert(ptr);
+
+				return ptr;
+			}
+
+			pixel_t* xy_at(u32 x, u32 y) const
+			{
+				assert(y < height);
+				assert(x < width);
+				return row_begin(y) + x;
+			}
+
 			void clear()
 			{
 				if (data)
@@ -371,7 +405,7 @@ namespace libimage
 					assert(loc_y < y_end);
 
 					auto offset = loc_y * image_width + loc_x;
-					auto ptr = image_data + static_cast<u64>(offset);
+					auto ptr = image_data + (u64)(offset);
 					assert(ptr);
 
 					return ptr;

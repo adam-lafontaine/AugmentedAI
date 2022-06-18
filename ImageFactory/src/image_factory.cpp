@@ -1,9 +1,3 @@
-/*
-
-Copyright (c) 2021 Adam Lafontaine
-
-*/
-
 #include "../../utils/libimage/libimage.hpp"
 #include "image_factory.hpp"
 
@@ -254,7 +248,7 @@ static void add_defects(img::view_t const& view)
 
 	std::uniform_int_distribution<u32> y_dist(100, view.height - 100);
 	std::uniform_int_distribution<u32> x_dist(100, view.width - 200);
-	std::uniform_int_distribution<u32> len_dist(10, 100);	
+	std::uniform_int_distribution<u32> len_dist(30, 100);	
 
 	for (u32 i = 0; i < num_lines; ++i)
 	{

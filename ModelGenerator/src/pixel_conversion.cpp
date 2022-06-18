@@ -1,82 +1,74 @@
-/*
-
-Copyright (c) 2021 Adam Lafontaine
-
-*/
-
 #include "pixel_conversion.hpp"
 
 #include <cassert>
-#include <random>
 
 
 constexpr auto BITS32_MAX = UINT32_MAX;
-constexpr double BITS8_MAX = 255;
+
+constexpr u32 CHANNEL_3_MAX = 255 * 255 * 255;
 
 constexpr auto MODEL_VALUE_MIN = 0.0;
-constexpr auto MODEL_VALUE_MAX = BITS32_MAX;
+constexpr auto MODEL_VALUE_MAX = (r64)CHANNEL_3_MAX;
 
-using shade_t = u8;
-
-constexpr shade_t PIXEL_ACTIVE = 255;
-constexpr shade_t PIXEL_INACTIVE = 254;
+constexpr u8 PIXEL_ACTIVE = 255;
+constexpr u8 PIXEL_INACTIVE = 254;
 
 namespace model_generator
 {
-	bool is_relevant(double model_val)
+	bool is_relevant(r64 model_val)
 	{
 		return model_val >= MODEL_VALUE_MIN && model_val <= MODEL_VALUE_MAX;
 	}
 
 
-	double data_pixel_to_model_value(data_pixel_t const& data_pix)
+	r64 feature_pixel_to_model_value(data_pixel_t const& data_pix)
 	{
-		return static_cast<double>(data_pix.value);
+		auto ratio = (r64)(data_pix.value) / BITS32_MAX;
+
+		return MODEL_VALUE_MIN + ratio * (MODEL_VALUE_MAX - MODEL_VALUE_MIN);
 	}
 
 
-	model_pixel_t model_value_to_model_pixel(double model_val, bool is_active)
+	model_pixel_t model_value_to_model_pixel(r64 model_val, bool is_active)
 	{
 		assert(is_relevant(model_val)); // only valid values can be converted to a pixel
 
-		shade_t min = 0;
-		shade_t max = 255;
+		auto const ratio = (model_val - MODEL_VALUE_MIN) / (MODEL_VALUE_MAX - MODEL_VALUE_MIN);
 
-		std::random_device rd;
-		std::mt19937 gen(rd());
-		std::uniform_int_distribution<> dist(min, max);
+		auto rgb_value = (u32)(ratio * CHANNEL_3_MAX);
 
-		
-		// red channel doesn't matter
-		const shade_t r = dist(gen);
+		auto r = rgb_value & 0x00'00'00'FF;
+		auto g = (rgb_value & 0x00'00'FF'00) >> 8;
+		auto b = (rgb_value & 0x00'FF'00'00) >> 16;
 
-		// green channel doesn't matter
-		const shade_t g = dist(gen);
+		model_pixel_t p{};
+		p.red = r;
+		p.green = g;
+		p.blue = b;
 
-		// only the blue channel is used to store data
-		// 32 bit number converted to 8 bit, loss of precision
-		const auto ratio = model_val / MODEL_VALUE_MAX;
-		const shade_t b = static_cast<shade_t>(ratio * max);
+		p.alpha = is_active ? PIXEL_ACTIVE : PIXEL_INACTIVE;
 
-		// use alpha channel to flag if pixel is used in the model
-		const shade_t a = is_active ? PIXEL_ACTIVE : PIXEL_INACTIVE;
-
-		return img::to_pixel(r, g, b, a);
+		return p;
 	}
 
 
-	double model_pixel_to_model_value(model_pixel_t const& model_pix)
+	r64 model_pixel_to_model_value(model_pixel_t const& model_pix)
 	{
-		const auto rgba = model_pix;
-
 		// if alpha channel has been flagged as inactive,
 		// return value makes is_relevant() == false
-		if (rgba.alpha != PIXEL_ACTIVE)
+		if (model_pix.alpha != PIXEL_ACTIVE)
+		{
 			return MODEL_VALUE_MIN - 1;
+		}
 
-		// only the blue channel is used to store a value
-		// the red and green channels are random values used to make the model image look more interesting
-		const auto ratio = rgba.blue / BITS8_MAX;
-		return ratio * MODEL_VALUE_MAX;
+		auto r = (u32)model_pix.red;
+		auto g = (u32)model_pix.green;
+		auto b = (u32)model_pix.blue;
+
+		auto rgb_value = b << 16 | g << 8 | r;
+
+		auto ratio = (r64)rgb_value / CHANNEL_3_MAX;
+
+		return MODEL_VALUE_MIN + ratio * (MODEL_VALUE_MAX - MODEL_VALUE_MIN);
 	}
 }

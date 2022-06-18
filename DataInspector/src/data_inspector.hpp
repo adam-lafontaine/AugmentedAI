@@ -1,13 +1,11 @@
 #pragma once
-/*
-
-Copyright (c) 2021 Adam Lafontaine
-
-*/
 
 #include "../../utils/ml_class.hpp"
 
 #include <vector>
+#include <cstdint>
+
+using r64 = double;
 
 /*
 
@@ -19,7 +17,7 @@ If there is more than one model in model_dir, the first one is used
 
 namespace data_inspector
 {
-	using src_data_t = std::vector<double>;
+	using src_data_t = std::vector<r64>;
 
 	MLClass inspect(src_data_t const& data, const char* model_dir);
 

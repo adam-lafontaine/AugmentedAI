@@ -181,9 +181,9 @@ void delete_files(std::string const& dir)
 
 void save_data_images(file_list_t const& files, std::string const& dst_dir)
 {
-	const auto data = da::file_list_to_data(files);
+	const auto data = da::file_list_to_features(files);
 	delete_files(dst_dir);
-	da::save_data_images(data, dst_dir);
+	da::save_feature_images(data, dst_dir);
 }
 
 

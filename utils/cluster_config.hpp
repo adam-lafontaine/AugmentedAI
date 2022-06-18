@@ -1,14 +1,8 @@
 #pragma once
-/*
-
-Copyright (c) 2021 Adam Lafontaine
-
-*/
 
 #include "cluster.hpp"
 
 #include <cmath>
-#include <cassert>
 #include <cstddef>
 
 namespace cluster
@@ -26,26 +20,26 @@ namespace cluster
 
 	// define how data type returns a value
 	// for creating clusters from data
-	constexpr value_t data_to_value(data_t const& data)
+	constexpr r64 data_to_value(r64 const& data)
 	{
-		return static_cast<value_t>(data);
+		return data;
 	}
 
 
 	template<typename LHS_t, typename RHS_t>
-	constexpr double distance_squared(LHS_t lhs, RHS_t rhs)
+	constexpr r64 distance_squared(LHS_t lhs, RHS_t rhs)
 	{
 		constexpr auto square = [](auto val) { return val * val; };
 
-		return square(static_cast<double>(lhs) - static_cast<double>(rhs));
+		return square(static_cast<r64>(lhs) - static_cast<r64>(rhs));
 	}
 
 
-	// calculates the average spared difference
+	// calculates the average squared difference
 	template<typename T>
-	double list_distance(std::vector<T> const& lhs, std::vector<T> const& rhs)
+	r64 list_distance(std::vector<T> const& lhs, std::vector<T> const& rhs)
 	{
-		double sum = 0;
+		r64 sum = 0;
 		//auto size = std::min(lhs.size(), rhs.size());
 		const auto size = lhs.size();
 
@@ -63,7 +57,7 @@ namespace cluster
 	inline
 	value_row_t make_value_row(size_t capacity)
 	{
-		std::vector<value_t> row(capacity);		
+		value_row_t row(capacity);
 
 		return row;
 	}
