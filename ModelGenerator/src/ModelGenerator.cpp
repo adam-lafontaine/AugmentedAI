@@ -82,7 +82,7 @@ namespace model_generator
 	
 	static u32 to_hist_value(data_pixel_t const& pix)
 	{
-		// converts a data pixel to a value between 0 and MAX_COLOR_VALUE
+		// converts a feature pixel to a value between 0 and MAX_COLOR_VALUE
 
 		auto const ratio = (r64)(pix.value) / UINT32_MAX;
 
@@ -125,7 +125,7 @@ namespace model_generator
 
 		auto const calc_sigma = [](color_hist_t const& hist, r64 mean)
 		{
-			r64 total = 0;
+			r64 total = 0.0;
 			size_t qty_total = 0;
 			for (size_t shade = 0; shade < hist.size(); ++shade)
 			{
@@ -185,8 +185,9 @@ namespace model_generator
 	
 	static index_list_t try_find_indeces(class_column_hists_t const& class_pos_hists)
 	{
-		// An attempt at programatically finding data image indeces that contribute to classification
-		// finds the indeces of the data that contribute to determining the class
+		// An attempt at programatically finding feature image indeces that contribute to classification
+		// Finds the indeces of the data that contribute to determining the class
+		// Princpal Component Analysis, Dimensionality Reduction
 
 		const size_t num_pos = class_pos_hists[0].size();
 		size_t pos = 0;
@@ -246,7 +247,7 @@ namespace model_generator
 	//======= HISTOGRAM ============================
 
 	
-	static void update_histograms(column_hists_t& pos_hists, img::view_t const& data_view)
+	static void update_histograms(column_hists_t& pos_hists, img::image_t const& feature_image)
 	{
 		// update the counts in the histograms with data from a data image
 
@@ -258,26 +259,26 @@ namespace model_generator
 			++pos_hists[column][to_hist_value(dp)];
 		};
 
-		for (; column < data_view.width; ++column)
+		for (; column < feature_image.width; ++column)
 		{
-			auto column_view = img::column_view(data_view, column);
+			auto column_view = img::column_view(feature_image, column);
 
 			std::for_each(column_view.begin(), column_view.end(), update_pred);
 		}
 	}
 
 	
-	static void append_data(data_list_t& data, img::view_t const& data_view)
+	static void append_data(data_list_t& data, img::image_t const& feature_image)
 	{
-		// add converted data from a data image
+		// add converted data from a feature image
 
-		auto const height = data_view.height;
+		auto const height = feature_image.height;
 
 		for (u32 y = 0; y < height; ++y)
 		{
 			cluster::data_row_t data_row;
 
-			auto row_view = img::row_view(data_view, y);
+			auto row_view = img::row_view(feature_image, y);
 			std::transform(row_view.begin(), row_view.end(), std::back_inserter(data_row), feature_pixel_to_model_value);
 
 			data.push_back(std::move(data_row));
@@ -350,7 +351,7 @@ namespace model_generator
 	{
 		// check if data exists for every class
 
-		auto const pred = [&](auto const& list) { return !list.empty(); };
+		auto const pred = [](auto const& list) { return !list.empty(); };
 
 		return std::all_of(m_class_data.begin(), m_class_data.end(), pred);
 	}
@@ -389,13 +390,12 @@ namespace model_generator
 			{
 				img::image_t feature_image;
 				img::read_image_from_file(data_file, feature_image);
-				auto data_view = img::make_view(feature_image);
 
-				assert(static_cast<size_t>(data_view.width) == data::feature_image_width());
+				assert((size_t)(feature_image.width) == data::feature_image_width());
 
-				append_data(cluster_data[class_index], data_view);
+				append_data(cluster_data[class_index], feature_image);
 
-				update_histograms(hists[class_index], data_view);
+				update_histograms(hists[class_index], feature_image);
 			}
 
 			normalize_histograms(hists[class_index], MAX_RELATIVE_QTY);
@@ -446,13 +446,6 @@ namespace model_generator
 		}
 
 		img::write_image(image, save_path);
-
-		/*
-		
-		This is a long function and it could be broken up into smaller ones.
-		However, this logic is only used here so there is no sense in creating more class members
-		
-		*/
 	}
 
 		

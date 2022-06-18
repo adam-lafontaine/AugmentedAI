@@ -37,9 +37,9 @@ namespace model_generator
 
 		auto rgb_value = (u32)(ratio * CHANNEL_3_MAX);
 
-		auto r = rgb_value & 0b0000'0000'0000'0000'0000'0000'1111'1111;
-		auto g = (rgb_value & 0b0000'0000'0000'0000'1111'1111'0000'0000) >> 8;
-		auto b = (rgb_value & 0b0000'0000'1111'1111'0000'0000'0000'0000) >> 16;
+		auto r = rgb_value & 0x00'00'00'FF;
+		auto g = (rgb_value & 0x00'00'FF'00) >> 8;
+		auto b = (rgb_value & 0x00'FF'00'00) >> 16;
 
 		model_pixel_t p{};
 		p.red = r;

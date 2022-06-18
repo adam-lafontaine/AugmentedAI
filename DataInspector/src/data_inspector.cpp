@@ -22,9 +22,10 @@ using centroid_list_t = cluster::centroid_list_t;
 using value_list_t = std::vector<r64>;
 
 
-// finds indeces from saved centroid data
 static index_list_t find_positions(value_list_t const& saved_centroid)
 {
+	// finds indeces from saved centroid data
+
 	index_list_t list;
 
 	for (size_t i = 0; i < saved_centroid.size(); ++i)
@@ -37,9 +38,10 @@ static index_list_t find_positions(value_list_t const& saved_centroid)
 }
 
 
-// read the model from file and convert to centroids
 static centroid_list_t read_model(const char* model_file)
 {
+	// read the model from file and convert to centroids
+
 	img::image_t image;
 	img::read_image_from_file(model_file, image);
 
@@ -49,8 +51,11 @@ static centroid_list_t read_model(const char* model_file)
 	centroid_list_t centroids;
 
 	assert(width == data::feature_image_width());
-	if(width != data::feature_image_width())
+
+	if (width != data::feature_image_width())
+	{
 		return centroids;
+	}		
 
 	centroids.reserve(height);
 
@@ -69,10 +74,11 @@ static centroid_list_t read_model(const char* model_file)
 }
 
 
-// convert a value from a data image to model/centroid value
-// uses data pixel as intermediary
 static r64 data_value_to_model_value(r64 data_val)
 {
+	// convert a value from a data image to model/centroid value
+	// uses feature pixel as intermediary
+
 	model::data_pixel_t pixel{};
 	pixel.value = data::value_to_feature_pixel(data_val);
 
@@ -97,7 +103,10 @@ namespace data_inspector
 	MLClass inspect(src_data_t const& data_row , const char* model_dir)
 	{
 		if (data_row.empty())
+		{
 			return MLClass::Error;
+		}
+			
 
 		/*
 		
@@ -110,11 +119,15 @@ namespace data_inspector
 		// use the first model found in the directory
 		auto const model_file = dir::get_first_file_of_type(model_dir, model::MODEL_FILE_EXTENSION);
 		if (model_file.empty())
+		{
 			return MLClass::Error;
+		}
 
 		auto const centroids = read_model(model_file.c_str());
 		if(centroids.empty())
+		{
 			return MLClass::Error;
+		}
 
 		auto const data_indeces = find_positions(centroids[0]);
 

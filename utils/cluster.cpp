@@ -6,6 +6,7 @@
 #include <iterator>
 #include <iostream>
 #include <functional>
+#include <cassert>
 
 namespace cluster
 {
@@ -27,13 +28,16 @@ namespace cluster
 
 	static size_t max_value(index_list_t const& list)
 	{
+		assert(list.size());
+
 		return *std::max_element(list.begin(), list.end());
 	}
 
-
-	// convert a list of data_row_t to value_row_t
+	
 	static value_row_list_t to_value_row_list(data_row_list_t const& data_row_list)
 	{
+		// convert a list of data_row_t to value_row_t
+
 		auto list = make_value_row_list(data_row_list.size(), data_row_list[0].size());
 		for (size_t i = 0; i < data_row_list.size(); ++i)
 		{
@@ -45,10 +49,10 @@ namespace cluster
 		return list;
 	}
 
-
-	// selects random data to be used as centroids
+	
 	static centroid_list_t random_values(data_row_list_t const& x_list, size_t num_clusters)
 	{
+		// selects random data to be used as centroids
 		// C++ 17 std::sample
 
 		data_row_list_t samples;
@@ -58,12 +62,13 @@ namespace cluster
 			num_clusters, std::mt19937{ std::random_device{}() });
 
 		return to_value_row_list(samples);
-	}
-		
+	}		
 
-	// assigns a cluster index to each data point
+	
 	static cluster_result_t assign_clusters(data_row_list_t const& x_list, centroid_list_t& centroids, closest_t const& closest)
 	{
+		// assigns a cluster index to each data point
+
 		index_list_t x_clusters;
 		x_clusters.reserve(x_list.size());
 
@@ -81,10 +86,11 @@ namespace cluster
 		return res;
 	}
 
-
-	// finds new centroids based on the averages of data clustered together
+	
 	static centroid_list_t calc_centroids(data_row_list_t const& x_list, index_list_t const& x_clusters, size_t num_clusters)
 	{
+		// finds new centroids based on the averages of data clustered together
+
 		const auto data_size = x_list[0].size();
 		auto values = make_value_row_list(num_clusters, data_size);		
 		
@@ -108,10 +114,11 @@ namespace cluster
 		return values;
 	}
 
-
-	// re-label cluster assignments so that they are consistent accross iterations
+	
 	static void relabel_clusters(cluster_result_t& result, size_t num_clusters)
 	{
+		// re-label cluster assignments so that they are consistent accross iterations
+
 		std::vector<uint8_t> flags(num_clusters, 0); // tracks if cluster index has been mapped
 		std::vector<size_t> map(num_clusters, 0);    // maps old cluster index to new cluster index
 
@@ -151,10 +158,11 @@ namespace cluster
 
 	//======= CLUSTERING ALGORITHMS ==========================
 	
-
-	// returns the result with the smallest distance
+	
 	static cluster_result_t cluster_min_distance(data_row_list_t const& x_list, size_t num_clusters, cluster_once_t const& cluster_once)
 	{
+		// returns the result with the smallest distance
+
 		auto result = cluster_once(x_list, num_clusters);
 		auto min = result;
 

@@ -3,7 +3,6 @@
 #include "cluster.hpp"
 
 #include <cmath>
-#include <cassert>
 #include <cstddef>
 
 namespace cluster
